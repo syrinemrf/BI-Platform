@@ -1,0 +1,11 @@
+order_id,order_date,customer_id,product_name,category,quantity,unit_price,total_amount,region,channel
+ORD_001,2024-01-15,CUST_001,Laptop Pro,Electronics,1,1299.99,1299.99,North,Online
+ORD_002,2024-01-16,CUST_002,Wireless Mouse,Electronics,2,29.99,59.98,South,Store
+ORD_003,2024-01-17,CUST_003,USB-C Hub,Electronics,1,49.99,49.99,East,Online
+ORD_004,2024-01-18,CUST_001,Keyboard,Electronics,1,149.99,149.99,North,Mobile App
+ORD_005,2024-01-19,CUST_004,Monitor 27inch,Electronics,1,399.99,399.99,West,Online
+ORD_006,2024-01-20,CUST_002,Headphones,Electronics,1,199.99,199.99,South,Store
+ORD_007,2024-01-21,CUST_005,Office Chair,Furniture,2,299.99,599.98,Central,Online
+ORD_008,2024-01-22,CUST_003,Standing Desk,Furniture,1,599.99,599.99,East,Partner
+ORD_009,2024-01-23,CUST_006,Notebook Set,Office,5,12.99,64.95,North,Store
+ORD_010,2024-01-24,CUST_004,Coffee Mug,Home,3,14.99,44.97,West,Online
