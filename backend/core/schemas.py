@@ -55,6 +55,8 @@ class DatasetResponse(DatasetBase):
     row_count: Optional[int]
     column_count: Optional[int]
     schema_info: Optional[Dict[str, Any]]
+    user_id: Optional[int] = None
+    session_id: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -135,6 +137,9 @@ class ETLConfig(BaseModel):
 class ETLJobResponse(BaseModel):
     id: int
     dataset_id: int
+    user_id: Optional[int] = None
+    session_id: Optional[str] = None
+    job_name: Optional[str] = None
     status: ETLStatus
     started_at: Optional[datetime]
     completed_at: Optional[datetime]

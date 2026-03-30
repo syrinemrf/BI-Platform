@@ -15,7 +15,8 @@ from api.routes import (
     etl_router,
     warehouse_router,
     dashboard_router,
-    llm_router
+    llm_router,
+    auth_router,
 )
 
 # Configure logging
@@ -24,6 +25,32 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+
+def _migrate_db():
+    """Add missing columns to existing tables (lightweight migration)."""
+    from sqlalchemy import text, inspect
+    inspector = inspect(engine)
+
+    migrations = [
+        ("datasets", "user_id", "INTEGER"),
+        ("datasets", "session_id", "VARCHAR(100)"),
+        ("etl_jobs", "user_id", "INTEGER"),
+        ("etl_jobs", "session_id", "VARCHAR(100)"),
+        ("etl_jobs", "job_name", "VARCHAR(255)"),
+    ]
+
+    with engine.connect() as conn:
+        for table, column, col_type in migrations:
+            if table in inspector.get_table_names():
+                existing_cols = [c["name"] for c in inspector.get_columns(table)]
+                if column not in existing_cols:
+                    try:
+                        conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}"))
+                        logger.info(f"Added column {column} to {table}")
+                    except Exception as e:
+                        logger.warning(f"Could not add column {column} to {table}: {e}")
+        conn.commit()
 
 
 @asynccontextmanager
@@ -36,6 +63,8 @@ async def lifespan(app: FastAPI):
     try:
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables initialized")
+        # Add new columns if they don't exist (lightweight migration)
+        _migrate_db()
     except Exception as e:
         logger.error(f"Database initialization failed: {e}")
 
@@ -96,6 +125,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 # Include routers
+app.include_router(auth_router, prefix="/api")
 app.include_router(datasets_router, prefix="/api")
 app.include_router(etl_router, prefix="/api")
 app.include_router(warehouse_router, prefix="/api")
@@ -104,7 +134,7 @@ app.include_router(llm_router, prefix="/api")
 
 
 # Health check endpoint
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
     """Health check endpoint."""
     from services.llm_service import get_llm_service

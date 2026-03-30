@@ -1,17 +1,18 @@
 """
 ETL Pipeline API routes.
 """
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Body, Query
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Body, Query, Header
 from sqlalchemy.orm import Session
 from typing import Optional, Dict, Any
 from datetime import datetime
 
 from core.database import get_db
-from core.models import Dataset, ETLJob, StarSchemaMetadata, DataQualityReport as DQReportModel
+from core.models import Dataset, ETLJob, StarSchemaMetadata, DataQualityReport as DQReportModel, User
 from core.schemas import ETLConfig, ETLJobResponse, DataQualityReportResponse, ETLProgress
 from services.etl_pipeline import ETLPipeline, ETLStatus
 from services.schema_analyzer import analyze_schema
 from services.data_quality import check_data_quality
+from services.auth_service import get_current_user
 from utils.file_handlers import load_file
 from utils.validators import sanitize_for_json
 
@@ -19,6 +20,10 @@ router = APIRouter(prefix="/etl", tags=["ETL"])
 
 # In-memory job status tracking (in production, use Redis)
 _job_status: Dict[int, Dict[str, Any]] = {}
+
+
+def _get_session_id(x_session_id: Optional[str] = Header(None)) -> Optional[str]:
+    return x_session_id
 
 
 @router.post("/analyze/{dataset_id}")
@@ -77,17 +82,12 @@ async def run_quality_check(
 async def run_etl_pipeline(
         config: ETLConfig,
         background_tasks: BackgroundTasks,
+        user: Optional[User] = Depends(get_current_user),
+        session_id: Optional[str] = Depends(_get_session_id),
         db: Session = Depends(get_db)
 ):
     """
     Start ETL pipeline execution.
-
-    The pipeline runs in the background and includes:
-    1. Data extraction
-    2. Quality checks
-    3. Data cleaning and transformation
-    4. Star schema generation
-    5. Loading to PostgreSQL
     """
     dataset = db.query(Dataset).filter(Dataset.id == config.dataset_id).first()
     if not dataset:
@@ -96,6 +96,8 @@ async def run_etl_pipeline(
     # Create ETL job record
     etl_job = ETLJob(
         dataset_id=config.dataset_id,
+        user_id=user.id if user else None,
+        session_id=session_id if not user else None,
         status="pending"
     )
     db.add(etl_job)
@@ -129,6 +131,9 @@ async def _execute_etl_job(
         db: Session
 ):
     """Execute ETL job in background."""
+    import logging
+    logger = logging.getLogger(__name__)
+
     try:
         # Update status
         _job_status[job_id] = {
@@ -154,16 +159,9 @@ async def _execute_etl_job(
                 config=config
             )
 
-            # Update progress during execution
-            def update_progress(step: str, progress: int, message: str):
-                _job_status[job_id] = {
-                    "status": "running",
-                    "progress": progress,
-                    "current_step": step,
-                    "message": message
-                }
-
             result = pipeline.run()
+
+            logger.info(f"ETL pipeline result: success={result.success}, error={result.error}")
 
             # Update job record
             if result.success:
@@ -201,12 +199,13 @@ async def _execute_etl_job(
             else:
                 job.status = "failed"
                 job.error_message = result.error
+                logger.error(f"ETL job {job_id} failed: {result.error}")
 
                 _job_status[job_id] = {
                     "status": "failed",
                     "progress": 0,
                     "current_step": "error",
-                    "message": result.error
+                    "message": result.error or "Unknown error"
                 }
 
             job.completed_at = datetime.now()
@@ -216,6 +215,9 @@ async def _execute_etl_job(
             session.close()
 
     except Exception as e:
+        import traceback
+        logger.error(f"ETL job {job_id} exception: {str(e)}")
+        logger.error(traceback.format_exc())
         _job_status[job_id] = {
             "status": "failed",
             "progress": 0,
@@ -289,12 +291,22 @@ async def list_etl_jobs(
         dataset_id: Optional[int] = None,
         status: Optional[str] = None,
         limit: int = 50,
+        user: Optional[User] = Depends(get_current_user),
+        session_id: Optional[str] = Depends(_get_session_id),
         db: Session = Depends(get_db)
 ):
     """
-    List ETL jobs with optional filters.
+    List ETL jobs with optional filters, scoped to user/session.
     """
     query = db.query(ETLJob)
+
+    # Filter by user/session
+    if user:
+        query = query.filter(ETLJob.user_id == user.id)
+    elif session_id:
+        query = query.filter(ETLJob.session_id == session_id, ETLJob.user_id == None)
+    else:
+        query = query.filter(ETLJob.id == -1)  # return nothing
 
     if dataset_id:
         query = query.filter(ETLJob.dataset_id == dataset_id)
@@ -307,6 +319,7 @@ async def list_etl_jobs(
         {
             "id": job.id,
             "dataset_id": job.dataset_id,
+            "job_name": job.job_name,
             "status": job.status,
             "started_at": job.started_at,
             "completed_at": job.completed_at,
@@ -792,3 +805,36 @@ async def get_improvement_suggestions(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+
+@router.get("/download-cleaned/{dataset_id}")
+async def download_cleaned_data(dataset_id: int, db: Session = Depends(get_db)):
+    """Download the cleaned version of a dataset as CSV."""
+    from fastapi.responses import StreamingResponse
+    import io
+
+    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    try:
+        df = load_file(dataset.file_path)
+        # Apply basic cleaning
+        df = df.drop_duplicates()
+        df = df.dropna(how='all')
+        # Normalize string columns
+        for col in df.select_dtypes(include=['object']).columns:
+            df[col] = df[col].astype(str).str.strip()
+
+        buffer = io.StringIO()
+        df.to_csv(buffer, index=False)
+        buffer.seek(0)
+
+        clean_name = f"{dataset.name}_cleaned.csv"
+        return StreamingResponse(
+            io.BytesIO(buffer.getvalue().encode('utf-8')),
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename={clean_name}"}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate cleaned data: {str(e)}")

@@ -79,9 +79,20 @@ def execute_ddl(ddl: str) -> bool:
     """Execute DDL statements (CREATE, ALTER, DROP)."""
     with engine.connect() as conn:
         for statement in ddl.split(';'):
+            # Strip whitespace and remove comment-only lines
             statement = statement.strip()
-            if statement:
+            if not statement:
+                continue
+            # Skip statements that are only comments
+            lines = [l.strip() for l in statement.split('\n') if l.strip() and not l.strip().startswith('--')]
+            if not lines:
+                continue
+            try:
                 conn.execute(text(statement))
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"DDL statement warning: {e}")
+                # Continue with remaining statements
         conn.commit()
     return True
 

@@ -9,19 +9,21 @@ import os
 class Settings(BaseSettings):
     # Application
     APP_NAME: str = "BI Platform"
-    APP_VERSION: str = "1.0.0"
+    APP_VERSION: str = "2.0.0"
     DEBUG: bool = True
 
     # Database (change to PostgreSQL in production)
-    # For dev without Docker, use SQLite:
     DATABASE_URL: str = "sqlite:///./bi_warehouse.db"
-    # For production with PostgreSQL:
-    # DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/bi_warehouse"
     DATABASE_POOL_SIZE: int = 10
     DATABASE_MAX_OVERFLOW: int = 20
 
     # Redis (for Celery)
     REDIS_URL: str = "redis://localhost:6379/0"
+
+    # Authentication
+    SECRET_KEY: str = "bi-platform-secret-key-change-in-production-2024"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
 
     # File Upload
     UPLOAD_DIR: str = "./uploads"

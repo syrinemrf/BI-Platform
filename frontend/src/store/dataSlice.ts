@@ -4,6 +4,7 @@ import type { Dataset, ETLJob, TableInfo, KPI } from '../types';
 interface DataState {
   datasets: Dataset[];
   selectedDataset: Dataset | null;
+  selectedDatasetId: number | null;
   currentETLJob: ETLJob | null;
   tables: TableInfo[];
   kpis: KPI[];
@@ -18,6 +19,7 @@ interface DataState {
 const initialState: DataState = {
   datasets: [],
   selectedDataset: null,
+  selectedDatasetId: null,
   currentETLJob: null,
   tables: [],
   kpis: [],
@@ -44,9 +46,16 @@ const dataSlice = createSlice({
       if (state.selectedDataset?.id === action.payload) {
         state.selectedDataset = null;
       }
+      if (state.selectedDatasetId === action.payload) {
+        state.selectedDatasetId = null;
+      }
     },
     setSelectedDataset: (state, action: PayloadAction<Dataset | null>) => {
       state.selectedDataset = action.payload;
+      state.selectedDatasetId = action.payload?.id ?? null;
+    },
+    setSelectedDatasetId: (state, action: PayloadAction<number | null>) => {
+      state.selectedDatasetId = action.payload;
     },
     setCurrentETLJob: (state, action: PayloadAction<ETLJob | null>) => {
       state.currentETLJob = action.payload;
@@ -73,6 +82,7 @@ export const {
   addDataset,
   removeDataset,
   setSelectedDataset,
+  setSelectedDatasetId,
   setCurrentETLJob,
   updateETLJob,
   setTables,

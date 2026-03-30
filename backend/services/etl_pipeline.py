@@ -244,24 +244,30 @@ class ETLPipeline:
             # Drop columns with too many nulls (>50%)
             threshold = len(self.df) * 0.5
             self.df = self.df.dropna(axis=1, thresh=threshold)
-        elif self.handle_missing == 'fill_mean':
-            # Fill numeric columns with mean
+        elif self.handle_missing in ('fill', 'fill_mean'):
+            # Fill numeric columns with mean, others with mode
             numeric_cols = self.df.select_dtypes(include=[np.number]).columns
             for col in numeric_cols:
-                self.df[col].fillna(self.df[col].mean(), inplace=True)
+                self.df[col] = self.df[col].fillna(self.df[col].mean())
+            for col in self.df.select_dtypes(include=['object']).columns:
+                mode_val = self.df[col].mode()
+                if len(mode_val) > 0:
+                    self.df[col] = self.df[col].fillna(mode_val[0])
         elif self.handle_missing == 'fill_median':
             # Fill numeric columns with median
             numeric_cols = self.df.select_dtypes(include=[np.number]).columns
             for col in numeric_cols:
-                self.df[col].fillna(self.df[col].median(), inplace=True)
+                self.df[col] = self.df[col].fillna(self.df[col].median())
         elif self.handle_missing == 'fill_mode':
             # Fill with mode (most frequent value)
             for col in self.df.columns:
                 mode_val = self.df[col].mode()
                 if len(mode_val) > 0:
-                    self.df[col].fillna(mode_val[0], inplace=True)
+                    self.df[col] = self.df[col].fillna(mode_val[0])
         elif self.handle_missing == 'fill_value' and self.fill_value is not None:
-            self.df.fillna(self.fill_value, inplace=True)
+            self.df = self.df.fillna(self.fill_value)
+        elif self.handle_missing == 'keep':
+            pass  # Keep missing values as-is
 
         rows_after_missing = len(self.df)
         issues_fixed += original_rows - rows_after_missing

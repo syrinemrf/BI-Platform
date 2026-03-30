@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -12,8 +12,12 @@ import {
   XMarkIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  InformationCircleIcon,
+  ArrowRightOnRectangleIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { toggleSidebar, toggleSidebarCollapsed } from '../../store/uiSlice';
+import { logout } from '../../store/authSlice';
 import type { RootState } from '../../store';
 import { clsx } from 'clsx';
 
@@ -26,23 +30,28 @@ interface NavItem {
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const { sidebarOpen, sidebarCollapsed } = useSelector((state: RootState) => state.ui);
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
   const navigation: NavItem[] = [
-    { name: t('nav.dashboard'), href: '/', icon: HomeIcon },
     { name: t('nav.dataSources'), href: '/data-sources', icon: CircleStackIcon },
     { name: t('nav.etl'), href: '/etl', icon: ArrowPathIcon },
     { name: t('nav.schema'), href: '/schema', icon: CubeTransparentIcon },
     { name: t('nav.warehouse'), href: '/warehouse', icon: ServerStackIcon },
+    { name: t('nav.dashboard'), href: '/dashboard', icon: HomeIcon },
     { name: t('nav.settings'), href: '/settings', icon: Cog6ToothIcon },
+    { name: t('nav.about'), href: '/about', icon: InformationCircleIcon },
   ];
 
   const isActive = (href: string) => {
-    if (href === '/') {
-      return location.pathname === '/';
-    }
     return location.pathname.startsWith(href);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/auth');
   };
 
   return (
@@ -77,7 +86,6 @@ export const Sidebar: React.FC = () => {
             )}
           </div>
 
-          {/* Mobile close button */}
           <button
             onClick={() => dispatch(toggleSidebar())}
             className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden"
@@ -85,7 +93,6 @@ export const Sidebar: React.FC = () => {
             <XMarkIcon className="h-5 w-5 text-slate-500" />
           </button>
 
-          {/* Desktop collapse button */}
           <button
             onClick={() => dispatch(toggleSidebarCollapsed())}
             className={clsx(
@@ -107,7 +114,7 @@ export const Sidebar: React.FC = () => {
             const active = isActive(item.href);
             return (
               <NavLink
-                key={item.name}
+                key={item.href}
                 to={item.href}
                 className={clsx(
                   'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group',
@@ -117,9 +124,7 @@ export const Sidebar: React.FC = () => {
                   sidebarCollapsed && 'lg:justify-center lg:px-2'
                 )}
                 onClick={() => {
-                  if (window.innerWidth < 1024) {
-                    dispatch(toggleSidebar());
-                  }
+                  if (window.innerWidth < 1024) dispatch(toggleSidebar());
                 }}
               >
                 <item.icon
@@ -138,29 +143,50 @@ export const Sidebar: React.FC = () => {
           })}
         </nav>
 
-        {/* Footer */}
+        {/* Footer - User section */}
         <div className={clsx(
           'p-4 border-t border-slate-200 dark:border-slate-700',
           sidebarCollapsed && 'lg:px-2'
         )}>
-          <div className={clsx(
-            'flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/50',
-            sidebarCollapsed && 'lg:justify-center lg:px-2'
-          )}>
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">v1</span>
-            </div>
-            {!sidebarCollapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-slate-900 dark:text-white truncate">
-                  BI Platform
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  v1.0.0
-                </p>
+          {isAuthenticated && user ? (
+            <div className={clsx(
+              'flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/50',
+              sidebarCollapsed && 'lg:justify-center lg:px-2'
+            )}>
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-xs font-bold">
+                  {user.username.charAt(0).toUpperCase()}
+                </span>
               </div>
-            )}
-          </div>
+              {!sidebarCollapsed && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-slate-900 dark:text-white truncate">
+                    {user.username}
+                  </p>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-1 text-xs text-slate-500 hover:text-red-500 transition-colors"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-3 w-3" />
+                    {t('auth.logout')}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate('/auth')}
+              className={clsx(
+                'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-all',
+                sidebarCollapsed && 'lg:justify-center lg:px-2'
+              )}
+            >
+              <UserCircleIcon className="h-5 w-5 flex-shrink-0" />
+              {!sidebarCollapsed && (
+                <span className="text-sm font-medium">{t('auth.signIn')}</span>
+              )}
+            </button>
+          )}
         </div>
       </aside>
     </>

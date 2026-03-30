@@ -8,6 +8,8 @@ export interface Dataset {
   row_count: number | null;
   column_count: number | null;
   schema_info: SchemaInfo | null;
+  user_id: number | null;
+  session_id: string | null;
   created_at: string;
 }
 
@@ -45,6 +47,9 @@ export interface SuggestedEntity {
 export interface ETLJob {
   id: number;
   dataset_id: number;
+  user_id: number | null;
+  session_id: string | null;
+  job_name: string | null;
   status: 'pending' | 'running' | 'completed' | 'failed';
   started_at: string | null;
   completed_at: string | null;
@@ -62,7 +67,7 @@ export interface ETLProgress {
 
 export interface ETLConfig {
   dataset_id: number;
-  handle_missing: 'drop' | 'fill_mean' | 'fill_median' | 'fill_mode' | 'fill_value';
+  handle_missing: string;
   fill_value?: unknown;
   remove_duplicates: boolean;
   normalize_strings: boolean;
@@ -76,11 +81,8 @@ export interface DataQualityReport {
   uniqueness_score: number;
   validity_score: number;
   consistency_score: number;
-  total_rows: number;
-  duplicate_rows: number;
   column_reports: ColumnQualityReport[];
-  critical_issues: QualityIssue[];
-  warnings: QualityIssue[];
+  issues: QualityIssue[];
   recommendations: string[];
   passed: boolean;
 }
@@ -92,13 +94,16 @@ export interface ColumnQualityReport {
   validity: number;
   data_type: string;
   null_count: number;
+  duplicate_count: number;
+  invalid_count: number;
   issues: string[];
 }
 
 export interface QualityIssue {
   column: string;
   issue: string;
-  severity: 'critical' | 'warning';
+  severity: 'critical' | 'warning' | 'info';
+  type?: string;
 }
 
 // Warehouse types
@@ -180,6 +185,51 @@ export interface LLMQueryResponse {
   sql_query: string | null;
   confidence: number;
   suggestions: string[];
+}
+
+// Auth types
+export interface AuthUser {
+  id: number;
+  email: string;
+  username: string;
+  full_name: string | null;
+}
+
+export interface AuthState {
+  user: AuthUser | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isGuest: boolean;
+  sessionId: string | null;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  username: string;
+  password: string;
+  full_name?: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  user: AuthUser;
+}
+
+export interface UserProject {
+  id: number;
+  name: string;
+  description: string | null;
+  config: Record<string, unknown> | null;
+  dataset_ids: number[] | null;
+  dashboard_state: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // UI types

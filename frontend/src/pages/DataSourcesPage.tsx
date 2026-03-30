@@ -6,7 +6,6 @@ import {
   TrashIcon,
   EyeIcon,
   ArrowPathIcon,
-  TableCellsIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import { Card, CardHeader } from '../components/common/Card';
@@ -121,7 +120,7 @@ export const DataSourcesPage: React.FC = () => {
         <div className="lg:col-span-1">
           <Card variant="glass">
             <CardHeader title={t('dataSources.upload')} />
-            <UploadZone onUpload={(file) => uploadMutation.mutateAsync(file)} />
+            <UploadZone onUpload={(file) => { uploadMutation.mutateAsync(file); }} />
           </Card>
         </div>
 
