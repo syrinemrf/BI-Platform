@@ -224,7 +224,7 @@ async def get_dimension_values(
         # Build query
         query = f"SELECT DISTINCT {value_column} FROM {table_name}"
         if search:
-            query += f" WHERE CAST({value_column} AS TEXT) ILIKE '%{search}%'"
+            query += f" WHERE CAST({value_column} AS TEXT) LIKE '%{search}%'"
         query += f" ORDER BY {value_column} LIMIT {limit}"
 
         data = execute_raw_sql(query)
@@ -281,17 +281,10 @@ async def get_warehouse_stats(
                 count = result[0]['count'] if result else 0
                 total_rows += count
 
-                # Get table size
-                size_result = execute_raw_sql(f"""
-                    SELECT pg_size_pretty(pg_total_relation_size('{table_name}')) as size
-                """)
-                size = size_result[0]['size'] if size_result else "0 bytes"
-
                 table_stats.append({
                     "name": table_name,
                     "type": "fact" if table_name.startswith("fact_") else "dimension",
                     "row_count": count,
-                    "size": size
                 })
             except Exception:
                 pass

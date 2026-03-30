@@ -12,6 +12,10 @@ import type {
   FilterOption,
   AggregateRequest,
   LLMQueryResponse,
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  UserProject,
 } from '../types';
 
 const API_BASE = '/api';
@@ -23,13 +27,74 @@ const api = axios.create({
   },
 });
 
-// Error handler
-const handleError = (error: AxiosError) => {
-  if (error.response) {
-    const message = (error.response.data as { detail?: string })?.detail || 'An error occurred';
-    throw new Error(message);
+// Add auth token and session ID to requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('bi_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  throw error;
+  // Send guest session ID for data isolation
+  const sessionId = sessionStorage.getItem('bi_session_id');
+  if (sessionId && !token) {
+    config.headers['X-Session-Id'] = sessionId;
+  }
+  return config;
+});
+
+// Extract error messages from API responses
+api.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response) {
+      // Handle expired/invalid token
+      if (error.response.status === 401) {
+        localStorage.removeItem('bi_token');
+        localStorage.removeItem('bi_user');
+        window.location.href = '/auth';
+        return Promise.reject(new Error('Session expired. Please log in again.'));
+      }
+      const detail = (error.response.data as { detail?: string })?.detail;
+      return Promise.reject(new Error(detail || 'An error occurred'));
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Auth API
+export const authApi = {
+  register: async (data: RegisterRequest): Promise<AuthResponse> => {
+    const response = await api.post('/auth/register', data);
+    return response.data;
+  },
+
+  login: async (data: LoginRequest): Promise<AuthResponse> => {
+    const response = await api.post('/auth/login', data);
+    return response.data;
+  },
+
+  getProfile: async () => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  },
+
+  listProjects: async (): Promise<UserProject[]> => {
+    const response = await api.get('/auth/projects');
+    return response.data;
+  },
+
+  createProject: async (data: Partial<UserProject>): Promise<UserProject> => {
+    const response = await api.post('/auth/projects', data);
+    return response.data;
+  },
+
+  updateProject: async (id: number, data: Partial<UserProject>): Promise<UserProject> => {
+    const response = await api.put(`/auth/projects/${id}`, data);
+    return response.data;
+  },
+
+  deleteProject: async (id: number): Promise<void> => {
+    await api.delete(`/auth/projects/${id}`);
+  },
 };
 
 // Dataset API
@@ -142,6 +207,10 @@ export const etlApi = {
     const response = await api.get(`/etl/improvement-suggestions/${datasetId}`);
     return response.data;
   },
+
+  downloadCleanedData: (datasetId: number) => {
+    return `${API_BASE}/etl/download-cleaned/${datasetId}`;
+  },
 };
 
 // Warehouse API
@@ -223,9 +292,8 @@ export const dashboardApi = {
   },
 
   saveQuery: async (name: string, queryType: string, configuration: Record<string, unknown>, description?: string) => {
-    const response = await api.post('/dashboard/saved-query', null, {
+    const response = await api.post('/dashboard/saved-query', configuration, {
       params: { name, query_type: queryType, description },
-      data: { configuration },
     });
     return response.data;
   },

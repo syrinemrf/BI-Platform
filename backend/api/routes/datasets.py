@@ -1,7 +1,7 @@
 """
 Dataset management API routes.
 """
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Query
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Query, Header
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -12,11 +12,12 @@ import logging
 import traceback
 
 from core.database import get_db
-from core.models import Dataset
+from core.models import Dataset, User
 from core.schemas import DatasetResponse, DatasetPreview
 from utils.file_handlers import FileHandler, save_upload_file, load_file, get_file_info
 from utils.validators import FileValidator, sanitize_for_json
 from services.schema_analyzer import analyze_schema
+from services.auth_service import get_current_user
 from config import settings
 
 logger = logging.getLogger(__name__)
@@ -24,10 +25,28 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/datasets", tags=["Datasets"])
 
 
+def _get_session_id(x_session_id: Optional[str] = Header(None)) -> Optional[str]:
+    """Get guest session ID from header."""
+    return x_session_id
+
+
+def _filter_datasets(query, user: Optional[User], session_id: Optional[str]):
+    """Filter datasets based on user or guest session."""
+    if user:
+        return query.filter(Dataset.user_id == user.id)
+    elif session_id:
+        return query.filter(Dataset.session_id == session_id, Dataset.user_id == None)
+    else:
+        # No user and no session = return nothing
+        return query.filter(Dataset.id == -1)
+
+
 @router.post("/upload", response_model=DatasetResponse)
 async def upload_dataset(
         file: UploadFile = File(...),
         name: Optional[str] = None,
+        user: Optional[User] = Depends(get_current_user),
+        session_id: Optional[str] = Depends(_get_session_id),
         db: Session = Depends(get_db)
 ):
     """
@@ -69,7 +88,9 @@ async def upload_dataset(
             file_size=file_info['size'],
             row_count=len(df),
             column_count=len(df.columns),
-            schema_info=sanitize_for_json(schema_info)
+            schema_info=sanitize_for_json(schema_info),
+            user_id=user.id if user else None,
+            session_id=session_id if not user else None,
         )
 
         db.add(dataset)
@@ -92,27 +113,32 @@ async def upload_dataset(
 async def list_datasets(
         skip: int = Query(0, ge=0),
         limit: int = Query(100, ge=1, le=1000),
+        user: Optional[User] = Depends(get_current_user),
+        session_id: Optional[str] = Depends(_get_session_id),
         db: Session = Depends(get_db)
 ):
     """
-    List all uploaded datasets.
-
-    - **skip**: Number of records to skip
-    - **limit**: Maximum number of records to return
+    List datasets for the current user or guest session.
     """
-    datasets = db.query(Dataset).order_by(Dataset.created_at.desc()).offset(skip).limit(limit).all()
+    query = db.query(Dataset)
+    query = _filter_datasets(query, user, session_id)
+    datasets = query.order_by(Dataset.created_at.desc()).offset(skip).limit(limit).all()
     return datasets
 
 
 @router.get("/{dataset_id}", response_model=DatasetResponse)
 async def get_dataset(
         dataset_id: int,
+        user: Optional[User] = Depends(get_current_user),
+        session_id: Optional[str] = Depends(_get_session_id),
         db: Session = Depends(get_db)
 ):
     """
     Get a specific dataset by ID.
     """
-    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    query = db.query(Dataset).filter(Dataset.id == dataset_id)
+    query = _filter_datasets(query, user, session_id)
+    dataset = query.first()
     if not dataset:
         raise HTTPException(status_code=404, detail="Dataset not found")
     return dataset
@@ -122,14 +148,16 @@ async def get_dataset(
 async def preview_dataset(
         dataset_id: int,
         rows: int = Query(100, ge=1, le=1000),
+        user: Optional[User] = Depends(get_current_user),
+        session_id: Optional[str] = Depends(_get_session_id),
         db: Session = Depends(get_db)
 ):
     """
     Preview dataset contents.
-
-    - **rows**: Number of rows to preview (max 1000)
     """
-    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    query = db.query(Dataset).filter(Dataset.id == dataset_id)
+    query = _filter_datasets(query, user, session_id)
+    dataset = query.first()
     if not dataset:
         raise HTTPException(status_code=404, detail="Dataset not found")
 
@@ -183,12 +211,16 @@ async def get_dataset_schema(
 @router.delete("/{dataset_id}")
 async def delete_dataset(
         dataset_id: int,
+        user: Optional[User] = Depends(get_current_user),
+        session_id: Optional[str] = Depends(_get_session_id),
         db: Session = Depends(get_db)
 ):
     """
     Delete a dataset and its associated file.
     """
-    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    query = db.query(Dataset).filter(Dataset.id == dataset_id)
+    query = _filter_datasets(query, user, session_id)
+    dataset = query.first()
     if not dataset:
         raise HTTPException(status_code=404, detail="Dataset not found")
 

@@ -1,69 +1,34 @@
-# BI Platform
+# BI Platform v2.0
 
-A complete Business Intelligence platform with automatic schema detection, ETL pipeline, star schema generation, and LLM-powered analytics.
+A complete Business Intelligence platform that transforms raw data into structured star schemas and interactive dashboards, powered by a local AI (LLaMA 3).
 
-![BI Platform](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.11+-green.svg)
 ![React](https://img.shields.io/badge/react-18+-blue.svg)
 ![PostgreSQL](https://img.shields.io/badge/postgresql-15+-blue.svg)
 
 ## Features
 
-### Data Ingestion
-- Upload CSV, Excel (xlsx, xls), and JSON files
-- Automatic schema detection
-- Support for multiple datasets
-
-### Schema Analysis
-- Automatic detection of measures (numeric) and dimensions (categorical)
-- Date column identification for time dimensions
-- Primary/foreign key detection
-- Entity suggestions (customer, product, time, location, etc.)
-
-### ETL Pipeline
-- **Extract**: Load from various file formats
-- **Transform**:
-  - Handle missing values (drop, fill mean/median/mode)
-  - Remove duplicates
-  - Normalize strings
-  - Generate dimension tables with surrogate keys
-  - Generate fact table with foreign keys
-- **Load**: Insert into PostgreSQL data warehouse
-- **Data Quality Checks**:
-  - Completeness score
-  - Uniqueness score
-  - Validity score
-  - Consistency score
-  - Detailed issue reporting
-
-### Star Schema Generation
-- Automatic dimension table creation
-- Time dimension with full attributes (year, quarter, month, week, day)
-- Fact table with measure columns and dimension foreign keys
-- DDL script generation for PostgreSQL
-
-### Dashboard
-- KPI cards with aggregated measures
-- Time series charts
-- Bar/line/area/pie visualizations
-- Dimension filtering
-- English/French localization
-
-### LLM Integration
-- Natural language to SQL query generation
-- Schema assistance recommendations
-- Data quality improvement suggestions
-- Powered by local Ollama (LLaMA 3 8B)
+- **Multi-format Upload**: CSV, Excel (.xlsx/.xls), JSON, API endpoints
+- **Auto Schema Detection**: Measures, dimensions, keys, entity types identified automatically
+- **Star Schema Generation**: Fact + dimension tables with surrogate keys and time dimensions
+- **ETL Pipeline**: Data cleaning, quality validation (completeness, uniqueness, validity, consistency)
+- **Data Warehouse**: SQLite (dev) / PostgreSQL (prod) with DDL generation
+- **Interactive Dashboards**: KPIs, time series, aggregations, dynamic filtering
+- **Natural Language Queries**: Ask questions in plain English/French via local LLaMA 3
+- **Bilingual UI**: Complete English and French support
+- **Auth System**: Optional accounts to save projects; full guest mode for anonymous use
+- **About & FAQ**: In-app documentation explaining the platform
 
 ## Architecture
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│    Frontend     │────▶│    Backend      │────▶│   PostgreSQL    │
+│    Frontend     │────>│    Backend      │────>│   PostgreSQL    │
 │  React + Vite   │     │    FastAPI      │     │   Data Warehouse│
 └─────────────────┘     └─────────────────┘     └─────────────────┘
                                │
-                               ▼
+                               v
                         ┌─────────────────┐
                         │     Ollama      │
                         │   LLaMA 3 8B    │
@@ -74,203 +39,160 @@ A complete Business Intelligence platform with automatic schema detection, ETL p
 
 ### Prerequisites
 
-- Docker and Docker Compose
-- (Optional) NVIDIA GPU for LLM acceleration
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   cd bi-platform
-   ```
-
-2. **Copy environment file**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Start with Docker Compose**
-   ```bash
-   docker-compose up -d
-   ```
-
-4. **Pull LLaMA model (first time only)**
-   ```bash
-   docker exec -it bi-ollama ollama pull llama3:8b
-   ```
-
-5. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API Docs: http://localhost:8000/docs
+- Python 3.11+
+- Node.js 18+
+- (Optional) Docker, Ollama for LLM features
 
 ### Local Development
 
 #### Backend
 
 ```bash
-cd backend
-
-# Create virtual environment
+cd bi-platform/backend
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
-# or
-.\venv\Scripts\activate  # Windows
-
-# Install dependencies
+# or: venv\Scripts\activate  # Windows
 pip install -r requirements.txt
-
-# Run development server
-uvicorn main:app --reload --port 8000
+python main.py
 ```
+
+Backend: http://localhost:8000 | Docs: http://localhost:8000/docs
 
 #### Frontend
 
 ```bash
-cd frontend
-
-# Install dependencies
+cd bi-platform/frontend
 npm install
-
-# Run development server
 npm run dev
 ```
 
-## API Endpoints
+Frontend: http://localhost:5173
 
-### Datasets
-- `POST /api/datasets/upload` - Upload dataset
-- `GET /api/datasets` - List datasets
-- `GET /api/datasets/{id}/preview` - Preview data
-- `DELETE /api/datasets/{id}` - Delete dataset
+#### (Optional) Ollama
 
-### ETL
-- `POST /api/etl/analyze/{dataset_id}` - Analyze schema
-- `POST /api/etl/quality-check/{dataset_id}` - Run quality checks
-- `POST /api/etl/run` - Execute ETL pipeline
-- `GET /api/etl/status/{job_id}` - Check job status
+```bash
+ollama serve
+ollama pull llama3:8b
+```
 
-### Warehouse
-- `GET /api/warehouse/tables` - List warehouse tables
-- `GET /api/warehouse/schema` - Get star schema
-- `POST /api/warehouse/query` - Execute SQL query
-- `GET /api/warehouse/dimensions/{dim}/values` - Get dimension values
+### Docker Deployment
 
-### Dashboard
-- `GET /api/dashboard/kpis` - Get KPI metrics
-- `GET /api/dashboard/timeseries` - Time series data
-- `POST /api/dashboard/aggregate` - Aggregated data
-- `GET /api/dashboard/filters` - Filter options
+```bash
+cd bi-platform
+docker-compose up --build
+```
 
-### LLM
-- `GET /api/llm/status` - Check LLM availability
-- `POST /api/llm/query` - Generate SQL from natural language
-- `POST /api/llm/natural-query` - Query with optional execution
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+| API Docs | http://localhost:8000/docs |
+| PostgreSQL | localhost:5432 |
+| Ollama | http://localhost:11434 |
 
-## Configuration
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://postgres:postgres@localhost:5432/bi_warehouse` |
-| `OLLAMA_BASE_URL` | Ollama API URL | `http://localhost:11434` |
-| `OLLAMA_MODEL` | LLM model name | `llama3:8b` |
-| `DQ_COMPLETENESS_THRESHOLD` | Minimum completeness score | `0.95` |
-
-## Usage Guide
-
-### 1. Upload Dataset
-
-Navigate to **Data Sources** and upload a CSV/Excel/JSON file.
-
-### 2. Run ETL Pipeline
-
-1. Go to **ETL Pipeline**
-2. Select your dataset
-3. Configure transformation options
-4. Click **Start ETL**
-
-### 3. View Dashboard
-
-After ETL completes, visit **Dashboard** to see:
-- KPI metrics
-- Time series charts
-- Data aggregations
-
-### 4. Query with Natural Language
-
-Go to **Warehouse** and use the natural language query feature:
-
-> "What are the total sales by product category for this year?"
-
-The LLM will generate the appropriate SQL query.
-
-## Localization
-
-The platform supports:
-- 🇬🇧 English
-- 🇫🇷 Français
-
-Switch languages using the toggle in the header.
-
-## Technology Stack
-
-### Backend
-- Python 3.11
-- FastAPI
-- SQLAlchemy
-- Pandas
-- PostgreSQL
-
-### Frontend
-- React 18
-- TypeScript
-- Vite
-- TailwindCSS
-- Recharts
-- i18next
-
-### Infrastructure
-- Docker
-- Docker Compose
-- Nginx
-- Ollama (LLaMA 3)
-
-## Directory Structure
+## Project Structure
 
 ```
 bi-platform/
 ├── backend/
-│   ├── api/routes/          # API endpoints
-│   ├── core/                # Database, models, schemas
-│   ├── services/            # Business logic
-│   ├── utils/               # Utilities
-│   └── main.py              # FastAPI entry point
+│   ├── api/routes/          # auth, datasets, etl, warehouse, dashboard, llm
+│   ├── core/                # database, ORM models, Pydantic schemas
+│   ├── services/            # ETL, schema analysis, star schema, data quality, auth, LLM
+│   ├── utils/               # file handlers, validators
+│   ├── main.py
+│   ├── config.py
+│   ├── requirements.txt
+│   └── Dockerfile
 ├── frontend/
 │   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── pages/           # Page components
-│   │   ├── services/        # API client
-│   │   ├── store/           # Redux store
-│   │   └── locales/         # i18n translations
-│   └── index.html
-├── sql/                     # SQL scripts
+│   │   ├── components/      # Layout, Dashboard, DataUpload, common
+│   │   ├── pages/           # Auth, Dashboard, DataSources, ETL, Schema, Warehouse, Settings, About, 404
+│   │   ├── store/           # Redux (auth, ui, data)
+│   │   ├── services/        # API client with JWT interceptor
+│   │   ├── locales/         # en.json, fr.json
+│   │   └── types/
+│   ├── package.json
+│   └── Dockerfile
+├── sql/init.sql
+├── ollama/Modelfile
 ├── docker-compose.yml
 └── README.md
 ```
 
-## Contributing
+## API Endpoints
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+### Authentication
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Create account |
+| POST | `/api/auth/login` | Login |
+| GET | `/api/auth/me` | Current user profile |
+| GET | `/api/auth/projects` | List user projects |
+| POST | `/api/auth/projects` | Save project |
+| PUT | `/api/auth/projects/{id}` | Update project |
+| DELETE | `/api/auth/projects/{id}` | Delete project |
+
+### Datasets
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/datasets/upload` | Upload file |
+| GET | `/api/datasets` | List all |
+| GET | `/api/datasets/{id}/preview` | Preview rows |
+| GET | `/api/datasets/{id}/schema` | Schema analysis |
+| DELETE | `/api/datasets/{id}` | Delete |
+
+### ETL
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/etl/run` | Run pipeline |
+| GET | `/api/etl/status/{job_id}` | Check progress |
+| POST | `/api/etl/quality-check/{id}` | Quality report |
+
+### Warehouse
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/warehouse/tables` | List tables |
+| POST | `/api/warehouse/query` | Execute SQL |
+| GET | `/api/warehouse/schema` | Star schema |
+
+### Dashboard
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/dashboard/kpis` | KPIs |
+| GET | `/api/dashboard/timeseries` | Time series |
+| GET | `/api/dashboard/filters` | Filter options |
+
+### LLM
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/llm/status` | Availability |
+| POST | `/api/llm/query` | NL to SQL |
+| POST | `/api/llm/natural-query` | Query + execute |
+
+## Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `DATABASE_URL` | `sqlite:///./bi_warehouse.db` | Database connection |
+| `SECRET_KEY` | (built-in) | JWT signing key - **change in production** |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server |
+| `OLLAMA_MODEL` | `llama3:8b` | LLM model |
+| `DEBUG` | `true` | Debug mode |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `1440` | JWT token lifetime |
+
+## Usage
+
+1. **Upload** - Go to Data Sources, upload CSV/Excel/JSON
+2. **ETL** - Configure and run the pipeline with quality checks
+3. **Schema** - Review generated star schema (fact + dimensions)
+4. **Dashboard** - Explore KPIs, charts, time series
+5. **Query** - Use SQL or natural language in the Warehouse
+6. **Save** - Create an account to save your projects
+
+## Localization
+
+Full support for English and French. Toggle via the header button or Settings page.
 
 ## License
 
-MIT License - see LICENSE file for details.
-
-## Support
-
-For issues and feature requests, please open a GitHub issue.
+MIT

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   PlayIcon,
   CheckCircleIcon,
@@ -20,15 +21,17 @@ import {
   ShieldCheckIcon,
   TableCellsIcon,
   ArrowDownTrayIcon,
+  ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import { Card, CardHeader } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { datasetApi, etlApi } from '../services/api';
+import { setSelectedDatasetId } from '../store/dataSlice';
+import type { RootState } from '../store';
 import type { Dataset, ETLConfig, ETLProgress, DataQualityReport } from '../types';
 import { clsx } from 'clsx';
 
-// Types for improvement suggestions
 interface ImprovementSuggestion {
   type: 'critical' | 'warning' | 'info';
   column: string | null;
@@ -44,7 +47,6 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-// ETL Steps definition with icons
 const ETL_STEPS = [
   { key: 'extract', icon: ArrowDownTrayIcon, color: 'text-blue-500' },
   { key: 'quality_check', icon: ShieldCheckIcon, color: 'text-purple-500' },
@@ -59,26 +61,42 @@ export const ETLPage: React.FC = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
-  // State
-  const [selectedDatasetId, setSelectedDatasetId] = useState<number | null>(() => {
-    const saved = localStorage.getItem('etl_selected_dataset');
-    return saved ? Number(saved) : null;
+  // Use Redux global state for dataset selection (syncs across pages)
+  const globalDatasetId = useSelector((state: RootState) => state.data.selectedDatasetId);
+  const [selectedDatasetId, setLocalSelectedDatasetId] = useState<number | null>(() => {
+    return globalDatasetId || null;
   });
+
+  // Sync local state from Redux
+  useEffect(() => {
+    if (globalDatasetId && globalDatasetId !== selectedDatasetId) {
+      setLocalSelectedDatasetId(globalDatasetId);
+    }
+  }, [globalDatasetId]);
+
+  // Sync Redux from local state
+  const setSelectedDatasetIdSync = (id: number | null) => {
+    setLocalSelectedDatasetId(id);
+    dispatch(setSelectedDatasetId(id));
+  };
   const [currentJobId, setCurrentJobId] = useState<number | null>(() => {
     const saved = localStorage.getItem('etl_current_job');
     return saved ? Number(saved) : null;
   });
+  const [jobName, setJobName] = useState('');
   const [progress, setProgress] = useState<ETLProgress | null>(null);
-  const [qualityReport, setQualityReport] = useState<DataQualityReport | null>(null);
-  const [activeTab, setActiveTab] = useState<'config' | 'improve' | 'chat'>('config');
+  const [preQualityReport, setPreQualityReport] = useState<DataQualityReport | null>(null);
+  const [postQualityReport, setPostQualityReport] = useState<DataQualityReport | null>(null);
+  const [activeTab, setActiveTab] = useState<'config' | 'quality' | 'improve' | 'chat'>('config');
   const [improvementSuggestions, setImprovementSuggestions] = useState<ImprovementSuggestion[]>([]);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+  const [isRunningPreCheck, setIsRunningPreCheck] = useState(false);
 
-  // ETL Configuration
   const [config, setConfig] = useState<Partial<ETLConfig>>({
     handle_missing: 'drop',
     remove_duplicates: true,
@@ -86,33 +104,22 @@ export const ETLPage: React.FC = () => {
     generate_time_dimension: true,
   });
 
-  // Fetch datasets
   const { data: datasets } = useQuery({
     queryKey: ['datasets'],
     queryFn: datasetApi.list,
   });
 
-  // Fetch ETL jobs
   const { data: etlJobs, refetch: refetchJobs } = useQuery({
     queryKey: ['etl-jobs'],
     queryFn: () => etlApi.listJobs(),
   });
 
-  // Persist selected dataset
-  useEffect(() => {
-    if (selectedDatasetId) {
-      localStorage.setItem('etl_selected_dataset', String(selectedDatasetId));
-    }
-  }, [selectedDatasetId]);
-
-  // Persist current job
   useEffect(() => {
     if (currentJobId) {
       localStorage.setItem('etl_current_job', String(currentJobId));
     }
   }, [currentJobId]);
 
-  // Fetch improvement suggestions when dataset is selected
   useEffect(() => {
     if (selectedDatasetId) {
       etlApi.getImprovementSuggestions(selectedDatasetId)
@@ -121,7 +128,22 @@ export const ETLPage: React.FC = () => {
     }
   }, [selectedDatasetId]);
 
-  // Run ETL mutation
+  // Run pre-ETL quality check
+  const handlePreQualityCheck = async () => {
+    if (!selectedDatasetId) return;
+    setIsRunningPreCheck(true);
+    try {
+      const report = await etlApi.qualityCheck(selectedDatasetId);
+      setPreQualityReport(report);
+      toast.success(t('etl.qualityReport') + ' - ' + t('etl.preETL'));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error';
+      toast.error(msg);
+    } finally {
+      setIsRunningPreCheck(false);
+    }
+  };
+
   const runETLMutation = useMutation({
     mutationFn: etlApi.run,
     onSuccess: (job) => {
@@ -134,15 +156,13 @@ export const ETLPage: React.FC = () => {
     },
   });
 
-  // Improve data mutation
   const improveDataMutation = useMutation({
-    mutationFn: ({ action, column, params }: { action: string; column?: string; params?: Record<string, unknown> }) => {
+    mutationFn: ({ action, column }: { action: string; column?: string; params?: Record<string, unknown> }) => {
       if (!selectedDatasetId) throw new Error('No dataset selected');
-      return etlApi.improveData(selectedDatasetId, action, column, params);
+      return etlApi.improveData(selectedDatasetId, action, column);
     },
-    onSuccess: (result) => {
-      toast.success(`Data improved: ${result.rows_removed} rows removed, ${result.nulls_fixed} nulls fixed`);
-      // Refresh suggestions
+    onSuccess: () => {
+      toast.success('Data improved successfully');
       if (selectedDatasetId) {
         etlApi.getImprovementSuggestions(selectedDatasetId)
           .then(data => setImprovementSuggestions(data.suggestions || []));
@@ -154,7 +174,7 @@ export const ETLPage: React.FC = () => {
     },
   });
 
-  // Poll for status when job is running
+  // Poll job status
   useEffect(() => {
     if (!currentJobId) return;
 
@@ -163,11 +183,9 @@ export const ETLPage: React.FC = () => {
         const status = await etlApi.getStatus(currentJobId);
         setProgress(status);
 
-        // Update completed steps
         const stepIndex = ETL_STEPS.findIndex(s => s.key === status.current_step);
         if (stepIndex > 0) {
-          const newCompleted = new Set(ETL_STEPS.slice(0, stepIndex).map(s => s.key));
-          setCompletedSteps(newCompleted);
+          setCompletedSteps(new Set(ETL_STEPS.slice(0, stepIndex).map(s => s.key)));
         }
 
         if (status.status === 'completed') {
@@ -175,42 +193,32 @@ export const ETLPage: React.FC = () => {
           toast.success(t('etl.etlComplete'));
           refetchJobs();
           localStorage.removeItem('etl_current_job');
-
-          // Fetch quality report
           try {
             const report = await etlApi.getQualityReport(currentJobId);
-            setQualityReport(report);
-          } catch {
-            // Quality report might not be available
-          }
-          return true; // Stop polling
+            setPostQualityReport(report);
+          } catch { /* quality report might not be available */ }
+          return true;
         } else if (status.status === 'failed') {
           toast.error(t('etl.etlFailed'));
           refetchJobs();
           localStorage.removeItem('etl_current_job');
-          return true; // Stop polling
+          return true;
         }
         return false;
       } catch {
-        return true; // Stop polling on error
+        return true;
       }
     };
 
-    // Initial poll
     pollStatus();
-
-    // Set up interval
     const interval = setInterval(async () => {
       const shouldStop = await pollStatus();
-      if (shouldStop) {
-        clearInterval(interval);
-      }
+      if (shouldStop) clearInterval(interval);
     }, 2000);
 
     return () => clearInterval(interval);
   }, [currentJobId, refetchJobs, t]);
 
-  // Scroll chat to bottom
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
@@ -220,8 +228,7 @@ export const ETLPage: React.FC = () => {
       toast.error(t('etl.selectDataset'));
       return;
     }
-
-    setQualityReport(null);
+    setPostQualityReport(null);
     setProgress(null);
     setCompletedSteps(new Set());
 
@@ -257,8 +264,6 @@ export const ETLPage: React.FC = () => {
 
     try {
       const response = await etlApi.chat(selectedDatasetId, messageToSend);
-
-      // Handle the response even if LLM is not available
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -266,21 +271,14 @@ export const ETLPage: React.FC = () => {
         timestamp: new Date(),
       };
       setChatMessages(prev => [...prev, assistantMessage]);
-
-      // Show warning if LLM was not available
-      if (response.available === false) {
-        console.log('LLM service not available - showing basic data info');
-      }
     } catch (error: unknown) {
-      console.error('Chat error:', error);
       const errorDetails = error instanceof Error ? error.message : 'Unknown error';
-      const errorMessage: ChatMessage = {
+      setChatMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Sorry, I encountered an error: ${errorDetails}\n\nPlease make sure:\n1. A dataset is selected\n2. The backend server is running\n3. Check the browser console for more details`,
+        content: `Error: ${errorDetails}`,
         timestamp: new Date(),
-      };
-      setChatMessages(prev => [...prev, errorMessage]);
+      }]);
     } finally {
       setIsChatLoading(false);
     }
@@ -288,10 +286,7 @@ export const ETLPage: React.FC = () => {
 
   const handleSuggestedPrompt = async (prompt: string) => {
     if (!selectedDatasetId || isChatLoading) return;
-
-    // Set input and immediately send
-    setChatInput(prompt);
-
+    setChatInput('');
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
@@ -303,27 +298,34 @@ export const ETLPage: React.FC = () => {
 
     try {
       const response = await etlApi.chat(selectedDatasetId, prompt);
-      const assistantMessage: ChatMessage = {
+      setChatMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: response.response || 'No response received',
         timestamp: new Date(),
-      };
-      setChatMessages(prev => [...prev, assistantMessage]);
+      }]);
     } catch (error: unknown) {
-      console.error('Chat error:', error);
       const errorDetails = error instanceof Error ? error.message : 'Unknown error';
-      const errorMessage: ChatMessage = {
+      setChatMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: `Error: ${errorDetails}`,
         timestamp: new Date(),
-      };
-      setChatMessages(prev => [...prev, errorMessage]);
+      }]);
     } finally {
       setIsChatLoading(false);
-      setChatInput('');
     }
+  };
+
+  const handleDownloadCleaned = () => {
+    if (!selectedDatasetId) return;
+    const url = etlApi.downloadCleanedData(selectedDatasetId);
+    const token = localStorage.getItem('bi_token');
+    // Open in new tab with auth
+    const a = document.createElement('a');
+    a.href = url + (token ? `?token=${token}` : '');
+    a.download = '';
+    a.click();
   };
 
   const getStepStatus = (stepKey: string) => {
@@ -343,6 +345,47 @@ export const ETLPage: React.FC = () => {
     if (score >= 0.7) return 'bg-amber-500';
     return 'bg-red-500';
   };
+
+  const renderQualityScores = (report: DataQualityReport, label: string) => (
+    <div className="space-y-3">
+      <div className={clsx(
+        'p-3 rounded-xl flex items-center gap-3',
+        report.passed ? 'bg-green-50 dark:bg-green-900/20' : 'bg-amber-50 dark:bg-amber-900/20'
+      )}>
+        {report.passed ? (
+          <CheckCircleIcon className="h-6 w-6 text-green-500" />
+        ) : (
+          <ExclamationTriangleIcon className="h-6 w-6 text-amber-500" />
+        )}
+        <div>
+          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{label}</span>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Score: {(report.overall_score * 100).toFixed(0)}%
+          </p>
+        </div>
+      </div>
+      {[
+        { label: t('etl.completeness'), value: report.completeness_score },
+        { label: t('etl.validity'), value: report.validity_score },
+        { label: t('etl.uniqueness'), value: report.uniqueness_score },
+      ].map((metric) => (
+        <div key={metric.label}>
+          <div className="flex justify-between text-xs mb-1">
+            <span className="text-slate-600 dark:text-slate-400">{metric.label}</span>
+            <span className={clsx('font-medium', getScoreColor(metric.value))}>
+              {(metric.value * 100).toFixed(0)}%
+            </span>
+          </div>
+          <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div
+              className={clsx('h-full rounded-full transition-all', getScoreBgColor(metric.value))}
+              style={{ width: `${metric.value * 100}%` }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -385,7 +428,6 @@ export const ETLPage: React.FC = () => {
             {ETL_STEPS.map((step, index) => {
               const status = getStepStatus(step.key);
               const Icon = step.icon;
-
               return (
                 <React.Fragment key={step.key}>
                   <div className="flex flex-col items-center min-w-[100px]">
@@ -400,40 +442,31 @@ export const ETLPage: React.FC = () => {
                       {status === 'completed' ? (
                         <CheckCircleIcon className="h-7 w-7 text-white" />
                       ) : (
-                        <Icon
-                          className={clsx(
-                            'h-7 w-7 transition-colors',
-                            status === 'current' ? 'text-white' : step.color
-                          )}
-                        />
+                        <Icon className={clsx('h-7 w-7 transition-colors', status === 'current' ? 'text-white' : step.color)} />
                       )}
                       {status === 'current' && (
                         <div className="absolute inset-0 rounded-2xl bg-white/20 animate-ping" />
                       )}
                     </div>
-                    <span
-                      className={clsx(
-                        'mt-2 text-xs font-medium text-center',
-                        status === 'completed' && 'text-green-600 dark:text-green-400',
-                        status === 'current' && 'text-primary-600 dark:text-primary-400',
-                        status === 'pending' && 'text-slate-500 dark:text-slate-400'
-                      )}
-                    >
+                    <span className={clsx(
+                      'mt-2 text-xs font-medium text-center',
+                      status === 'completed' && 'text-green-600 dark:text-green-400',
+                      status === 'current' && 'text-primary-600 dark:text-primary-400',
+                      status === 'pending' && 'text-slate-500 dark:text-slate-400'
+                    )}>
                       {t(`etl.step.${step.key.replace('_', '')}`)}
                     </span>
                   </div>
                   {index < ETL_STEPS.length - 1 && (
                     <div className="flex-1 mx-2">
-                      <div
-                        className={clsx(
-                          'h-1 rounded-full transition-all duration-500',
-                          completedSteps.has(ETL_STEPS[index + 1].key) || completedSteps.has(step.key)
-                            ? 'bg-gradient-to-r from-green-400 to-green-600'
-                            : progress?.current_step === ETL_STEPS[index + 1].key
-                            ? 'bg-gradient-to-r from-green-400 via-primary-500 to-slate-200 dark:to-slate-700'
-                            : 'bg-slate-200 dark:bg-slate-700'
-                        )}
-                      />
+                      <div className={clsx(
+                        'h-1 rounded-full transition-all duration-500',
+                        completedSteps.has(ETL_STEPS[index + 1].key) || completedSteps.has(step.key)
+                          ? 'bg-gradient-to-r from-green-400 to-green-600'
+                          : progress?.current_step === ETL_STEPS[index + 1].key
+                          ? 'bg-gradient-to-r from-green-400 via-primary-500 to-slate-200 dark:to-slate-700'
+                          : 'bg-slate-200 dark:bg-slate-700'
+                      )} />
                     </div>
                   )}
                 </React.Fragment>
@@ -447,63 +480,50 @@ export const ETLPage: React.FC = () => {
         {/* Left Column - Tabs */}
         <div className="lg:col-span-2 space-y-6">
           {/* Tab Navigation */}
-          <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
-            <button
-              onClick={() => setActiveTab('config')}
-              className={clsx(
-                'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all',
-                activeTab === 'config'
-                  ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              )}
-            >
-              <BeakerIcon className="h-5 w-5" />
-              {t('etl.configuration')}
-            </button>
-            <button
-              onClick={() => setActiveTab('improve')}
-              className={clsx(
-                'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all',
-                activeTab === 'improve'
-                  ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              )}
-            >
-              <WrenchScrewdriverIcon className="h-5 w-5" />
-              {t('etl.improvements')}
-              {improvementSuggestions.length > 0 && (
-                <span className="px-2 py-0.5 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full">
-                  {improvementSuggestions.length}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab('chat')}
-              className={clsx(
-                'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm transition-all',
-                activeTab === 'chat'
-                  ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              )}
-            >
-              <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />
-              {t('etl.dataAssistant')}
-            </button>
+          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl overflow-x-auto">
+            {[
+              { key: 'config' as const, icon: BeakerIcon, label: t('etl.configuration') },
+              { key: 'quality' as const, icon: ShieldCheckIcon, label: t('etl.qualityComparison') },
+              { key: 'improve' as const, icon: WrenchScrewdriverIcon, label: t('etl.improvements'), badge: improvementSuggestions.length },
+              { key: 'chat' as const, icon: ChatBubbleBottomCenterTextIcon, label: t('etl.dataAssistant') },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={clsx(
+                  'flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg font-medium text-sm transition-all whitespace-nowrap',
+                  activeTab === tab.key
+                    ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                )}
+              >
+                <tab.icon className="h-4 w-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+                {tab.badge ? (
+                  <span className="px-1.5 py-0.5 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full">
+                    {tab.badge}
+                  </span>
+                ) : null}
+              </button>
+            ))}
           </div>
 
-          {/* Tab Content */}
+          {/* Config Tab */}
           {activeTab === 'config' && (
             <Card variant="glass">
               <CardHeader title={t('etl.configuration')} />
               <div className="space-y-5">
-                {/* Dataset Selection */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     {t('etl.selectDataset')}
                   </label>
                   <select
                     value={selectedDatasetId || ''}
-                    onChange={(e) => setSelectedDatasetId(Number(e.target.value))}
+                    onChange={(e) => {
+                      setSelectedDatasetIdSync(Number(e.target.value));
+                      setPreQualityReport(null);
+                      setPostQualityReport(null);
+                    }}
                     className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 transition-all"
                   >
                     <option value="">{t('etl.chooseDataset')}</option>
@@ -515,68 +535,46 @@ export const ETLPage: React.FC = () => {
                   </select>
                 </div>
 
+                {/* Job Name */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    {t('etl.jobName')}
+                  </label>
+                  <input
+                    type="text"
+                    value={jobName}
+                    onChange={(e) => setJobName(e.target.value)}
+                    placeholder={t('etl.jobNamePlaceholder')}
+                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 transition-all"
+                  />
+                </div>
+
                 {/* Config Options */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={config.remove_duplicates}
-                      onChange={(e) => setConfig({ ...config, remove_duplicates: e.target.checked })}
-                      className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.remove_duplicates} onChange={(e) => setConfig({ ...config, remove_duplicates: e.target.checked })} className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500" />
                     <div>
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        {t('etl.removeDuplicates')}
-                      </span>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Remove duplicate rows
-                      </p>
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('etl.removeDuplicates')}</span>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Remove duplicate rows</p>
                     </div>
                   </label>
-
                   <label className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={config.normalize_strings}
-                      onChange={(e) => setConfig({ ...config, normalize_strings: e.target.checked })}
-                      className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.normalize_strings} onChange={(e) => setConfig({ ...config, normalize_strings: e.target.checked })} className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500" />
                     <div>
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        {t('etl.normalizeStrings')}
-                      </span>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Trim & normalize text
-                      </p>
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('etl.normalizeStrings')}</span>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Trim & normalize text</p>
                     </div>
                   </label>
-
                   <label className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={config.generate_time_dimension}
-                      onChange={(e) => setConfig({ ...config, generate_time_dimension: e.target.checked })}
-                      className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
-                    />
+                    <input type="checkbox" checked={config.generate_time_dimension} onChange={(e) => setConfig({ ...config, generate_time_dimension: e.target.checked })} className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500" />
                     <div>
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        {t('etl.generateTimeDimension')}
-                      </span>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Auto-generate time table
-                      </p>
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('etl.generateTimeDimension')}</span>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Auto-generate time table</p>
                     </div>
                   </label>
-
                   <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      {t('etl.handleMissing')}
-                    </label>
-                    <select
-                      value={config.handle_missing}
-                      onChange={(e) => setConfig({ ...config, handle_missing: e.target.value })}
-                      className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
-                    >
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('etl.handleMissing')}</label>
+                    <select value={config.handle_missing} onChange={(e) => setConfig({ ...config, handle_missing: e.target.value })} className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm">
                       <option value="drop">{t('etl.dropMissing')}</option>
                       <option value="fill">{t('etl.fillMissing')}</option>
                       <option value="keep">{t('etl.keepMissing')}</option>
@@ -584,98 +582,123 @@ export const ETLPage: React.FC = () => {
                   </div>
                 </div>
 
-                <Button
-                  onClick={handleRunETL}
-                  icon={<PlayIcon className="h-5 w-5" />}
-                  disabled={!selectedDatasetId || runETLMutation.isPending}
-                  className="w-full py-3"
-                >
-                  {runETLMutation.isPending ? t('common.loading') : t('etl.runETL')}
-                </Button>
+                <div className="flex gap-3">
+                  <Button onClick={handlePreQualityCheck} variant="secondary" icon={<ShieldCheckIcon className="h-5 w-5" />} disabled={!selectedDatasetId || isRunningPreCheck} className="flex-1">
+                    {isRunningPreCheck ? t('common.loading') : t('etl.runQualityCheck')}
+                  </Button>
+                  <Button onClick={handleRunETL} icon={<PlayIcon className="h-5 w-5" />} disabled={!selectedDatasetId || runETLMutation.isPending} className="flex-1">
+                    {runETLMutation.isPending ? t('common.loading') : t('etl.runETL')}
+                  </Button>
+                </div>
+
+                {selectedDatasetId && (
+                  <Button onClick={handleDownloadCleaned} variant="secondary" icon={<ArrowDownTrayIcon className="h-5 w-5" />} className="w-full">
+                    {t('etl.downloadCleaned')}
+                  </Button>
+                )}
               </div>
             </Card>
           )}
 
+          {/* Quality Comparison Tab */}
+          {activeTab === 'quality' && (
+            <Card variant="glass">
+              <CardHeader title={t('etl.qualityComparison')} subtitle={preQualityReport && postQualityReport ? 'Before vs After ETL' : undefined} />
+              <div className="space-y-6">
+                {!preQualityReport && !postQualityReport ? (
+                  <div className="text-center py-12">
+                    <ArrowsRightLeftIcon className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" />
+                    <p className="mt-4 text-slate-500 dark:text-slate-400">{t('etl.noQualityReport')}</p>
+                    <Button onClick={handlePreQualityCheck} variant="secondary" className="mt-4" disabled={!selectedDatasetId || isRunningPreCheck}>
+                      {t('etl.runQualityCheck')}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {preQualityReport && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                          <div className="h-2 w-2 rounded-full bg-amber-500" />
+                          {t('etl.preETL')}
+                        </h4>
+                        {renderQualityScores(preQualityReport, t('etl.preETL'))}
+                      </div>
+                    )}
+                    {postQualityReport && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                          <div className="h-2 w-2 rounded-full bg-green-500" />
+                          {t('etl.postETL')}
+                        </h4>
+                        {renderQualityScores(postQualityReport, t('etl.postETL'))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Improvement delta */}
+                {preQualityReport && postQualityReport && (
+                  <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl">
+                    <h4 className="text-sm font-semibold text-primary-700 dark:text-primary-300 mb-2">Improvement Summary</h4>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      {[
+                        { label: t('etl.completeness'), before: preQualityReport.completeness_score, after: postQualityReport.completeness_score },
+                        { label: t('etl.validity'), before: preQualityReport.validity_score, after: postQualityReport.validity_score },
+                        { label: t('etl.uniqueness'), before: preQualityReport.uniqueness_score, after: postQualityReport.uniqueness_score },
+                      ].map((m) => {
+                        const delta = ((m.after - m.before) * 100).toFixed(1);
+                        const positive = m.after >= m.before;
+                        return (
+                          <div key={m.label}>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{m.label}</p>
+                            <p className={clsx('text-lg font-bold', positive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400')}>
+                              {positive ? '+' : ''}{delta}%
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
+
+          {/* Improve Tab */}
           {activeTab === 'improve' && (
             <Card variant="glass">
-              <CardHeader
-                title={t('etl.improvements')}
-                subtitle={`${improvementSuggestions.length} suggestions available`}
-              />
+              <CardHeader title={t('etl.improvements')} subtitle={`${improvementSuggestions.length} suggestions`} />
               <div className="space-y-4">
                 {!selectedDatasetId ? (
                   <div className="text-center py-8">
                     <DocumentMagnifyingGlassIcon className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" />
-                    <p className="mt-4 text-slate-500 dark:text-slate-400">
-                      Select a dataset to see improvement suggestions
-                    </p>
+                    <p className="mt-4 text-slate-500 dark:text-slate-400">Select a dataset to see suggestions</p>
                   </div>
                 ) : improvementSuggestions.length === 0 ? (
                   <div className="text-center py-8">
                     <CheckCircleIcon className="mx-auto h-12 w-12 text-green-400" />
-                    <p className="mt-4 text-green-600 dark:text-green-400 font-medium">
-                      No issues found! Your data looks good.
-                    </p>
+                    <p className="mt-4 text-green-600 dark:text-green-400 font-medium">No issues found! Your data looks good.</p>
                   </div>
                 ) : (
                   improvementSuggestions.map((suggestion, index) => (
-                    <div
-                      key={index}
-                      className={clsx(
-                        'p-4 rounded-xl border-l-4 transition-all hover:shadow-md',
-                        suggestion.type === 'critical' && 'bg-red-50 dark:bg-red-900/20 border-red-500',
-                        suggestion.type === 'warning' && 'bg-amber-50 dark:bg-amber-900/20 border-amber-500',
-                        suggestion.type === 'info' && 'bg-blue-50 dark:bg-blue-900/20 border-blue-500'
-                      )}
-                    >
+                    <div key={index} className={clsx('p-4 rounded-xl border-l-4 transition-all hover:shadow-md',
+                      suggestion.type === 'critical' && 'bg-red-50 dark:bg-red-900/20 border-red-500',
+                      suggestion.type === 'warning' && 'bg-amber-50 dark:bg-amber-900/20 border-amber-500',
+                      suggestion.type === 'info' && 'bg-blue-50 dark:bg-blue-900/20 border-blue-500'
+                    )}>
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            {suggestion.type === 'critical' && (
-                              <XCircleIcon className="h-5 w-5 text-red-500" />
-                            )}
-                            {suggestion.type === 'warning' && (
-                              <ExclamationTriangleIcon className="h-5 w-5 text-amber-500" />
-                            )}
-                            {suggestion.type === 'info' && (
-                              <SparklesIcon className="h-5 w-5 text-blue-500" />
-                            )}
-                            <span className={clsx(
-                              'font-medium',
-                              suggestion.type === 'critical' && 'text-red-700 dark:text-red-300',
-                              suggestion.type === 'warning' && 'text-amber-700 dark:text-amber-300',
-                              suggestion.type === 'info' && 'text-blue-700 dark:text-blue-300'
-                            )}>
-                              {suggestion.column || 'Dataset'}
-                            </span>
-                            <span className={clsx(
-                              'text-xs px-2 py-0.5 rounded-full',
-                              suggestion.type === 'critical' && 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
-                              suggestion.type === 'warning' && 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
-                              suggestion.type === 'info' && 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                            )}>
-                              {suggestion.issue}
-                            </span>
+                            {suggestion.type === 'critical' && <XCircleIcon className="h-5 w-5 text-red-500" />}
+                            {suggestion.type === 'warning' && <ExclamationTriangleIcon className="h-5 w-5 text-amber-500" />}
+                            {suggestion.type === 'info' && <SparklesIcon className="h-5 w-5 text-blue-500" />}
+                            <span className="font-medium text-slate-700 dark:text-slate-300">{suggestion.column || 'Dataset'}</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400">{suggestion.issue}</span>
                           </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
-                            {suggestion.description}
-                          </p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">{suggestion.description}</p>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => handleApplyImprovement(suggestion)}
-                          disabled={improveDataMutation.isPending}
-                          className="shrink-0"
-                        >
-                          {improveDataMutation.isPending ? (
-                            <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <>
-                              <WrenchScrewdriverIcon className="h-4 w-4 mr-1" />
-                              Fix
-                            </>
-                          )}
+                        <Button size="sm" variant="secondary" onClick={() => handleApplyImprovement(suggestion)} disabled={improveDataMutation.isPending} className="shrink-0">
+                          {improveDataMutation.isPending ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : <><WrenchScrewdriverIcon className="h-4 w-4 mr-1" />Fix</>}
                         </Button>
                       </div>
                     </div>
@@ -685,42 +708,25 @@ export const ETLPage: React.FC = () => {
             </Card>
           )}
 
+          {/* Chat Tab */}
           {activeTab === 'chat' && (
             <Card variant="glass" className="flex flex-col h-[500px]">
-              <CardHeader
-                title={t('etl.dataAssistant')}
-                subtitle="Ask questions about your data or request transformations"
-              />
+              <CardHeader title={t('etl.dataAssistant')} subtitle="Ask questions, request improvements, or generate SQL/Python" />
               <div className="flex-1 overflow-y-auto space-y-4 px-1">
                 {chatMessages.length === 0 ? (
                   <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                     <ChatBubbleBottomCenterTextIcon className="mx-auto h-12 w-12 mb-4 text-slate-300 dark:text-slate-600" />
                     <p className="font-medium">Start a conversation</p>
-                    <p className="text-sm mt-1">
-                      Ask about data quality, suggest transformations, or explore your dataset
-                    </p>
+                    <p className="text-sm mt-1">Ask about data quality, suggest transformations, generate SQL or Python code</p>
                   </div>
                 ) : (
                   chatMessages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={clsx(
-                        'flex',
-                        message.role === 'user' ? 'justify-end' : 'justify-start'
-                      )}
-                    >
-                      <div
-                        className={clsx(
-                          'max-w-[80%] px-4 py-3 rounded-2xl',
-                          message.role === 'user'
-                            ? 'bg-primary-500 text-white rounded-br-none'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-bl-none'
-                        )}
-                      >
+                    <div key={message.id} className={clsx('flex', message.role === 'user' ? 'justify-end' : 'justify-start')}>
+                      <div className={clsx('max-w-[80%] px-4 py-3 rounded-2xl',
+                        message.role === 'user' ? 'bg-primary-500 text-white rounded-br-none' : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-bl-none'
+                      )}>
                         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                        <span className="text-xs opacity-60 mt-1 block">
-                          {message.timestamp.toLocaleTimeString()}
-                        </span>
+                        <span className="text-xs opacity-60 mt-1 block">{message.timestamp.toLocaleTimeString()}</span>
                       </div>
                     </div>
                   ))
@@ -743,27 +749,19 @@ export const ETLPage: React.FC = () => {
                     type="text"
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendChatMessage()}
-                    placeholder={selectedDatasetId ? "Ask about your data..." : "Select a dataset first"}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendChatMessage()}
+                    placeholder={selectedDatasetId ? 'Ask about your data, request SQL, Python code...' : 'Select a dataset first'}
                     disabled={!selectedDatasetId || isChatLoading}
                     className="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 transition-all"
                   />
-                  <Button
-                    onClick={handleSendChatMessage}
-                    disabled={!chatInput.trim() || !selectedDatasetId || isChatLoading}
-                    icon={<PaperAirplaneIcon className="h-5 w-5" />}
-                  >
+                  <Button onClick={handleSendChatMessage} disabled={!chatInput.trim() || !selectedDatasetId || isChatLoading} icon={<PaperAirplaneIcon className="h-5 w-5" />}>
                     Send
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-3">
-                  {['Show data summary', 'Check for issues', 'Suggest improvements', 'Describe columns'].map((prompt) => (
-                    <button
-                      key={prompt}
-                      onClick={() => handleSuggestedPrompt(prompt)}
-                      disabled={!selectedDatasetId || isChatLoading}
-                      className="px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
+                  {['Show data summary', 'Check for issues', 'Generate SQL query for totals', 'Suggest Python analysis code', 'Describe columns', 'Suggest improvements'].map((prompt) => (
+                    <button key={prompt} onClick={() => handleSuggestedPrompt(prompt)} disabled={!selectedDatasetId || isChatLoading}
+                      className="px-3 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                       {prompt}
                     </button>
                   ))}
@@ -773,103 +771,29 @@ export const ETLPage: React.FC = () => {
           )}
         </div>
 
-        {/* Right Column - Quality Report */}
+        {/* Right Column - Job History */}
         <div className="space-y-6">
-          {/* Quality Report */}
-          <Card variant="glass">
-            <CardHeader title={t('etl.qualityReport')} />
-            {qualityReport ? (
-              <div className="space-y-4">
-                {/* Overall Status */}
-                <div
-                  className={clsx(
-                    'p-4 rounded-xl flex items-center gap-3',
-                    qualityReport.passed
-                      ? 'bg-green-50 dark:bg-green-900/20'
-                      : 'bg-amber-50 dark:bg-amber-900/20'
-                  )}
-                >
-                  {qualityReport.passed ? (
-                    <CheckCircleIcon className="h-8 w-8 text-green-500" />
-                  ) : (
-                    <ExclamationTriangleIcon className="h-8 w-8 text-amber-500" />
-                  )}
-                  <div>
-                    <span
-                      className={clsx(
-                        'font-semibold',
-                        qualityReport.passed
-                          ? 'text-green-700 dark:text-green-300'
-                          : 'text-amber-700 dark:text-amber-300'
-                      )}
-                    >
-                      {qualityReport.passed ? t('etl.qualityPassed') : t('etl.qualityWarning')}
-                    </span>
-                    <p className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">
-                      Score: {(qualityReport.overall_score * 100).toFixed(0)}%
-                    </p>
-                  </div>
-                </div>
+          {/* Quick Quality */}
+          {preQualityReport && !postQualityReport && (
+            <Card variant="glass">
+              <CardHeader title={t('etl.preETL') + ' ' + t('etl.qualityReport')} />
+              {renderQualityScores(preQualityReport, t('etl.preETL'))}
+            </Card>
+          )}
 
-                {/* Score Breakdown */}
-                <div className="space-y-3">
-                  {[
-                    { label: t('etl.completeness'), value: qualityReport.completeness_score },
-                    { label: t('etl.validity'), value: qualityReport.validity_score },
-                    { label: t('etl.uniqueness'), value: qualityReport.uniqueness_score },
-                  ].map((metric) => (
-                    <div key={metric.label}>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-600 dark:text-slate-400">{metric.label}</span>
-                        <span className={clsx('font-medium', getScoreColor(metric.value))}>
-                          {(metric.value * 100).toFixed(0)}%
-                        </span>
-                      </div>
-                      <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                        <div
-                          className={clsx('h-full rounded-full transition-all', getScoreBgColor(metric.value))}
-                          style={{ width: `${metric.value * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          {postQualityReport && (
+            <Card variant="glass">
+              <CardHeader title={t('etl.postETL') + ' ' + t('etl.qualityReport')} />
+              {renderQualityScores(postQualityReport, t('etl.postETL'))}
+            </Card>
+          )}
 
-                {/* Critical Issues */}
-                {qualityReport.critical_issues && qualityReport.critical_issues.length > 0 && (
-                  <div>
-                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      {t('etl.criticalIssues')}
-                    </h4>
-                    <div className="space-y-2">
-                      {qualityReport.critical_issues.slice(0, 3).map((issue, idx) => (
-                        <div
-                          key={idx}
-                          className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg text-xs text-red-700 dark:text-red-300"
-                        >
-                          <strong>{issue.column}:</strong> {issue.issue}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <ShieldCheckIcon className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" />
-                <p className="mt-4 text-slate-500 dark:text-slate-400 text-sm">
-                  {t('etl.noQualityReport')}
-                </p>
-              </div>
-            )}
-          </Card>
-
-          {/* Recent Jobs */}
+          {/* Job History */}
           {etlJobs && etlJobs.length > 0 && (
             <Card variant="glass">
-              <CardHeader title="Recent Jobs" />
+              <CardHeader title={t('etl.jobHistory')} />
               <div className="space-y-2">
-                {etlJobs.slice(0, 5).map((job: any) => (
+                {etlJobs.slice(0, 10).map((job: any) => (
                   <div
                     key={job.id}
                     onClick={() => setCurrentJobId(job.id)}
@@ -881,21 +805,13 @@ export const ETLPage: React.FC = () => {
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      {job.status === 'completed' && (
-                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                      )}
-                      {job.status === 'failed' && (
-                        <XCircleIcon className="h-5 w-5 text-red-500" />
-                      )}
-                      {job.status === 'running' && (
-                        <ArrowPathIcon className="h-5 w-5 text-primary-500 animate-spin" />
-                      )}
-                      {job.status === 'pending' && (
-                        <ClockIcon className="h-5 w-5 text-slate-400" />
-                      )}
+                      {job.status === 'completed' && <CheckCircleIcon className="h-5 w-5 text-green-500" />}
+                      {job.status === 'failed' && <XCircleIcon className="h-5 w-5 text-red-500" />}
+                      {job.status === 'running' && <ArrowPathIcon className="h-5 w-5 text-primary-500 animate-spin" />}
+                      {job.status === 'pending' && <ClockIcon className="h-5 w-5 text-slate-400" />}
                       <div>
                         <p className="text-sm font-medium text-slate-900 dark:text-white">
-                          Job #{job.id}
+                          {job.job_name || `Job #${job.id}`}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
                           {datasets?.find((d: Dataset) => d.id === job.dataset_id)?.name || `Dataset #${job.dataset_id}`}

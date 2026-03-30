@@ -7,7 +7,6 @@ import {
   KeyIcon,
   ArrowRightIcon,
   ArrowPathIcon,
-  DocumentArrowDownIcon,
 } from '@heroicons/react/24/outline';
 import { Card, CardHeader } from '../components/common/Card';
 import { Button } from '../components/common/Button';
@@ -19,7 +18,7 @@ export const SchemaPage: React.FC = () => {
   const { t } = useTranslation();
 
   // Fetch star schema
-  const { data: schema, isLoading: schemaLoading, error: schemaError, refetch } = useQuery({
+  const { data: schema, isLoading: schemaLoading, refetch } = useQuery({
     queryKey: ['star-schema'],
     queryFn: () => warehouseApi.getSchema(),
     retry: 1,

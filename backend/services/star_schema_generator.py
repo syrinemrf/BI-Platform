@@ -9,9 +9,12 @@ from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 import hashlib
+import logging
 
 from services.schema_analyzer import SchemaAnalyzer, SchemaAnalysis
 from utils.validators import DataValidator
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -87,8 +90,10 @@ class StarSchemaGenerator:
         dimension_keys = {}
         used_columns = set()
 
-        # Generate dimension tables
+        # Generate dimension tables (skip time dimensions - handled below)
         for config in dim_config:
+            if config.get('is_time_dimension', False):
+                continue  # Time dimensions need special handling
             dim = self._create_dimension(config)
             if dim and dim.dataframe is not None and len(dim.dataframe) > 0:
                 dimensions.append(dim)
@@ -98,7 +103,13 @@ class StarSchemaGenerator:
         # Generate time dimension if needed
         if generate_time_dim:
             date_cols = [c['name'] for c in self.analysis.get('date_columns', [])]
-            if date_cols and not any(d.is_time_dimension for d in dimensions):
+            # Also check suggested entities for date columns
+            for config in dim_config:
+                if config.get('is_time_dimension', False):
+                    for col in config.get('columns', []):
+                        if col not in date_cols:
+                            date_cols.append(col)
+            if date_cols:
                 time_dim = self._create_time_dimension(date_cols[0])
                 if time_dim:
                     dimensions.append(time_dim)
@@ -295,34 +306,45 @@ class StarSchemaGenerator:
                 date_cols = [c['name'] for c in self.analysis.get('date_columns', [])]
                 if date_cols:
                     date_col = date_cols[0]
-                    fact_df[date_col] = pd.to_datetime(fact_df[date_col], errors='coerce')
+                    try:
+                        fact_df[date_col] = pd.to_datetime(fact_df[date_col], errors='coerce')
 
-                    # Create date_key for joining
-                    fact_df['_temp_date_key'] = fact_df[date_col].dt.strftime('%Y%m%d').astype(float)
+                        # Create date_key for joining
+                        fact_df['_temp_date_key'] = fact_df[date_col].dt.strftime('%Y%m%d')
+                        fact_df['_temp_date_key'] = pd.to_numeric(fact_df['_temp_date_key'], errors='coerce')
 
-                    # Merge with time dimension
-                    time_lookup = dim.dataframe[['sk_time', 'date_key']].copy()
-                    fact_df = fact_df.merge(
-                        time_lookup,
-                        left_on='_temp_date_key',
-                        right_on='date_key',
-                        how='left'
-                    )
-                    fact_df[fk_column] = fact_df['sk_time']
-                    fact_df.drop(['_temp_date_key', 'sk_time', 'date_key'], axis=1, inplace=True, errors='ignore')
+                        # Merge with time dimension
+                        time_lookup = dim.dataframe[['sk_time', 'date_key']].copy()
+                        fact_df = fact_df.merge(
+                            time_lookup,
+                            left_on='_temp_date_key',
+                            right_on='date_key',
+                            how='left'
+                        )
+                        fact_df[fk_column] = fact_df['sk_time']
+                        # Drop temp columns safely
+                        drop_cols = [c for c in ['_temp_date_key', 'sk_time', 'date_key'] if c in fact_df.columns]
+                        fact_df.drop(drop_cols, axis=1, inplace=True, errors='ignore')
+                    except Exception as e:
+                        logger.warning(f"Time dimension join failed for {date_col}: {e}")
+                        fact_df[fk_column] = -1
             else:
                 # Join regular dimension
                 if dim.natural_key and dim.natural_key in fact_df.columns:
-                    lookup = dim.dataframe[[dim.surrogate_key, dim.natural_key]].copy()
-                    fact_df = fact_df.merge(
-                        lookup,
-                        left_on=dim.natural_key,
-                        right_on=dim.natural_key,
-                        how='left',
-                        suffixes=('', '_dim')
-                    )
-                    fact_df[fk_column] = fact_df[dim.surrogate_key]
-                    fact_df.drop([dim.surrogate_key], axis=1, inplace=True, errors='ignore')
+                    try:
+                        lookup = dim.dataframe[[dim.surrogate_key, dim.natural_key]].copy()
+                        fact_df = fact_df.merge(
+                            lookup,
+                            left_on=dim.natural_key,
+                            right_on=dim.natural_key,
+                            how='left',
+                            suffixes=('', '_dim')
+                        )
+                        fact_df[fk_column] = fact_df[dim.surrogate_key]
+                        fact_df.drop([dim.surrogate_key], axis=1, inplace=True, errors='ignore')
+                    except Exception as e:
+                        logger.warning(f"Dimension join failed for {dim.name}: {e}")
+                        fact_df[fk_column] = -1
 
         # Determine columns to keep
         keep_cols = []

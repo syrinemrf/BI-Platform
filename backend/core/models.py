@@ -9,6 +9,41 @@ from datetime import datetime
 from core.database import Base
 
 
+class User(Base):
+    """User accounts for saving work."""
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    username = Column(String(100), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(255), nullable=False)
+    full_name = Column(String(255), nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    # Relationships
+    projects = relationship("Project", back_populates="owner")
+
+
+class Project(Base):
+    """Saved user projects (datasets + ETL config + dashboard state)."""
+    __tablename__ = "projects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    name = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    config = Column(JSON, nullable=True)
+    dataset_ids = Column(JSON, nullable=True)  # list of dataset IDs
+    dashboard_state = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    # Relationships
+    owner = relationship("User", back_populates="projects")
+
+
 class Dataset(Base):
     """Metadata for uploaded datasets."""
     __tablename__ = "datasets"
@@ -22,11 +57,14 @@ class Dataset(Base):
     row_count = Column(Integer, nullable=True)
     column_count = Column(Integer, nullable=True)
     schema_info = Column(JSON, nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # null = guest
+    session_id = Column(String(100), nullable=True)  # for guest isolation
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # Relationships
     etl_jobs = relationship("ETLJob", back_populates="dataset")
+    owner = relationship("User", backref="datasets", foreign_keys=[user_id])
 
 
 class ETLJob(Base):
@@ -35,6 +73,9 @@ class ETLJob(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     dataset_id = Column(Integer, ForeignKey("datasets.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    session_id = Column(String(100), nullable=True)
+    job_name = Column(String(255), nullable=True)
     status = Column(String(50), default="pending")  # pending, running, completed, failed
     started_at = Column(DateTime, nullable=True)
     completed_at = Column(DateTime, nullable=True)
