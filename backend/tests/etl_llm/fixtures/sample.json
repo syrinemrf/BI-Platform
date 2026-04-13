@@ -1,0 +1,39 @@
+{
+  "orders": [
+    {
+      "id": 1,
+      "customer": {"name": "Alice Smith", "email": "alice@example.com", "city": "New York"},
+      "items": [{"product": "Widget A", "qty": 2, "price": 19.99}],
+      "total": 39.98,
+      "date": "2024-01-01"
+    },
+    {
+      "id": 2,
+      "customer": {"name": "Bob Jones", "email": "bob@example.com", "city": "Chicago"},
+      "items": [{"product": "Widget B", "qty": 1, "price": 29.99}],
+      "total": 29.99,
+      "date": "2024-01-02"
+    },
+    {
+      "id": 3,
+      "customer": {"name": "Carol White", "email": "carol@example.com", "city": "Denver"},
+      "items": [{"product": "Widget C", "qty": 3, "price": 9.99}],
+      "total": 29.97,
+      "date": "2024-01-03"
+    },
+    {
+      "id": 4,
+      "customer": {"name": "Dave Brown", "email": "dave@example.com", "city": "Seattle"},
+      "items": [{"product": "Widget A", "qty": 5, "price": 19.99}],
+      "total": 99.95,
+      "date": "2024-01-04"
+    },
+    {
+      "id": 5,
+      "customer": {"name": "Eve Davis", "email": "eve@example.com", "city": "Boston"},
+      "items": [{"product": "Widget B", "qty": 2, "price": 29.99}],
+      "total": 59.98,
+      "date": "2024-01-05"
+    }
+  ]
+}

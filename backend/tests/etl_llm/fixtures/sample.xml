@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+  <product id="1">
+    <name>Widget A</name>
+    <category>Electronics</category>
+    <price>19.99</price>
+    <stock>150</stock>
+  </product>
+  <product id="2">
+    <name>Widget B</name>
+    <category>Home</category>
+    <price>29.99</price>
+    <stock>85</stock>
+  </product>
+  <product id="3">
+    <name>Widget C</name>
+    <category>Electronics</category>
+    <price>9.99</price>
+    <stock>200</stock>
+  </product>
+  <product id="4">
+    <name>Widget D</name>
+    <category>Garden</category>
+    <price>49.99</price>
+    <stock>30</stock>
+  </product>
+  <product id="5">
+    <name>Widget E</name>
+    <category>Home</category>
+    <price>14.99</price>
+    <stock>120</stock>
+  </product>
+</catalog>

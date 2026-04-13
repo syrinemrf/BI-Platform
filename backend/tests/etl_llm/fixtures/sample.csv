@@ -1,0 +1,21 @@
+date,product,quantity,price,region
+2024-01-01,Widget A,10,19.99,North
+2024-01-02,Widget B,5,29.99,South
+2024-01-03,Widget C,8,9.99,East
+2024-01-04,Widget A,12,19.99,West
+2024-01-05,Widget B,3,29.99,North
+2024-01-06,Widget C,15,9.99,South
+2024-01-07,Widget A,7,19.99,East
+2024-01-08,Widget B,9,29.99,West
+2024-01-09,Widget C,11,9.99,North
+2024-01-10,Widget A,6,19.99,South
+2024-01-11,Widget B,14,29.99,East
+2024-01-12,Widget C,2,9.99,West
+2024-01-13,Widget A,18,19.99,North
+2024-01-14,Widget B,4,29.99,South
+2024-01-15,Widget C,13,9.99,East
+2024-01-16,Widget A,1,19.99,West
+2024-01-17,Widget B,16,29.99,North
+2024-01-18,Widget C,20,9.99,South
+2024-01-19,Widget A,8,19.99,East
+2024-01-20,Widget B,10,29.99,West
