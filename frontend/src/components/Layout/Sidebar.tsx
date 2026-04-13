@@ -15,6 +15,7 @@ import {
   InformationCircleIcon,
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { toggleSidebar, toggleSidebarCollapsed } from '../../store/uiSlice';
 import { logout } from '../../store/authSlice';
@@ -38,6 +39,7 @@ export const Sidebar: React.FC = () => {
   const navigation: NavItem[] = [
     { name: t('nav.dataSources'), href: '/data-sources', icon: CircleStackIcon },
     { name: t('nav.etl'), href: '/etl', icon: ArrowPathIcon },
+    { name: t('nav.etlLlm'), href: '/etl-llm', icon: SparklesIcon },
     { name: t('nav.schema'), href: '/schema', icon: CubeTransparentIcon },
     { name: t('nav.warehouse'), href: '/warehouse', icon: ServerStackIcon },
     { name: t('nav.dashboard'), href: '/dashboard', icon: HomeIcon },

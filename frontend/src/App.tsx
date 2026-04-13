@@ -18,6 +18,7 @@ import AboutPage from './pages/AboutPage';
 import AuthPage from './pages/AuthPage';
 import WelcomePage from './pages/WelcomePage';
 import NotFoundPage from './pages/NotFoundPage';
+import ETLLLMPage from './pages/ETLLLMPage';
 
 import './i18n';
 import { clsx } from 'clsx';
@@ -77,6 +78,7 @@ const ProtectedLayout: React.FC = () => {
               <Route path="/" element={<Navigate to="/data-sources" replace />} />
               <Route path="/data-sources" element={<DataSourcesPage />} />
               <Route path="/etl" element={<ETLPage />} />
+              <Route path="/etl-llm" element={<ETLLLMPage />} />
               <Route path="/schema" element={<SchemaPage />} />
               <Route path="/warehouse" element={<WarehousePage />} />
               <Route path="/dashboard" element={<DashboardPage />} />

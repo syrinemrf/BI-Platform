@@ -61,6 +61,7 @@
     "dashboard": "Tableau de bord",
     "dataSources": "Sources de données",
     "etl": "Pipeline ETL",
+    "etlLlm": "ETL LLM",
     "schema": "Schéma",
     "warehouse": "Entrepôt",
     "settings": "Paramètres",

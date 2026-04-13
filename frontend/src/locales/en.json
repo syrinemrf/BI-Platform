@@ -61,6 +61,7 @@
     "dashboard": "Dashboard",
     "dataSources": "Data Sources",
     "etl": "ETL Pipeline",
+    "etlLlm": "ETL LLM",
     "schema": "Schema",
     "warehouse": "Warehouse",
     "settings": "Settings",
