@@ -1,0 +1,64 @@
+[
+  {
+    "fingerprint": "687964e760215e7ae0d16e1eae20860d933edb953750e162a6ac33654071e0da",
+    "source_name": "C:\\Users\\Syrin\\AppData\\Local\\Temp\\pytest-of-Syrin\\pytest-16\\test_full_pipeline_auto_approv0\\test.csv",
+    "schema_text": "date:str | product:str | quantity:int64 | price:float64",
+    "mapping": {
+      "fact_table": {
+        "name": "fact_sales",
+        "measures": [
+          "quantity",
+          "price"
+        ],
+        "foreign_keys": [
+          "product"
+        ]
+      },
+      "dimension_tables": [
+        {
+          "name": "dim_product",
+          "source_columns": [
+            "product"
+          ],
+          "surrogate_key": "sk"
+        }
+      ],
+      "confidence": 0.9,
+      "model_used": "llama3:8b",
+      "reasoning": "test",
+      "few_shot_examples_used": 0
+    },
+    "approved_by_human": true
+  },
+  {
+    "fingerprint": "687964e760215e7ae0d16e1eae20860d933edb953750e162a6ac33654071e0da",
+    "source_name": "C:\\Users\\Syrin\\AppData\\Local\\Temp\\pytest-of-Syrin\\pytest-17\\test_full_pipeline_auto_approv0\\test.csv",
+    "schema_text": "date:str | product:str | quantity:int64 | price:float64",
+    "mapping": {
+      "fact_table": {
+        "name": "fact_sales",
+        "measures": [
+          "quantity",
+          "price"
+        ],
+        "foreign_keys": [
+          "product"
+        ]
+      },
+      "dimension_tables": [
+        {
+          "name": "dim_product",
+          "source_columns": [
+            "product"
+          ],
+          "surrogate_key": "sk"
+        }
+      ],
+      "confidence": 0.9,
+      "model_used": "llama3:8b",
+      "reasoning": "test",
+      "few_shot_examples_used": 0
+    },
+    "approved_by_human": true
+  }
+]

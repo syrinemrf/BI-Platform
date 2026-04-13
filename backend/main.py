@@ -18,6 +18,8 @@ from api.routes import (
     llm_router,
     auth_router,
 )
+from api.routes.etl_llm.pipeline_routes import router as etl_llm_pipeline_router
+from api.routes.etl_llm.hitl_routes import router as etl_llm_hitl_router
 
 # Configure logging
 logging.basicConfig(
@@ -131,6 +133,8 @@ app.include_router(etl_router, prefix="/api")
 app.include_router(warehouse_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
 app.include_router(llm_router, prefix="/api")
+app.include_router(etl_llm_pipeline_router, prefix="/api")
+app.include_router(etl_llm_hitl_router, prefix="/api")
 
 
 # Health check endpoint
