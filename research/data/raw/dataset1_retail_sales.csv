@@ -1,0 +1,501 @@
+order_id,order_date,customer_name,customer_email,customer_city,customer_country,product_name,product_category,product_subcategory,unit_price,quantity,discount_pct,total_amount,payment_method,delivery_status,sales_rep_name,region
+10297,Nov 04 2023,Mia Jackson,mia.jackson@gmail.com,Tokyo,United States,Vase,Home,Home-Vase,39.64,11,0.04,418.6,PayPal,Returned,Karen Gonzalez,East
+10097,21/04/2024,Rose Jones,rose.jones@company.com,Philadelphia,Japan,Olive Oil,Food,Food-Olive Oil,417.69,7,0.2,2339.06,Wire Transfer,Shipped,Quinn Thomas,South
+10420,16/03/2023,Victor Williams,victor.williams@outlook.com,Chicago,Germany,Pillow,Home,Home-Pillow,404.25,2,0.25,606.38,Wire Transfer,Cancelled,Grace Thompson,West
+10171,Apr 20 2024,Paul Gonzalez,paul.gonzalez@gmail.com,Houston,Germany,Dress,Clothing,Clothing-Dress,261.39,8,0.04,2007.48,Cash,Cancelled,Tina Hernandez,West
+10008,09/10/2023,Tina White,tina.white@company.com,Sydney,India,Chocolate,Food,Food-Chocolate,377.13,9,0.19,2749.28,Credit Card,Processing,Hank Rodriguez,East
+10148,Aug 21 2024,Karen Moore,karen.moore@yahoo.com,San Diego,France,T-Shirt,Clothing,Clothing-T-Shirt,210.36,15,0.13,2745.2,Credit Card,Cancelled,Mia Thomas,North
+10241,Sep 29 2024,Leo Martinez,leo.martinez@company.com,San Diego,Japan,Pasta,Food,Food-Pasta,19.37,13,0.28,181.3,Credit Card,Returned,Sam Jackson,North
+10199,25/03/2023,Charlie Lee,charlie.lee@company.com,Philadelphia,united states,Pillow,Home,Home-Pillow,230.08,13,0.13,2602.2,Credit Card,Cancelled,Bob Lopez,South
+10157,2024-01-13,Uma Williams,uma.williams@gmail.com,New York,Germany,Monitor,Electronics,Electronics-Monitor,80.43,4,0.21,254.16,Cash,Cancelled,Xander Thompson,North
+10154,2024-09-06,Yara Garcia,yara.garcia@gmail.com,New York,Canada,Honey,Food,Food-Honey,103.17,8,0.26,610.77,Cash,Delivered,Leo Moore,West
+10476,28/10/2024,Victor Lopez,,London,united states,Coffee,Food,Food-Coffee,219.59,15,0.22,2569.2,Cash,Cancelled,Yara Thomas,West
+10060,2023-11-29,Noah White,noah.white@outlook.com,San Diego,UK,Vase,Home,Home-Vase,125.71,20,0.15,2137.07,Wire Transfer,Shipped,Leo Rodriguez,East
+10144,2023-01-18,Ivy Martin,ivy.martin@outlook.com,New York,Germany,Smartphone,Electronics,Electronics-Smartphone,361.44,8,0.15,2457.79,PayPal,Shipped,Mia Thompson,South
+10487,Jul 02 2024,Jack Perez,jack.perez@company.com,Mumbai,Australia,Frame,Home,Home-Frame,229.6,8,0.04,1763.33,Debit Card,Shipped,Grace White,West
+10152,Feb 25 2023,Ivy White,ivy.white@outlook.com,Houston,Japan,Jacket,Clothing,Clothing-Jacket,$93.82,18,,1688.76,PayPal,Shipped,Uma Harris,West
+10226,2023-02-24,Diana Smith,diana.smith@company.com,Toronto,France,Tablet,Electronics,Electronics-Tablet,470.83,3,0.19,1144.12,Debit Card,Cancelled,Jack Williams,South
+10164,Aug 01 2023,Diana Moore,diana.moore@yahoo.com,Mumbai,India,Clock,Home,Home-Clock,495.07,20,0.03,9604.36,Debit Card,Processing,Victor Williams,South
+10325,Oct 02 2024,Hank Garcia,hank.garcia@yahoo.com,New York,India,Lamp,Home,Home-Lamp,119.58,15,0.08,1650.2,Debit Card,Returned,Diana Moore,South
+10045,Mar 24 2023,Uma Jones,uma.jones@yahoo.com,Chicago,US,Vase,Home,Home-Vase,66.56,13,0.15,735.49,Credit Card,Returned,Xander Hernandez,Central
+10410,04/04/2023,Ivy Smith,ivy.smith@gmail.com,Dallas,France,Olive Oil,Food,Food-Olive Oil,327.5,6,0.24,1493.4,PayPal,Returned,Karen Hernandez,North
+10406,Jan 02 2023,Frank Hernandez,frank.hernandez@company.com,Austin,Canada,Headphones,Electronics,Electronics-Headphones,48.59,4,0.15,165.21,Cash,Returned,Noah Johnson,South
+10417,Sep 03 2023,Quinn Lopez,quinn.lopez@company.com,Sydney,Germany,Clock,Home,Home-Clock,69.85,16,0.18,916.43,Debit Card,Processing,Rose Smith,Central
+10258,2024-07-18,Noah Williams,noah.williams@gmail.com,Sydney,France,Honey,Food,Food-Honey,149.47,14,0.07,1946.1,Wire Transfer,Shipped,Tina Taylor,South
+10464,05/07/2024,Charlie Rodriguez,charlie.rodriguez@company.com,London,Japan,Tablet,Electronics,Electronics-Tablet,364.4,19,0.04,6646.66,PayPal,Processing,Rose Harris,Central
+10042,05/06/2023,Mia Anderson,mia.anderson@yahoo.com,San Diego,Germany,Coffee,Food,Food-Coffee,162.5,13,0.25,1584.38,Credit Card,Shipped,Quinn Jackson,East
+10132,Dec 03 2023,Diana Anderson,diana.anderson@company.com,New York,Canada,T-Shirt,Clothing,Clothing-T-Shirt,237.4,11,0.02,2559.17,Cash,Returned,Karen Lee,West
+10009,17/02/2023,Rose Johnson,rose.johnson@yahoo.com,Austin,UK,Coffee,Food,Food-Coffee,381.38,4,0.27,1113.63,Credit Card,Processing,Leo Lopez,West
+10376,21/04/2024,Eve Davis,eve.davis@yahoo.com,Philadelphia,united states,Sneakers,Clothing,Clothing-Sneakers,456.85,15,0.2,5482.2,Cash,Shipped,Charlie Anderson,East
+10038,2023-10-30,Sam Martinez,sam.martinez@company.com,Dallas,Japan,Sneakers,Clothing,Clothing-Sneakers,427.4,13,0.3,3889.34,Wire Transfer,Processing,Alice Jackson,North
+10128,13/11/2023,Tina White,tina.white@outlook.com,San Diego,Australia,Dress,Clothing,Clothing-Dress,99.12,5,0.19,401.44,Credit Card,Cancelled,Leo White,South
+10364,28/04/2023,Charlie Martinez,charlie.martinez@company.com,Philadelphia,US,Pillow,Home,Home-Pillow,132.2,16,0.26,1565.25,Credit Card,Shipped,Yara Davis,West
+10254,2024-11-22,Zane Moore,zane.moore@company.com,New York,USA,Chocolate,Food,Food-Chocolate,338.05,19,0.11,5716.43,Wire Transfer,Delivered,Tina Moore,East
+10091,02/02/2024,Tina Davis,tina.davis@company.com,Austin,UK,T-Shirt,Clothing,Clothing-T-Shirt,473.4,16,0.16,6362.5,PayPal,Cancelled,Noah Jackson,South
+10039,Jul 11 2024,Noah Lee,noah.lee@company.com,Tokyo,Japan,Keyboard,Electronics,Electronics-Keyboard,188.41,8,0.21,1190.75,PayPal,Delivered,Mia Rodriguez,South
+10335,2023-12-03,Diana Anderson,diana.anderson@yahoo.com,New York,US,Jeans,Clothing,Clothing-Jeans,394.55,18,0.26,5255.41,Cash,Delivered,Ivy Jones,South
+10473,07/03/2023,Rose Rodriguez,rose.rodriguez@gmail.com,New York,US,Hat,Clothing,Clothing-Hat,165.27,2,0.03,320.62,Wire Transfer,Processing,Quinn Jackson,North
+10319,24/03/2023,Olivia Taylor,olivia.taylor@gmail.com,Mumbai,USA,Headphones,Electronics,Electronics-Headphones,424.41,4,0.02,1663.69,Cash,Shipped,Charlie Jones,East
+10371,09/08/2023,Tina Lee,tina.lee@outlook.com,Berlin,Japan,Olive Oil,Food,Food-Olive Oil,304.69,4,0.23,938.45,Wire Transfer,Shipped,Noah Hernandez,West
+10422,2024-01-17,Mia Wilson,mia.wilson@outlook.com,Tokyo,Japan,Pillow,Home,Home-Pillow,344.98,3,0.03,1003.89,Cash,Delivered,Sam Moore,Central
+10200,21/04/2023,Karen Perez,karen.perez@outlook.com,Tokyo,USA,Clock,Home,Home-Clock,159.66,17,0.07,2524.22,Cash,Processing,Diana Harris,East
+10183,2024-10-10,Sam Davis,sam.davis@gmail.com,Dallas,US,Rug,Home,Home-Rug,178.76,5,0.04,858.05,Credit Card,Cancelled,Grace Gonzalez,West
+10424,28/03/2024,Olivia Hernandez,olivia.hernandez@outlook.com,London,UK,Smartphone,Electronics,Electronics-Smartphone,82.92,3,0.15,211.45,PayPal,Shipped,Yara Taylor,North
+10101,19/09/2023,Leo Wilson,leo.wilson@company.com,Mumbai,USA,Sneakers,Clothing,Clothing-Sneakers,492.3,7,0.04,3308.26,PayPal,Delivered,Alice Thomas,West
+10089,Mar 15 2024,Frank Jones,frank.jones@yahoo.com,Mumbai,Australia,Headphones,Electronics,Electronics-Headphones,$431.57,1,0.09,392.73,Wire Transfer,Returned,Jack Brown,West
+10387,2023-06-22,Alice Hernandez,alice.hernandez@company.com,Paris,USA,Sneakers,Clothing,Clothing-Sneakers,296.49,13,0.07,3584.56,Cash,Delivered,Quinn Taylor,South
+10356,Jul 31 2024,Yara Lopez,yara.lopez@yahoo.com,San Diego,US,Jeans,Clothing,Clothing-Jeans,303.19,3,0.15,773.13,Wire Transfer,Cancelled,Uma Lee,Central
+10094,13/01/2024,Karen Lee,karen.lee@company.com,Chicago,Japan,Clock,Home,Home-Clock,32.81,10,,328.1,Credit Card,Delivered,Tina Martin,Central
+10168,Mar 28 2023,Mia Anderson,mia.anderson@gmail.com,Sydney,Germany,Clock,Home,Home-Clock,240.44,2,0.25,360.66,Debit Card,Delivered,Hank Thompson,West
+10022,Apr 07 2023,Olivia Taylor,olivia.taylor@yahoo.com,Paris,Japan,Pasta,Food,Food-Pasta,388.36,2,0.02,761.19,Wire Transfer,Processing,Ivy White,Central
+10172,Nov 17 2024,Eve Hernandez,eve.hernandez@yahoo.com,Paris,Canada,Hat,Clothing,Clothing-Hat,355.87,18,0.24,4868.3,Cash,Delivered,Uma Perez,West
+10054,Jul 06 2024,Quinn Lopez,,Austin,United States,Vase,Home,Home-Vase,100.04,5,0.03,485.19,Cash,Delivered,Victor Hernandez,Central
+10423,2024-04-04,Eve Martin,eve.martin@yahoo.com,Philadelphia,France,Coffee,Food,Food-Coffee,208.38,8,0.23,1283.62,Cash,Shipped,Jack Thomas,South
+10437,Jan 16 2024,Leo Perez,leo.perez@company.com,Sydney,Canada,Tea,Food,Food-Tea,409.36,5,0.14,1760.25,Credit Card,Cancelled,Diana Martinez,North
+10377,2024-01-19,Yara Garcia,yara.garcia@yahoo.com,Tokyo,United States,Chocolate,Food,Food-Chocolate,465.58,13,0.3,4236.78,Credit Card,Processing,Diana Thompson,East
+10323,Sep 15 2024,Zane Jones,zane.jones@outlook.com,Toronto,France,Pasta,Food,Food-Pasta,309.6,1,0.16,260.06,Wire Transfer,Delivered,Yara Martinez,South
+10445,28/05/2023,Jack Brown,,Tokyo,India,Laptop,Electronics,Electronics-Laptop,419.16,18,0.07,7016.74,Wire Transfer,Delivered,Tina Lopez,South
+10165,11/03/2023,Sam Wilson,sam.wilson@gmail.com,Mumbai,UK,Headphones,Electronics,Electronics-Headphones,$437.3,13,0.0,5684.9,Debit Card,Delivered,Yara Jackson,East
+10112,12/02/2023,Eve Johnson,eve.johnson@outlook.com,Philadelphia,India,Honey,Food,Food-Honey,95.23,15,0.24,1085.62,PayPal,Cancelled,Mia Moore,West
+10191,11/07/2023,Ivy Johnson,ivy.johnson@yahoo.com,Austin,USA,Rug,Home,Home-Rug,66.62,13,0.12,762.13,Wire Transfer,Processing,Zane Taylor,East
+10331,07/12/2024,Zane Williams,zane.williams@gmail.com,Tokyo,France,Rug,Home,Home-Rug,55.79,10,0.13,485.37,PayPal,Returned,Bob White,East
+10141,2023-02-05,Tina Wilson,tina.wilson@gmail.com,Chicago,Canada,Clock,Home,Home-Clock,401.54,1,0.23,309.19,Credit Card,Shipped,Yara Lee,East
+10086,2023-04-27,Leo Gonzalez,leo.gonzalez@gmail.com,Phoenix,Australia,Vase,Home,Home-Vase,382.73,17,0.08,5985.9,Debit Card,Returned,Quinn Gonzalez,Central
+10216,29/11/2024,Diana Rodriguez,diana.rodriguez@company.com,San Antonio,Japan,Tea,Food,Food-Tea,65.71,15,0.3,689.95,PayPal,Delivered,Rose Moore,East
+10156,2024-07-18,Jack Garcia,jack.garcia@yahoo.com,Paris,UK,Jeans,Clothing,Clothing-Jeans,122.18,12,0.24,1114.28,Cash,Delivered,Charlie Martinez,West
+10069,Oct 17 2024,Wendy White,wendy.white@company.com,Tokyo,UK,Jacket,Clothing,Clothing-Jacket,322.96,17,0.23,4227.55,Debit Card,Shipped,Noah Taylor,North
+10384,02/10/2024,Diana Taylor,diana.taylor@yahoo.com,Philadelphia,Germany,Clock,Home,Home-Clock,447.99,9,0.08,3709.36,Cash,Cancelled,Charlie Taylor,South
+10343,2024-10-16,Sam Jackson,sam.jackson@outlook.com,Los Angeles,USA,Laptop,Electronics,Electronics-Laptop,474.53,9,0.12,3758.28,Wire Transfer,Cancelled,Jack Lee,East
+10400,20/12/2023,Paul Davis,paul.davis@company.com,Austin,USA,Sneakers,Clothing,Clothing-Sneakers,210.73,11,0.22,1808.06,Debit Card,Processing,Quinn Moore,North
+10046,Dec 02 2023,Karen Davis,karen.davis@outlook.com,Sydney,USA,Tablet,Electronics,Electronics-Tablet,472.97,14,0.05,6290.5,PayPal,Shipped,Yara Garcia,West
+10133,19/11/2024,Quinn Anderson,quinn.anderson@outlook.com,Toronto,united states,Tea,Food,Food-Tea,111.5,2,0.25,167.25,PayPal,Cancelled,Alice Brown,West
+10269,Sep 30 2024,Eve Rodriguez,eve.rodriguez@company.com,Paris,USA,Jacket,Clothing,Clothing-Jacket,278.85,17,0.25,3555.34,Cash,Delivered,Eve Brown,West
+10197,24/05/2023,Leo Hernandez,leo.hernandez@outlook.com,Phoenix,united states,Laptop,Electronics,Electronics-Laptop,24.26,16,0.27,283.36,Cash,Processing,Frank Gonzalez,Central
+10412,2024-10-06,Xander Martinez,xander.martinez@company.com,Austin,USA,Rug,Home,Home-Rug,338.53,19,0.26,4759.73,Cash,Returned,Ivy Lee,Central
+10093,Feb 27 2024,Sam Davis,sam.davis@company.com,Philadelphia,Canada,Dress,Clothing,Clothing-Dress,124.89,4,0.13,434.62,Debit Card,Returned,Quinn Harris,Central
+10468,Nov 28 2024,Paul White,paul.white@yahoo.com,Mumbai,US,Olive Oil,Food,Food-Olive Oil,191.53,15,0.11,2556.93,PayPal,Cancelled,Paul Miller,South
+10202,09/02/2024,Ivy Moore,ivy.moore@outlook.com,Austin,India,Vase,Home,Home-Vase,177.66,9,0.16,1343.11,Debit Card,Processing,Bob Martinez,North
+10107,2024-10-15,Leo Anderson,leo.anderson@company.com,San Antonio,US,Pillow,Home,Home-Pillow,59.07,8,0.16,396.95,Credit Card,Delivered,Noah Hernandez,West
+10075,Oct 29 2024,Diana Perez,diana.perez@gmail.com,Philadelphia,India,Honey,Food,Food-Honey,103.73,11,0.23,878.59,Debit Card,Cancelled,Xander White,North
+10477,Aug 04 2024,Frank Wilson,frank.wilson@yahoo.com,Los Angeles,Canada,Tea,Food,Food-Tea,468.62,10,,4686.2,Credit Card,Processing,Jack Anderson,Central
+10005,12/12/2023,Quinn Thomas,quinn.thomas@yahoo.com,Mumbai,Germany,Tablet,Electronics,Electronics-Tablet,85.43,9,,768.87,Cash,Shipped,Frank Martin,West
+10070,Nov 06 2023,Noah Taylor,noah.taylor@company.com,Houston,United States,Chocolate,Food,Food-Chocolate,$468.23,13,0.29,4321.76,Cash,Delivered,Ivy Lee,East
+10246,Jan 12 2024,Wendy Davis,,Houston,France,Honey,Food,Food-Honey,253.75,10,0.28,1827.0,Debit Card,Shipped,Eve Thomas,South
+10324,2024-07-31,Olivia White,olivia.white@outlook.com,Tokyo,India,Jeans,Clothing,Clothing-Jeans,341.77,3,0.11,912.53,Credit Card,Cancelled,Quinn Miller,Central
+10293,Apr 18 2024,Rose Jones,rose.jones@company.com,Houston,India,Monitor,Electronics,Electronics-Monitor,225.51,5,0.02,1105.0,PayPal,Delivered,Mia Rodriguez,North
+10345,23/10/2024,Xander Miller,xander.miller@gmail.com,Tokyo,UK,Laptop,Electronics,Electronics-Laptop,493.14,10,0.23,3797.18,PayPal,Returned,Olivia Gonzalez,West
+10242,Mar 10 2024,Charlie Perez,charlie.perez@yahoo.com,Paris,united states,Dress,Clothing,Clothing-Dress,489.47,1,0.22,381.79,Wire Transfer,Shipped,Hank Anderson,East
+10213,Sep 08 2023,Eve Rodriguez,eve.rodriguez@gmail.com,Los Angeles,Canada,Smartphone,Electronics,Electronics-Smartphone,107.01,2,0.26,158.37,Credit Card,Returned,Olivia Davis,Central
+10292,2024-06-17,Grace Harris,grace.harris@gmail.com,Phoenix,Japan,Dress,Clothing,Clothing-Dress,290.17,11,0.3,2234.31,Wire Transfer,Processing,Ivy Johnson,Central
+10373,2023-09-04,Sam White,sam.white@company.com,Toronto,US,Olive Oil,Food,Food-Olive Oil,162.77,5,0.16,683.63,PayPal,Shipped,Zane Anderson,North
+10163,02/10/2023,Rose Wilson,rose.wilson@yahoo.com,Berlin,United States,Frame,Home,Home-Frame,44.14,12,0.06,497.9,Cash,Cancelled,Bob Williams,South
+10346,Dec 13 2024,Zane Harris,zane.harris@yahoo.com,Toronto,US,Lamp,Home,Home-Lamp,109.84,4,0.27,320.73,Debit Card,Returned,Hank Moore,East
+10457,2024-07-30,Yara Martinez,yara.martinez@outlook.com,Austin,united states,Coffee,Food,Food-Coffee,402.39,11,0.12,3895.14,Debit Card,Delivered,Ivy Moore,Central
+10013,Oct 19 2024,Sam White,sam.white@yahoo.com,San Antonio,Canada,Sneakers,Clothing,Clothing-Sneakers,277.57,11,0.29,2167.82,Wire Transfer,Returned,Frank White,East
+10214,2024-12-25,Frank Jones,frank.jones@company.com,Philadelphia,USA,Laptop,Electronics,Electronics-Laptop,472.87,1,0.07,439.77,Credit Card,Shipped,Quinn Anderson,East
+10212,2023-07-03,Bob Martin,bob.martin@company.com,Toronto,united states,Laptop,Electronics,Electronics-Laptop,267.06,10,0.2,2136.48,Credit Card,Cancelled,Eve Davis,South
+10491,2024-10-27,Tina Taylor,tina.taylor@outlook.com,Dallas,UK,Vase,Home,Home-Vase,232.2,8,0.02,1820.45,Credit Card,Returned,Mia Gonzalez,Central
+10245,Dec 09 2024,Paul Johnson,paul.johnson@yahoo.com,Chicago,Canada,Clock,Home,Home-Clock,488.78,17,0.27,6065.76,Wire Transfer,Processing,Bob Williams,East
+10295,Feb 03 2024,Rose Jackson,rose.jackson@yahoo.com,London,United States,Dress,Clothing,Clothing-Dress,411.35,10,0.25,3085.12,Cash,Processing,Mia Harris,South
+10106,07/10/2023,Zane Thompson,zane.thompson@outlook.com,Los Angeles,United States,Tablet,Electronics,Electronics-Tablet,304.56,20,0.01,6030.29,Wire Transfer,Shipped,Leo Moore,West
+10012,21/11/2023,Noah Garcia,noah.garcia@company.com,Chicago,Japan,Dress,Clothing,Clothing-Dress,41.39,13,0.22,419.69,Credit Card,Delivered,Alice Martinez,West
+10007,13/01/2023,Leo Harris,leo.harris@yahoo.com,Chicago,united states,Coffee,Food,Food-Coffee,18.0,3,0.26,39.96,Wire Transfer,Returned,Yara Williams,Central
+10462,2023-09-15,Hank Jackson,hank.jackson@company.com,Philadelphia,US,Vase,Home,Home-Vase,77.24,9,0.02,681.26,Wire Transfer,Cancelled,Tina Miller,West
+10478,25/07/2023,Diana Jones,diana.jones@company.com,London,Canada,Vase,Home,Home-Vase,170.69,20,0.28,2457.94,PayPal,Shipped,Mia Hernandez,East
+10311,Apr 17 2024,Xander Thompson,xander.thompson@yahoo.com,London,Canada,Lamp,Home,Home-Lamp,466.37,18,0.01,8310.71,Debit Card,Returned,Zane Martinez,North
+10348,09/12/2024,Zane Wilson,zane.wilson@yahoo.com,Austin,United States,Pasta,Food,Food-Pasta,41.61,16,0.28,479.35,Cash,Delivered,Zane Lopez,Central
+10370,2023-04-19,Tina Lee,tina.lee@gmail.com,San Diego,Australia,Dress,Clothing,Clothing-Dress,308.28,13,0.24,3045.81,Credit Card,Processing,Hank Taylor,Central
+10426,26/05/2023,Rose Jackson,rose.jackson@yahoo.com,Sydney,India,Jacket,Clothing,Clothing-Jacket,498.86,10,0.03,4838.94,PayPal,Processing,Olivia Miller,Central
+10486,Sep 07 2023,Paul Lopez,paul.lopez@company.com,Sydney,Japan,Keyboard,Electronics,Electronics-Keyboard,61.97,4,0.3,173.52,Debit Card,Cancelled,Frank Hernandez,Central
+10315,30/07/2023,Noah Anderson,noah.anderson@company.com,Philadelphia,united states,Coffee,Food,Food-Coffee,370.01,15,0.21,4384.62,Credit Card,Cancelled,Diana Moore,South
+10342,Nov 20 2024,Leo Hernandez,leo.hernandez@gmail.com,Dallas,India,Clock,Home,Home-Clock,197.38,4,0.19,639.51,PayPal,Cancelled,Sam Williams,South
+10027,2024-10-22,Karen Brown,karen.brown@gmail.com,Philadelphia,France,Pasta,Food,Food-Pasta,300.23,14,0.21,3320.54,Cash,Shipped,Paul Martinez,South
+10140,28/12/2024,Frank Hernandez,frank.hernandez@gmail.com,Paris,India,Jeans,Clothing,Clothing-Jeans,408.53,17,0.15,5903.26,Wire Transfer,Shipped,Charlie Jackson,North
+10278,10/07/2024,Zane Harris,zane.harris@gmail.com,Dallas,US,Sneakers,Clothing,Clothing-Sneakers,285.0,16,0.03,4423.2,Cash,Delivered,Yara White,West
+10281,Aug 03 2023,Rose Miller,rose.miller@gmail.com,San Diego,USA,Chocolate,Food,Food-Chocolate,177.55,15,0.24,2024.07,Cash,Processing,Wendy Martin,West
+10238,2024-11-26,Frank Martin,frank.martin@yahoo.com,San Antonio,Australia,Clock,Home,Home-Clock,271.69,10,0.26,2010.51,Debit Card,Returned,Bob Rodriguez,South
+10378,06/04/2023,Wendy Jones,wendy.jones@outlook.com,San Diego,Canada,Tea,Food,Food-Tea,290.83,14,0.24,3094.43,Cash,Processing,Wendy Lopez,West
+10433,Jul 14 2024,Paul Hernandez,paul.hernandez@gmail.com,Sydney,Australia,Monitor,Electronics,Electronics-Monitor,201.87,7,0.09,1285.91,Debit Card,Cancelled,Paul Hernandez,North
+10365,2023-11-06,Bob Brown,bob.brown@company.com,New York,United States,Pasta,Food,Food-Pasta,5.33,7,0.26,27.61,PayPal,Delivered,Uma Lopez,East
+10471,Jun 15 2024,Charlie Lopez,charlie.lopez@yahoo.com,Los Angeles,Japan,Sneakers,Clothing,Clothing-Sneakers,329.47,1,0.18,270.17,Wire Transfer,Delivered,Alice Thompson,East
+10180,Oct 18 2024,Diana Wilson,diana.wilson@company.com,Chicago,USA,Laptop,Electronics,Electronics-Laptop,160.11,5,0.26,592.41,Debit Card,Delivered,Quinn Jackson,North
+10142,29/01/2024,Tina Lee,tina.lee@outlook.com,San Antonio,France,Olive Oil,Food,Food-Olive Oil,344.85,3,0.04,993.17,Wire Transfer,Processing,Zane Jones,South
+10263,03/09/2023,Ivy Lee,ivy.lee@outlook.com,New York,Japan,Hat,Clothing,Clothing-Hat,305.43,13,0.27,2898.53,Wire Transfer,Delivered,Hank Thomas,Central
+10204,Jan 18 2023,Charlie Taylor,charlie.taylor@gmail.com,Paris,France,Olive Oil,Food,Food-Olive Oil,213.33,6,0.23,985.58,Credit Card,Delivered,Ivy Miller,North
+10121,Aug 23 2024,Bob Gonzalez,bob.gonzalez@company.com,Tokyo,UK,Jacket,Clothing,Clothing-Jacket,46.38,7,0.1,292.19,Credit Card,Processing,Wendy Wilson,South
+10378,23/05/2024,Bob Davis,bob.davis@company.com,Houston,USA,Frame,Home,Home-Frame,372.14,4,0.0,1488.56,Cash,Cancelled,Zane White,East
+10327,26/02/2023,Frank Lopez,frank.lopez@outlook.com,Houston,USA,Vase,Home,Home-Vase,139.63,19,0.15,2255.02,Cash,Shipped,Leo Garcia,East
+10447,Feb 06 2023,Yara Brown,yara.brown@gmail.com,San Diego,USA,Laptop,Electronics,Electronics-Laptop,126.05,13,0.29,1163.44,Wire Transfer,Shipped,Karen Davis,West
+10161,15/11/2023,Xander Hernandez,xander.hernandez@gmail.com,Paris,USA,Jeans,Clothing,Clothing-Jeans,403.15,13,0.08,4821.67,Credit Card,Cancelled,Olivia Smith,East
+10169,08/07/2024,Grace Martinez,grace.martinez@outlook.com,San Diego,India,Dress,Clothing,Clothing-Dress,450.72,8,0.01,3569.7,Credit Card,Processing,Alice Harris,West
+10078,16/06/2024,Xander White,xander.white@yahoo.com,Mumbai,Canada,Coffee,Food,Food-Coffee,486.42,9,0.27,3195.78,PayPal,Returned,Xander Williams,Central
+10416,01/12/2023,Diana Taylor,diana.taylor@company.com,Chicago,USA,Honey,Food,Food-Honey,482.29,9,0.12,3819.74,Wire Transfer,Processing,Hank Williams,South
+10181,2023-04-03,Eve Harris,eve.harris@gmail.com,Phoenix,united states,Chocolate,Food,Food-Chocolate,206.22,7,0.26,1068.22,PayPal,Cancelled,Bob Miller,East
+10073,2023-04-15,Eve Williams,eve.williams@outlook.com,Berlin,Japan,Pillow,Home,Home-Pillow,20.39,15,0.03,296.67,Credit Card,Delivered,Bob Harris,South
+10095,2023-12-06,Eve Miller,eve.miller@outlook.com,Chicago,Japan,Laptop,Electronics,Electronics-Laptop,498.59,15,0.25,5609.14,Credit Card,Returned,Bob Garcia,Central
+10063,Sep 26 2024,Noah White,noah.white@gmail.com,Berlin,France,Pillow,Home,Home-Pillow,454.61,15,,6819.15,Debit Card,Processing,Paul Wilson,Central
+10290,26/11/2023,Paul Johnson,paul.johnson@company.com,Phoenix,Germany,Headphones,Electronics,Electronics-Headphones,392.05,18,0.17,5857.23,PayPal,Shipped,Alice Hernandez,Central
+10090,2023-02-27,Hank Smith,hank.smith@outlook.com,Los Angeles,India,Clock,Home,Home-Clock,499.8,4,0.16,1679.33,Cash,Returned,Leo Garcia,South
+10357,2023-02-27,Hank Jackson,hank.jackson@outlook.com,New York,Australia,Hat,Clothing,Clothing-Hat,474.44,16,0.01,7515.13,Cash,Shipped,Alice Taylor,West
+10427,16/03/2023,Alice Hernandez,alice.hernandez@yahoo.com,Phoenix,France,Lamp,Home,Home-Lamp,15.85,5,0.26,58.64,Wire Transfer,Cancelled,Diana Hernandez,East
+10130,Jan 02 2023,Karen Jones,karen.jones@company.com,Toronto,France,Pillow,Home,Home-Pillow,334.44,13,0.04,4173.81,Cash,Returned,Yara Jackson,North
+10262,Dec 26 2024,Frank Martin,frank.martin@yahoo.com,Houston,France,Frame,Home,Home-Frame,43.51,11,0.03,464.25,PayPal,Returned,Alice Rodriguez,South
+10247,13/07/2024,Hank Thompson,,Dallas,USA,Headphones,Electronics,Electronics-Headphones,221.92,6,0.11,1185.05,Credit Card,Returned,Zane Jackson,South
+10147,06/04/2023,Frank Anderson,,Los Angeles,US,Lamp,Home,Home-Lamp,41.73,13,0.28,390.59,Cash,Cancelled,Paul Thompson,North
+10231,20/02/2023,Noah Lee,noah.lee@company.com,Philadelphia,US,Jeans,Clothing,Clothing-Jeans,207.59,18,0.07,3475.06,Cash,Cancelled,Paul Jones,North
+10229,May 15 2024,Leo Smith,leo.smith@outlook.com,Toronto,USA,Jeans,Clothing,Clothing-Jeans,320.9,16,0.12,4518.27,PayPal,Delivered,Uma Moore,West
+10003,Mar 29 2023,Frank Lopez,frank.lopez@outlook.com,Philadelphia,Japan,Pasta,Food,Food-Pasta,135.38,19,0.2,2057.78,PayPal,Cancelled,Noah Harris,Central
+10019,Aug 07 2024,Hank Moore,,Berlin,Canada,Olive Oil,Food,Food-Olive Oil,441.42,3,0.01,1311.02,Cash,Cancelled,Eve Brown,West
+10155,2023-03-10,Frank Garcia,frank.garcia@yahoo.com,Phoenix,USA,Tea,Food,Food-Tea,498.65,20,0.27,7280.29,Wire Transfer,Cancelled,Mia Moore,East
+10308,Oct 20 2023,Ivy Taylor,ivy.taylor@gmail.com,Mumbai,UK,Tea,Food,Food-Tea,78.36,4,0.03,304.04,PayPal,Returned,Ivy Gonzalez,West
+10077,2024-01-17,Sam Martin,sam.martin@yahoo.com,Dallas,Canada,Headphones,Electronics,Electronics-Headphones,445.34,8,0.08,3277.7,PayPal,Processing,Jack Rodriguez,West
+10404,May 11 2024,Wendy Perez,wendy.perez@yahoo.com,Phoenix,India,Rug,Home,Home-Rug,365.76,3,0.25,822.96,PayPal,Delivered,Quinn Garcia,North
+10334,2024-12-22,Jack Thompson,jack.thompson@yahoo.com,Mumbai,USA,Jeans,Clothing,Clothing-Jeans,438.21,2,0.28,631.02,PayPal,Processing,Olivia Taylor,West
+10210,03/04/2023,Uma Brown,uma.brown@yahoo.com,Paris,India,Sneakers,Clothing,Clothing-Sneakers,295.51,6,0.25,1329.8,Credit Card,Returned,Bob Garcia,Central
+10294,Sep 16 2023,Yara Miller,yara.miller@yahoo.com,San Antonio,united states,Keyboard,Electronics,Electronics-Keyboard,9.4,6,,56.4,PayPal,Processing,Noah Gonzalez,East
+10453,2024-12-01,Olivia Rodriguez,olivia.rodriguez@outlook.com,Mumbai,Canada,Laptop,Electronics,Electronics-Laptop,258.2,12,0.08,2850.53,Wire Transfer,Delivered,Karen Rodriguez,East
+10483,23/09/2023,Ivy Rodriguez,ivy.rodriguez@outlook.com,San Antonio,United States,Monitor,Electronics,Electronics-Monitor,205.03,5,0.3,717.61,Wire Transfer,Returned,Xander Johnson,Central
+10067,Sep 22 2023,Wendy Jackson,wendy.jackson@outlook.com,San Diego,India,Clock,Home,Home-Clock,153.6,18,0.04,2654.21,Cash,Shipped,Victor Hernandez,North
+10451,2024-09-27,Hank Lopez,hank.lopez@outlook.com,Tokyo,Australia,Rug,Home,Home-Rug,294.86,4,0.18,967.14,Wire Transfer,Shipped,Quinn Brown,West
+10134,14/05/2024,Quinn Martinez,quinn.martinez@yahoo.com,Phoenix,Australia,Olive Oil,Food,Food-Olive Oil,446.96,5,0.23,1720.8,Debit Card,Processing,Uma Johnson,North
+10145,Jul 24 2023,Olivia Rodriguez,olivia.rodriguez@yahoo.com,Philadelphia,UK,Hat,Clothing,Clothing-Hat,219.69,14,0.01,3044.9,PayPal,Delivered,Karen Harris,Central
+10185,25/10/2023,Grace Smith,grace.smith@yahoo.com,San Diego,Australia,Pillow,Home,Home-Pillow,55.84,10,0.09,508.14,Cash,Cancelled,Quinn Hernandez,West
+10435,2024-05-31,Victor Jones,victor.jones@company.com,Paris,France,Coffee,Food,Food-Coffee,118.07,5,,590.35,Credit Card,Processing,Wendy Lee,North
+10178,Dec 12 2024,Mia Lee,mia.lee@gmail.com,Los Angeles,USA,Keyboard,Electronics,Electronics-Keyboard,62.32,4,0.05,236.82,Credit Card,Processing,Noah Perez,North
+10159,26/07/2023,Victor Taylor,victor.taylor@yahoo.com,Tokyo,UK,Tablet,Electronics,Electronics-Tablet,61.44,7,0.25,322.56,Wire Transfer,Processing,Frank Johnson,Central
+10289,14/04/2023,Paul Miller,paul.miller@company.com,London,USA,Laptop,Electronics,Electronics-Laptop,418.44,5,0.02,2050.36,Debit Card,Returned,Jack Rodriguez,West
+10474,03/12/2023,Bob Brown,bob.brown@gmail.com,Austin,Australia,Honey,Food,Food-Honey,62.37,-2,0.19,-101.04,Wire Transfer,Cancelled,Ivy White,North
+10298,2023-06-13,Leo Hernandez,leo.hernandez@company.com,Berlin,Japan,Honey,Food,Food-Honey,426.08,6,0.02,2505.35,Wire Transfer,Cancelled,Paul Jackson,West
+10411,Nov 25 2024,Frank Martin,frank.martin@outlook.com,New York,France,Pasta,Food,Food-Pasta,60.9,2,0.0,121.8,Cash,Cancelled,Hank Perez,East
+10146,2023-02-25,Quinn Taylor,quinn.taylor@gmail.com,Tokyo,Germany,Chocolate,Food,Food-Chocolate,333.54,5,0.3,1167.39,Debit Card,Cancelled,Paul Thomas,South
+10466,01/04/2023,Charlie Harris,charlie.harris@yahoo.com,London,USA,Hat,Clothing,Clothing-Hat,323.44,8,0.17,2147.64,Wire Transfer,Processing,Diana Thomas,North
+10104,Dec 06 2023,Diana Gonzalez,diana.gonzalez@gmail.com,Chicago,Japan,Dress,Clothing,Clothing-Dress,337.38,12,0.25,3036.42,Cash,Cancelled,Paul Thompson,East
+10222,20/04/2023,Wendy Anderson,wendy.anderson@yahoo.com,New York,Japan,Frame,Home,Home-Frame,57.63,16,0.22,719.22,Cash,Shipped,Grace Brown,West
+10484,2024-05-25,Grace Anderson,grace.anderson@yahoo.com,London,united states,Keyboard,Electronics,Electronics-Keyboard,419.55,15,0.15,5349.26,Cash,Delivered,Rose Wilson,Central
+10176,2024-12-10,Paul Taylor,paul.taylor@yahoo.com,Philadelphia,France,Headphones,Electronics,Electronics-Headphones,330.47,11,0.29,2580.97,PayPal,Returned,Karen Martinez,West
+10338,Jul 02 2023,Zane Jones,zane.jones@outlook.com,London,Germany,Jeans,Clothing,Clothing-Jeans,313.96,12,0.21,2976.34,Cash,Processing,Wendy Brown,East
+10018,14/06/2023,Rose Thomas,rose.thomas@company.com,Austin,Canada,Monitor,Electronics,Electronics-Monitor,57.7,2,0.23,88.86,PayPal,Shipped,Bob Thompson,East
+10482,26/01/2024,Grace Harris,grace.harris@outlook.com,Sydney,United States,Tea,Food,Food-Tea,257.91,10,,2579.1,Wire Transfer,Processing,Rose Johnson,North
+10021,2024-06-10,Xander Rodriguez,xander.rodriguez@company.com,San Diego,Australia,Dress,Clothing,Clothing-Dress,482.32,6,0.29,2054.68,Wire Transfer,Delivered,Noah Rodriguez,Central
+10131,17/07/2024,Ivy Jones,ivy.jones@outlook.com,New York,France,Smartphone,Electronics,Electronics-Smartphone,464.67,20,0.24,7062.98,Credit Card,Processing,Quinn Davis,South
+10255,Sep 25 2024,Quinn Williams,quinn.williams@yahoo.com,Tokyo,Canada,Tablet,Electronics,Electronics-Tablet,114.49,11,0.29,894.17,Wire Transfer,Cancelled,Yara Lee,North
+10316,Jun 10 2024,Diana Perez,diana.perez@yahoo.com,San Diego,Australia,Coffee,Food,Food-Coffee,196.01,10,0.23,1509.28,Wire Transfer,Returned,Bob Martinez,South
+10363,Mar 21 2024,Karen Taylor,karen.taylor@gmail.com,Philadelphia,USA,Smartphone,Electronics,Electronics-Smartphone,336.82,14,0.25,3536.61,Credit Card,Shipped,Alice Anderson,East
+10432,2024-11-20,Bob Williams,,Philadelphia,UK,Jacket,Clothing,Clothing-Jacket,206.78,13,,2688.14,Cash,Delivered,Uma White,Central
+10320,Jun 10 2023,Charlie Harris,charlie.harris@gmail.com,Chicago,UK,Frame,Home,Home-Frame,154.17,15,0.01,2289.42,Debit Card,Shipped,Xander Gonzalez,Central
+10150,2023-12-19,Jack Lee,jack.lee@outlook.com,New York,France,Laptop,Electronics,Electronics-Laptop,7.49,18,0.06,126.73,Wire Transfer,Cancelled,Eve Garcia,South
+10500,05/12/2023,Hank Martin,hank.martin@yahoo.com,Houston,USA,Honey,Food,Food-Honey,277.08,3,0.17,689.93,Debit Card,Shipped,Diana Martinez,Central
+10380,Dec 30 2024,Charlie Miller,charlie.miller@company.com,London,Japan,Hat,Clothing,Clothing-Hat,285.6,14,0.24,3038.78,Wire Transfer,Processing,Leo Jones,East
+10347,2023-03-19,Paul Anderson,paul.anderson@outlook.com,Toronto,France,Tablet,Electronics,Electronics-Tablet,430.06,18,0.19,6270.27,Cash,Delivered,Sam Jackson,West
+10227,2024-06-06,Yara Jackson,yara.jackson@gmail.com,Dallas,India,Jacket,Clothing,Clothing-Jacket,199.29,19,0.14,3256.4,Wire Transfer,Processing,Quinn Smith,South
+10228,Jul 31 2023,Zane Martin,zane.martin@yahoo.com,Sydney,United States,Chocolate,Food,Food-Chocolate,25.01,8,0.01,198.08,PayPal,Returned,Paul Anderson,North
+10189,12/06/2024,Bob Lee,bob.lee@outlook.com,Dallas,France,Honey,Food,Food-Honey,192.37,3,0.27,421.29,PayPal,Processing,Paul Thomas,Central
+10450,27/04/2023,Alice Taylor,alice.taylor@company.com,Philadelphia,US,Jeans,Clothing,Clothing-Jeans,97.52,4,0.1,351.07,Wire Transfer,Returned,Grace Jackson,South
+10015,Feb 20 2024,Uma Wilson,,Los Angeles,United States,Dress,Clothing,Clothing-Dress,258.76,5,0.05,1229.11,Cash,Delivered,Xander White,East
+10056,Apr 09 2024,Charlie Miller,charlie.miller@company.com,Toronto,united states,Hat,Clothing,Clothing-Hat,411.12,17,0.1,6290.14,Cash,Delivered,Hank Gonzalez,West
+10076,2023-05-01,Eve Brown,,Mumbai,Canada,Hat,Clothing,Clothing-Hat,52.67,20,0.16,884.86,Wire Transfer,Shipped,Tina Moore,North
+10248,2024-08-12,Yara Perez,yara.perez@company.com,Paris,Canada,Sneakers,Clothing,Clothing-Sneakers,395.83,19,0.25,5640.58,Wire Transfer,Shipped,Ivy Thomas,South
+10040,22/08/2024,Charlie Martinez,charlie.martinez@company.com,Dallas,USA,Monitor,Electronics,Electronics-Monitor,8.56,11,0.13,81.92,PayPal,Cancelled,Noah Jackson,East
+10219,May 22 2023,Tina Rodriguez,tina.rodriguez@company.com,San Antonio,India,Jacket,Clothing,Clothing-Jacket,281.75,10,0.12,2479.4,Credit Card,Shipped,Olivia Thompson,South
+10479,Feb 08 2023,Diana Miller,diana.miller@outlook.com,Los Angeles,USA,Smartphone,Electronics,Electronics-Smartphone,238.48,3,0.02,701.13,Wire Transfer,Returned,Tina Lee,Central
+10279,Sep 05 2024,Jack Thompson,jack.thompson@gmail.com,Philadelphia,India,Smartphone,Electronics,Electronics-Smartphone,426.03,17,,7242.51,Cash,Shipped,Tina Garcia,North
+10354,16/07/2024,Leo Davis,leo.davis@yahoo.com,Chicago,Canada,Frame,Home,Home-Frame,200.6,17,0.28,2455.34,Cash,Cancelled,Leo Lopez,East
+10208,Sep 21 2023,Hank Martin,hank.martin@company.com,Berlin,Japan,Sneakers,Clothing,Clothing-Sneakers,255.59,17,0.24,3302.22,Cash,Processing,Wendy Anderson,West
+10188,Dec 28 2023,Sam Thomas,sam.thomas@outlook.com,Sydney,USA,Coffee,Food,Food-Coffee,132.62,8,0.09,965.47,Cash,Delivered,Wendy Rodriguez,South
+10179,14/07/2023,Jack Williams,jack.williams@outlook.com,Chicago,France,Chocolate,Food,Food-Chocolate,180.0,9,0.28,1166.4,Debit Card,Shipped,Xander Davis,East
+10053,08/05/2024,Grace Davis,grace.davis@yahoo.com,Paris,USA,Laptop,Electronics,Electronics-Laptop,339.53,-20,0.29,-4821.33,Cash,Processing,Paul Jackson,East
+10393,28/06/2023,Paul Garcia,paul.garcia@outlook.com,Berlin,United States,Monitor,Electronics,Electronics-Monitor,400.64,18,0.26,5336.52,Credit Card,Cancelled,Olivia Hernandez,North
+10452,Mar 05 2024,Alice Perez,alice.perez@gmail.com,London,Japan,Hat,Clothing,Clothing-Hat,135.11,20,0.13,2350.91,PayPal,Processing,Mia Rodriguez,West
+10268,07/03/2024,Frank Jackson,frank.jackson@yahoo.com,Houston,Germany,Pasta,Food,Food-Pasta,102.05,5,,510.25,Debit Card,Cancelled,Rose White,East
+10201,Jul 27 2024,Zane Thomas,zane.thomas@gmail.com,Berlin,United States,Smartphone,Electronics,Electronics-Smartphone,407.84,4,0.11,1451.91,PayPal,Processing,Alice Wilson,North
+10352,2024-10-08,Leo Perez,leo.perez@yahoo.com,Philadelphia,Japan,Rug,Home,Home-Rug,338.23,15,0.09,4616.84,Debit Card,Processing,Noah Lee,Central
+10100,Jan 07 2024,Sam Gonzalez,sam.gonzalez@gmail.com,Chicago,United States,Rug,Home,Home-Rug,328.24,20,0.13,5711.38,Cash,Cancelled,Olivia Wilson,South
+10337,Feb 11 2024,Frank Smith,frank.smith@yahoo.com,Dallas,UK,Jeans,Clothing,Clothing-Jeans,201.54,16,,3224.64,Credit Card,Delivered,Ivy Martin,South
+10267,30/11/2023,Charlie Lee,charlie.lee@company.com,Austin,US,Honey,Food,Food-Honey,67.57,6,0.26,300.01,Wire Transfer,Cancelled,Ivy Moore,West
+10234,2023-01-11,Eve Thompson,eve.thompson@company.com,Tokyo,Japan,Vase,Home,Home-Vase,272.14,15,0.05,3877.99,Cash,Shipped,Leo Martinez,West
+10016,2023-09-13,Rose Smith,rose.smith@company.com,Toronto,united states,Clock,Home,Home-Clock,$119.45,12,0.13,1247.06,Wire Transfer,Returned,Hank Rodriguez,North
+10301,Dec 18 2024,Noah Lee,noah.lee@outlook.com,Austin,Japan,Tea,Food,Food-Tea,427.47,10,0.14,3676.24,Wire Transfer,Shipped,Karen Smith,South
+10340,25/05/2024,Bob Moore,,Houston,United States,Honey,Food,Food-Honey,9.06,1,0.09,8.24,Wire Transfer,Delivered,Karen Williams,South
+10318,2023-02-04,Bob Rodriguez,bob.rodriguez@gmail.com,Toronto,US,Coffee,Food,Food-Coffee,65.37,8,0.07,486.35,Wire Transfer,Delivered,Quinn Perez,South
+10270,2023-04-26,Paul Gonzalez,paul.gonzalez@outlook.com,London,USA,Tablet,Electronics,Electronics-Tablet,243.21,12,0.07,2714.22,Wire Transfer,Processing,Alice Garcia,East
+10105,2024-10-02,Sam Brown,sam.brown@yahoo.com,New York,India,Jacket,Clothing,Clothing-Jacket,386.54,16,0.28,4452.94,Credit Card,Processing,Uma Jones,Central
+10043,24/12/2024,Zane Brown,zane.brown@yahoo.com,London,Australia,Honey,Food,Food-Honey,100.52,12,0.01,1194.18,Cash,Processing,Rose Thompson,West
+10061,02/06/2024,Grace Jackson,grace.jackson@outlook.com,London,Japan,T-Shirt,Clothing,Clothing-T-Shirt,267.91,9,0.23,1856.62,Debit Card,Delivered,Tina Lopez,Central
+10218,2023-05-13,Hank Hernandez,hank.hernandez@company.com,San Antonio,India,Hat,Clothing,Clothing-Hat,145.15,11,0.02,1564.72,Credit Card,Shipped,Diana Thomas,South
+10193,23/03/2023,Diana Johnson,diana.johnson@company.com,Toronto,Japan,Tablet,Electronics,Electronics-Tablet,114.26,1,0.15,97.12,Credit Card,Processing,Rose White,West
+10461,Jul 17 2023,Leo Thompson,,Dallas,UK,Lamp,Home,Home-Lamp,472.58,4,0.12,1663.48,Debit Card,Cancelled,Uma Garcia,Central
+10285,29/03/2024,Xander Moore,xander.moore@gmail.com,Paris,Canada,Smartphone,Electronics,Electronics-Smartphone,397.27,17,0.3,4727.51,PayPal,Cancelled,Karen Lopez,West
+10058,Oct 19 2023,Yara Lee,yara.lee@outlook.com,San Diego,Germany,Olive Oil,Food,Food-Olive Oil,463.44,15,0.22,5422.25,Credit Card,Cancelled,Eve Martinez,North
+10419,20/09/2023,Jack Davis,jack.davis@outlook.com,New York,Japan,T-Shirt,Clothing,Clothing-T-Shirt,23.68,5,0.07,110.11,Credit Card,Cancelled,Mia Jackson,South
+10493,20/03/2024,Xander Williams,xander.williams@company.com,Philadelphia,UK,Lamp,Home,Home-Lamp,366.74,3,0.1,990.2,Credit Card,Shipped,Xander Lee,Central
+10013,Apr 01 2024,Alice Lee,alice.lee@company.com,Los Angeles,USA,Clock,Home,Home-Clock,284.63,8,0.3,1593.93,Cash,Cancelled,Charlie Davis,West
+10026,Feb 09 2024,Jack Gonzalez,jack.gonzalez@outlook.com,Chicago,USA,Chocolate,Food,Food-Chocolate,47.11,5,0.06,221.42,Cash,Shipped,Rose Martin,Central
+10141,2023-11-09,Hank Davis,,Tokyo,UK,Keyboard,Electronics,Electronics-Keyboard,209.72,7,0.01,1453.36,PayPal,Cancelled,Zane Anderson,Central
+10385,2023-10-22,Eve Anderson,,San Diego,US,Dress,Clothing,Clothing-Dress,427.12,2,0.04,820.07,PayPal,Delivered,Jack Anderson,West
+10252,2023-09-19,Alice Hernandez,alice.hernandez@yahoo.com,San Antonio,Japan,Olive Oil,Food,Food-Olive Oil,366.31,1,0.16,307.7,Credit Card,Processing,Grace Thompson,Central
+10397,12/04/2023,Ivy Johnson,ivy.johnson@gmail.com,Chicago,Japan,Lamp,Home,Home-Lamp,14.44,13,0.29,133.28,Wire Transfer,Cancelled,Rose Williams,South
+10114,28/05/2024,Grace Taylor,grace.taylor@gmail.com,Los Angeles,US,Vase,Home,Home-Vase,199.73,12,0.09,2181.05,Credit Card,Processing,Mia Smith,Central
+10020,Jul 31 2023,Ivy Davis,ivy.davis@company.com,Phoenix,united states,Sneakers,Clothing,Clothing-Sneakers,123.98,10,0.16,1041.43,Debit Card,Cancelled,Rose Perez,South
+10421,31/01/2023,Eve Martinez,eve.martinez@yahoo.com,Tokyo,France,Jacket,Clothing,Clothing-Jacket,38.57,4,0.04,148.11,Wire Transfer,Returned,Jack Anderson,East
+10090,11/09/2024,Eve Harris,eve.harris@yahoo.com,Philadelphia,US,Hat,Clothing,Clothing-Hat,119.93,12,0.04,1381.59,PayPal,Shipped,Mia Thomas,West
+10250,Mar 25 2024,Eve Garcia,eve.garcia@gmail.com,Tokyo,USA,Vase,Home,Home-Vase,115.16,7,0.28,580.41,Wire Transfer,Processing,Olivia Davis,West
+10119,Feb 10 2023,Mia Harris,,Berlin,Canada,Monitor,Electronics,Electronics-Monitor,59.11,2,0.16,99.3,Wire Transfer,Cancelled,Yara Lee,North
+10485,2024-05-27,Grace Martinez,grace.martinez@outlook.com,Austin,Canada,Clock,Home,Home-Clock,459.92,5,0.03,2230.61,Debit Card,Cancelled,Wendy Moore,South
+10375,Apr 05 2024,Mia Wilson,mia.wilson@gmail.com,Philadelphia,Germany,Coffee,Food,Food-Coffee,128.79,6,0.03,749.56,PayPal,Delivered,Quinn Thompson,West
+10303,22/02/2023,Xander Taylor,xander.taylor@yahoo.com,Berlin,USA,Jacket,Clothing,Clothing-Jacket,284.92,5,0.23,1096.94,PayPal,Processing,Xander Harris,West
+10313,06/11/2024,Jack Lee,jack.lee@yahoo.com,San Antonio,US,Headphones,Electronics,Electronics-Headphones,251.33,1,0.07,233.74,Wire Transfer,Returned,Olivia Williams,Central
+10115,2023-03-31,Tina Smith,tina.smith@outlook.com,San Antonio,United States,Keyboard,Electronics,Electronics-Keyboard,177.76,2,0.09,323.52,Credit Card,Returned,Frank Garcia,East
+10405,08/03/2023,Tina Perez,tina.perez@yahoo.com,Sydney,Australia,Laptop,Electronics,Electronics-Laptop,385.41,13,0.25,3757.75,Wire Transfer,Shipped,Diana Thompson,East
+10266,Aug 11 2024,Karen Taylor,karen.taylor@yahoo.com,San Antonio,UK,Headphones,Electronics,Electronics-Headphones,363.42,10,0.08,3343.46,PayPal,Shipped,Tina Jackson,West
+10458,29/02/2024,Quinn White,quinn.white@company.com,Philadelphia,Germany,Pillow,Home,Home-Pillow,$5.78,4,0.18,18.96,Credit Card,Processing,Leo Moore,South
+10469,2024-09-22,Alice Lee,alice.lee@outlook.com,Dallas,Japan,Clock,Home,Home-Clock,277.25,4,0.22,865.02,Debit Card,Shipped,Karen Hernandez,West
+10347,2024-07-02,Paul Johnson,paul.johnson@company.com,Phoenix,Australia,Pasta,Food,Food-Pasta,464.26,17,0.09,7182.1,Debit Card,Cancelled,Victor Hernandez,East
+10499,2024-02-28,Charlie Jones,charlie.jones@gmail.com,London,France,Tea,Food,Food-Tea,299.62,10,0.01,2966.24,Wire Transfer,Shipped,Leo Anderson,East
+10494,20/06/2024,Grace Taylor,grace.taylor@gmail.com,Paris,Germany,Headphones,Electronics,Electronics-Headphones,255.47,17,0.15,3691.54,PayPal,Shipped,Yara Brown,Central
+10087,Apr 16 2023,Victor Jones,victor.jones@gmail.com,Sydney,UK,Tablet,Electronics,Electronics-Tablet,466.51,20,0.27,6811.05,PayPal,Delivered,Sam Harris,East
+10439,2023-04-15,Uma Miller,uma.miller@yahoo.com,Austin,US,Honey,Food,Food-Honey,63.24,9,0.17,472.4,Cash,Processing,Rose Hernandez,East
+10207,Jul 03 2023,Eve Thompson,eve.thompson@yahoo.com,Philadelphia,US,Coffee,Food,Food-Coffee,69.39,2,0.13,120.74,Cash,Cancelled,Uma Thompson,West
+10032,21/04/2024,Tina Lopez,tina.lopez@yahoo.com,Chicago,India,T-Shirt,Clothing,Clothing-T-Shirt,407.36,15,0.19,4949.42,Debit Card,Shipped,Eve Martin,East
+10051,2024-06-04,Leo Gonzalez,leo.gonzalez@outlook.com,London,USA,Headphones,Electronics,Electronics-Headphones,60.88,6,0.17,303.18,Wire Transfer,Delivered,Karen Moore,North
+10028,Dec 17 2023,Zane Martinez,zane.martinez@company.com,Tokyo,United States,Sneakers,Clothing,Clothing-Sneakers,194.99,19,0.17,3074.99,Debit Card,Shipped,Victor Perez,North
+10362,02/09/2024,Xander Thompson,xander.thompson@company.com,Houston,India,Clock,Home,Home-Clock,53.34,10,0.03,517.4,PayPal,Returned,Uma Perez,North
+10211,26/11/2024,Charlie Miller,charlie.miller@gmail.com,Phoenix,India,Vase,Home,Home-Vase,309.71,7,0.17,1799.42,Wire Transfer,Processing,Charlie Jackson,North
+10304,Dec 20 2024,Tina Taylor,tina.taylor@yahoo.com,Austin,USA,Keyboard,Electronics,Electronics-Keyboard,282.21,4,0.07,1049.82,Wire Transfer,Processing,Wendy Gonzalez,West
+10436,May 13 2024,Mia Wilson,mia.wilson@yahoo.com,Toronto,united states,Vase,Home,Home-Vase,81.36,5,0.0,406.8,Wire Transfer,Shipped,Charlie Jones,West
+10221,Dec 30 2024,Olivia Thompson,olivia.thompson@company.com,Philadelphia,Canada,Pasta,Food,Food-Pasta,180.88,-20,0.22,-2821.73,PayPal,Returned,Rose Jackson,East
+10480,2023-04-01,Bob Johnson,bob.johnson@outlook.com,Houston,UK,Dress,Clothing,Clothing-Dress,366.99,9,0.27,2411.12,Wire Transfer,Delivered,Victor Lee,Central
+10049,2023-10-24,Zane Jackson,zane.jackson@gmail.com,London,USA,Pasta,Food,Food-Pasta,258.77,11,0.24,2163.32,Credit Card,Cancelled,Xander Martinez,Central
+10098,15/10/2023,Ivy Johnson,ivy.johnson@yahoo.com,Los Angeles,Japan,Tablet,Electronics,Electronics-Tablet,244.96,3,0.04,705.48,PayPal,Delivered,Xander Brown,Central
+10209,07/06/2023,Frank Jackson,frank.jackson@company.com,Paris,Japan,Sneakers,Clothing,Clothing-Sneakers,94.5,2,0.04,181.44,Wire Transfer,Returned,Hank Perez,West
+10305,Jan 24 2024,Xander Lee,xander.lee@outlook.com,Los Angeles,UK,Smartphone,Electronics,Electronics-Smartphone,234.69,16,0.16,3154.23,Wire Transfer,Returned,Ivy Jones,Central
+10125,04/10/2023,Noah Smith,noah.smith@company.com,Berlin,USA,Monitor,Electronics,Electronics-Monitor,320.52,14,0.08,4128.3,Credit Card,Processing,Uma Jackson,West
+10243,01/04/2024,Olivia Harris,olivia.harris@yahoo.com,San Antonio,France,Clock,Home,Home-Clock,$10.24,3,0.03,29.8,Debit Card,Processing,Ivy Miller,North
+10068,08/07/2023,Alice Martin,alice.martin@yahoo.com,Houston,UK,Monitor,Electronics,Electronics-Monitor,69.3,19,0.03,1277.2,PayPal,Returned,Victor Williams,West
+10110,13/03/2023,Ivy Harris,ivy.harris@outlook.com,Dallas,USA,Lamp,Home,Home-Lamp,194.49,2,0.05,369.53,Debit Card,Cancelled,Mia Garcia,West
+10314,2024-05-24,Diana Jones,diana.jones@company.com,San Antonio,UK,Honey,Food,Food-Honey,$133.2,3,0.13,347.65,Credit Card,Delivered,Victor Gonzalez,East
+10443,06/12/2024,Eve Thompson,eve.thompson@company.com,New York,India,Pasta,Food,Food-Pasta,204.94,3,,614.82,Credit Card,Cancelled,Rose Lopez,East
+10122,Jan 29 2024,Victor Martinez,victor.martinez@gmail.com,Paris,Australia,Headphones,Electronics,Electronics-Headphones,381.42,7,,2669.94,Debit Card,Processing,Wendy Gonzalez,North
+10264,12/11/2023,Uma Thompson,uma.thompson@gmail.com,Sydney,France,Smartphone,Electronics,Electronics-Smartphone,17.56,8,0.16,118.0,Cash,Returned,Alice Johnson,East
+10388,2024-09-25,Bob Hernandez,bob.hernandez@gmail.com,Berlin,united states,Dress,Clothing,Clothing-Dress,291.78,2,0.01,577.72,Debit Card,Shipped,Alice Garcia,North
+10170,25/11/2024,Jack Brown,jack.brown@yahoo.com,Chicago,UK,Headphones,Electronics,Electronics-Headphones,299.51,3,0.24,682.88,PayPal,Delivered,Victor Jackson,Central
+10408,2024-08-18,Eve Hernandez,eve.hernandez@yahoo.com,Los Angeles,Australia,Laptop,Electronics,Electronics-Laptop,140.58,6,0.13,733.83,Debit Card,Delivered,Zane Lee,Central
+10035,2023-05-10,Mia Harris,mia.harris@company.com,Chicago,United States,Keyboard,Electronics,Electronics-Keyboard,327.62,14,0.14,3944.54,Debit Card,Processing,Quinn Anderson,West
+10287,Jan 06 2024,Hank Garcia,hank.garcia@gmail.com,Philadelphia,UK,Rug,Home,Home-Rug,212.3,7,0.03,1441.52,Cash,Shipped,Olivia Harris,South
+10033,2024-04-09,Ivy Johnson,ivy.johnson@yahoo.com,Toronto,France,Laptop,Electronics,Electronics-Laptop,324.21,14,0.27,3313.43,Credit Card,Delivered,Rose Garcia,South
+10429,Aug 31 2023,Zane Smith,zane.smith@gmail.com,Chicago,India,Vase,Home,Home-Vase,103.38,11,0.07,1057.58,Wire Transfer,Shipped,Mia Davis,North
+10495,2023-05-11,Paul Jackson,paul.jackson@company.com,Phoenix,united states,Sneakers,Clothing,Clothing-Sneakers,189.88,7,0.06,1249.41,Cash,Delivered,Ivy Jones,North
+10379,Aug 10 2023,Olivia Anderson,olivia.anderson@outlook.com,San Diego,France,Hat,Clothing,Clothing-Hat,485.22,3,0.26,1077.19,Wire Transfer,Returned,Ivy Smith,West
+10409,08/02/2024,Xander Davis,xander.davis@company.com,San Diego,France,Headphones,Electronics,Electronics-Headphones,$490.19,16,0.13,6823.44,Credit Card,Returned,Paul Davis,North
+10359,Aug 07 2024,Rose Harris,,Tokyo,France,Rug,Home,Home-Rug,123.34,1,0.21,97.44,Cash,Delivered,Olivia Anderson,South
+10011,Sep 19 2024,Wendy Gonzalez,wendy.gonzalez@outlook.com,Sydney,USA,Headphones,Electronics,Electronics-Headphones,447.25,2,0.21,706.66,Cash,Shipped,Zane Perez,North
+10174,Mar 10 2023,Tina Hernandez,tina.hernandez@gmail.com,Mumbai,Australia,Laptop,Electronics,Electronics-Laptop,194.56,2,0.17,322.97,Debit Card,Shipped,Karen Davis,Central
+10366,Dec 27 2024,Diana Lee,diana.lee@yahoo.com,San Diego,Japan,Chocolate,Food,Food-Chocolate,31.96,15,0.04,460.22,Cash,Processing,Olivia Martin,East
+10116,2024-05-23,Zane Perez,zane.perez@gmail.com,San Antonio,India,Laptop,Electronics,Electronics-Laptop,198.39,3,0.21,470.18,Debit Card,Cancelled,Uma Smith,East
+10390,15/08/2024,Noah Perez,noah.perez@yahoo.com,Toronto,India,Tablet,Electronics,Electronics-Tablet,$98.59,8,0.1,709.85,PayPal,Returned,Sam Perez,Central
+10062,2024-09-25,Rose Anderson,rose.anderson@yahoo.com,Austin,US,Sneakers,Clothing,Clothing-Sneakers,189.09,2,0.29,268.51,Cash,Processing,Frank Garcia,South
+10232,Jun 16 2023,Frank Davis,frank.davis@outlook.com,Phoenix,Australia,Jeans,Clothing,Clothing-Jeans,$283.43,11,0.13,2712.43,PayPal,Delivered,Alice Gonzalez,West
+10265,28/03/2024,Yara Jones,yara.jones@outlook.com,Phoenix,US,Vase,Home,Home-Vase,448.51,19,0.22,6646.92,Credit Card,Returned,Bob Jones,Central
+10225,2023-01-24,Diana Martinez,,San Diego,UK,Lamp,Home,Home-Lamp,306.03,17,0.08,4786.31,Cash,Returned,Victor Perez,North
+10430,Apr 01 2024,Quinn Gonzalez,quinn.gonzalez@outlook.com,Mumbai,Australia,Tea,Food,Food-Tea,359.4,13,0.11,4158.26,Credit Card,Shipped,Xander Anderson,West
+10381,2024-01-20,Zane Anderson,zane.anderson@company.com,Tokyo,USA,Jeans,Clothing,Clothing-Jeans,155.1,17,0.29,1872.06,Credit Card,Returned,Uma Rodriguez,West
+10160,2024-04-19,Frank Moore,frank.moore@yahoo.com,San Antonio,united states,Clock,Home,Home-Clock,247.84,10,0.17,2057.07,Credit Card,Delivered,Eve Rodriguez,East
+10103,22/03/2024,Uma Lee,uma.lee@outlook.com,Tokyo,United States,Laptop,Electronics,Electronics-Laptop,383.54,3,0.14,989.53,Wire Transfer,Delivered,Leo Taylor,Central
+10395,Mar 20 2023,Alice Rodriguez,alice.rodriguez@gmail.com,Phoenix,France,Pillow,Home,Home-Pillow,31.18,12,0.19,303.07,Debit Card,Shipped,Yara Brown,Central
+10399,26/02/2024,Yara Garcia,yara.garcia@outlook.com,Austin,US,Monitor,Electronics,Electronics-Monitor,292.12,1,0.23,224.93,Debit Card,Delivered,Grace Jones,Central
+10401,Sep 03 2024,Hank Miller,hank.miller@gmail.com,Tokyo,UK,Smartphone,Electronics,Electronics-Smartphone,462.09,10,0.13,4020.18,PayPal,Shipped,Wendy Martinez,North
+10456,2023-02-13,Xander Brown,xander.brown@yahoo.com,San Diego,Germany,T-Shirt,Clothing,Clothing-T-Shirt,215.28,4,0.23,663.06,Credit Card,Delivered,Zane Perez,Central
+10392,Oct 12 2023,Sam Johnson,sam.johnson@outlook.com,Los Angeles,USA,Laptop,Electronics,Electronics-Laptop,460.45,7,0.03,3126.46,PayPal,Processing,Frank Taylor,Central
+10085,01/05/2024,Hank Taylor,hank.taylor@gmail.com,New York,Germany,Pillow,Home,Home-Pillow,451.32,4,0.26,1335.91,Cash,Shipped,Olivia Perez,North
+10282,2023-02-11,Frank Lopez,frank.lopez@company.com,San Antonio,Canada,Tablet,Electronics,Electronics-Tablet,66.19,5,0.09,301.16,PayPal,Returned,Diana Gonzalez,East
+10244,21/11/2024,Olivia Martin,olivia.martin@company.com,San Diego,Japan,Tea,Food,Food-Tea,429.1,16,0.0,6865.6,Credit Card,Returned,Olivia Taylor,North
+10066,Dec 31 2024,Diana Jones,diana.jones@gmail.com,Philadelphia,United States,Pillow,Home,Home-Pillow,299.51,4,0.15,1018.33,Cash,Processing,Yara Lee,West
+10065,2023-02-24,Leo Thomas,leo.thomas@company.com,Toronto,France,Coffee,Food,Food-Coffee,65.48,8,0.03,508.12,Wire Transfer,Delivered,Frank Gonzalez,Central
+10273,2024-07-13,Victor Hernandez,victor.hernandez@gmail.com,Chicago,India,Tea,Food,Food-Tea,150.31,17,0.26,1890.9,Credit Card,Returned,Diana Gonzalez,West
+10455,Nov 06 2024,Karen Gonzalez,karen.gonzalez@gmail.com,Los Angeles,US,Sneakers,Clothing,Clothing-Sneakers,218.19,13,0.2,2269.18,Cash,Cancelled,Paul Thomas,Central
+10249,2024-08-20,Frank Taylor,,Dallas,Canada,Rug,Home,Home-Rug,$163.64,2,0.24,248.73,PayPal,Returned,Diana Wilson,East
+10044,04/11/2024,Leo Wilson,leo.wilson@yahoo.com,San Diego,US,Keyboard,Electronics,Electronics-Keyboard,37.42,11,0.01,407.5,Cash,Cancelled,Noah Rodriguez,North
+10449,Jun 20 2023,Wendy Thomas,wendy.thomas@outlook.com,Berlin,Australia,Headphones,Electronics,Electronics-Headphones,54.53,11,0.2,479.86,PayPal,Processing,Noah Miller,West
+10402,27/06/2024,Uma Williams,uma.williams@yahoo.com,Austin,US,Tea,Food,Food-Tea,314.16,19,0.02,5849.66,Wire Transfer,Shipped,Leo Williams,East
+10124,2024-05-26,Quinn Martinez,quinn.martinez@outlook.com,San Antonio,Japan,Honey,Food,Food-Honey,382.9,1,0.06,359.93,Wire Transfer,Processing,Uma Moore,Central
+10030,Mar 07 2023,Yara Wilson,yara.wilson@gmail.com,Mumbai,united states,Jeans,Clothing,Clothing-Jeans,79.48,10,0.26,588.15,Debit Card,Returned,Ivy Martinez,South
+10123,2023-02-07,Ivy Perez,ivy.perez@company.com,San Diego,United States,Smartphone,Electronics,Electronics-Smartphone,399.54,16,0.19,5178.04,Debit Card,Processing,Eve Smith,East
+10158,Jan 08 2024,Zane Rodriguez,zane.rodriguez@yahoo.com,Los Angeles,India,Laptop,Electronics,Electronics-Laptop,430.49,20,0.29,6112.96,Credit Card,Returned,Xander Jones,South
+10380,30/08/2023,Diana Jackson,diana.jackson@gmail.com,Mumbai,Japan,Coffee,Food,Food-Coffee,122.85,11,0.12,1189.19,Debit Card,Shipped,Diana Garcia,South
+10355,12/01/2024,Ivy Anderson,ivy.anderson@gmail.com,Toronto,UK,Clock,Home,Home-Clock,214.77,9,0.11,1720.31,Credit Card,Cancelled,Bob White,North
+10010,19/09/2023,Wendy Perez,wendy.perez@company.com,Austin,Australia,Monitor,Electronics,Electronics-Monitor,434.14,-13,0.28,-4063.55,Credit Card,Shipped,Jack Miller,South
+10251,Jun 14 2023,Olivia Lee,olivia.lee@company.com,Los Angeles,USA,Pasta,Food,Food-Pasta,369.79,11,0.25,3050.77,PayPal,Cancelled,Charlie Lopez,West
+10166,2023-03-26,Tina White,tina.white@outlook.com,Sydney,USA,Dress,Clothing,Clothing-Dress,224.49,1,0.09,204.29,Debit Card,Shipped,Quinn Thompson,South
+10307,Jan 22 2024,Tina Perez,tina.perez@outlook.com,Sydney,France,Pillow,Home,Home-Pillow,345.3,10,0.05,3280.35,Debit Card,Delivered,Alice Moore,Central
+10001,2023-05-01,Uma Davis,uma.davis@company.com,San Antonio,United States,Headphones,Electronics,Electronics-Headphones,310.91,5,0.28,1119.28,Cash,Returned,Yara Anderson,West
+10272,2024-03-04,Diana Davis,diana.davis@yahoo.com,Dallas,united states,Tea,Food,Food-Tea,218.5,7,0.2,1223.6,Wire Transfer,Shipped,Alice Martinez,East
+10277,03/09/2024,Hank Martin,hank.martin@yahoo.com,Paris,India,Laptop,Electronics,Electronics-Laptop,237.1,13,0.21,2435.02,Credit Card,Delivered,Rose Johnson,North
+10083,19/05/2024,Karen Davis,karen.davis@outlook.com,Los Angeles,united states,Vase,Home,Home-Vase,337.27,18,0.05,5767.32,Wire Transfer,Shipped,Charlie Hernandez,Central
+10192,17/11/2023,Noah Jones,noah.jones@outlook.com,Los Angeles,India,Frame,Home,Home-Frame,183.49,9,0.08,1519.3,Debit Card,Processing,Xander Thomas,South
+10372,11/02/2023,Rose Perez,rose.perez@company.com,Los Angeles,USA,Jeans,Clothing,Clothing-Jeans,22.75,15,0.28,245.7,PayPal,Cancelled,Paul Anderson,West
+10115,Jan 05 2023,Diana White,diana.white@gmail.com,Paris,US,Jeans,Clothing,Clothing-Jeans,376.22,19,0.18,5861.51,Cash,Shipped,Noah Williams,South
+10440,06/11/2024,Yara Thomas,yara.thomas@outlook.com,New York,USA,Chocolate,Food,Food-Chocolate,297.22,11,0.25,2452.07,Wire Transfer,Processing,Tina Perez,North
+10341,05/04/2023,Karen Johnson,karen.johnson@company.com,London,France,T-Shirt,Clothing,Clothing-T-Shirt,401.77,2,0.18,658.9,PayPal,Shipped,Hank Harris,West
+10418,09/04/2023,Charlie Smith,charlie.smith@yahoo.com,Berlin,Japan,T-Shirt,Clothing,Clothing-T-Shirt,152.78,10,0.11,1359.74,Cash,Shipped,Paul Anderson,West
+10153,Dec 03 2024,Paul Rodriguez,paul.rodriguez@company.com,Chicago,Australia,Sneakers,Clothing,Clothing-Sneakers,317.19,17,0.07,5014.77,Debit Card,Returned,Quinn Lee,Central
+10321,06/06/2024,Charlie Martinez,charlie.martinez@gmail.com,Toronto,France,Pillow,Home,Home-Pillow,263.93,2,0.15,448.68,Wire Transfer,Delivered,Olivia Perez,Central
+10055,Apr 10 2024,Ivy Lopez,ivy.lopez@gmail.com,Mumbai,united states,Jeans,Clothing,Clothing-Jeans,$422.24,14,0.18,4847.32,Wire Transfer,Cancelled,Zane Rodriguez,East
+10260,Nov 04 2024,Zane Garcia,zane.garcia@gmail.com,Dallas,UK,Olive Oil,Food,Food-Olive Oil,13.87,1,0.21,10.96,Cash,Returned,Jack Martin,Central
+10092,2024-10-27,Leo Thompson,leo.thompson@company.com,Austin,United States,Smartphone,Electronics,Electronics-Smartphone,$60.4,7,0.19,342.47,Wire Transfer,Cancelled,Grace Williams,East
+10257,2024-02-06,Yara Anderson,yara.anderson@company.com,New York,United States,Pasta,Food,Food-Pasta,238.39,19,0.25,3397.06,PayPal,Delivered,Diana Lee,West
+10386,25/10/2024,Noah Thomas,noah.thomas@outlook.com,Los Angeles,India,Tea,Food,Food-Tea,358.57,14,0.08,4618.38,Wire Transfer,Delivered,Paul Martin,East
+10002,2024-04-24,Olivia Thompson,olivia.thompson@yahoo.com,Austin,India,Vase,Home,Home-Vase,119.89,11,0.21,1041.84,PayPal,Returned,Noah Perez,East
+10460,2023-11-07,Zane Thomas,zane.thomas@yahoo.com,San Antonio,USA,Tea,Food,Food-Tea,90.78,16,0.3,1016.74,Debit Card,Cancelled,Bob Smith,East
+10081,2023-12-30,Ivy Lopez,ivy.lopez@yahoo.com,Mumbai,USA,Vase,Home,Home-Vase,61.41,18,0.1,994.84,Cash,Processing,Eve Thompson,Central
+10223,2023-04-18,Tina Perez,tina.perez@gmail.com,Sydney,UK,Monitor,Electronics,Electronics-Monitor,306.78,4,,1227.12,Credit Card,Shipped,Leo Garcia,East
+10465,30/04/2024,Wendy Anderson,wendy.anderson@company.com,Houston,US,Pillow,Home,Home-Pillow,65.88,14,,922.32,PayPal,Cancelled,Frank Williams,East
+10058,29/11/2024,Leo Thompson,leo.thompson@outlook.com,San Diego,united states,Jeans,Clothing,Clothing-Jeans,401.88,14,0.15,4782.37,Credit Card,Returned,Eve Harris,North
+10489,Dec 31 2024,Wendy Taylor,wendy.taylor@gmail.com,London,France,Coffee,Food,Food-Coffee,$199.67,5,0.19,808.66,Cash,Processing,Noah Gonzalez,Central
+10329,26/10/2024,Jack White,jack.white@outlook.com,New York,France,Pasta,Food,Food-Pasta,323.72,20,0.21,5114.78,Debit Card,Processing,Charlie Johnson,Central
+10433,Jul 06 2024,Karen Gonzalez,karen.gonzalez@yahoo.com,Mumbai,Japan,T-Shirt,Clothing,Clothing-T-Shirt,258.28,11,0.01,2812.67,PayPal,Shipped,Yara Martinez,West
+10470,Aug 30 2023,Quinn Brown,quinn.brown@outlook.com,Dallas,Australia,Laptop,Electronics,Electronics-Laptop,379.5,15,0.14,4895.55,Cash,Cancelled,Wendy Lee,Central
+10431,2024-02-26,Tina Davis,tina.davis@outlook.com,Phoenix,Germany,Tablet,Electronics,Electronics-Tablet,260.64,12,0.13,2721.08,Credit Card,Delivered,Noah Jones,West
+10059,2024-03-02,Grace Anderson,,Mumbai,Canada,Clock,Home,Home-Clock,251.92,15,0.22,2947.46,Debit Card,Cancelled,Eve Thomas,West
+10369,2023-10-24,Eve Thompson,eve.thompson@gmail.com,San Antonio,USA,Hat,Clothing,Clothing-Hat,187.82,20,0.11,3343.2,Cash,Shipped,Diana Lopez,East
+10006,15/02/2023,Leo Martinez,leo.martinez@gmail.com,Phoenix,united states,Tablet,Electronics,Electronics-Tablet,445.08,-16,0.02,-6978.85,Wire Transfer,Cancelled,Jack Jackson,West
+10284,2024-02-01,Karen Gonzalez,karen.gonzalez@yahoo.com,Phoenix,India,Honey,Food,Food-Honey,227.29,11,0.19,2025.15,Wire Transfer,Processing,Rose Johnson,West
+10129,2024-06-18,Xander Rodriguez,xander.rodriguez@yahoo.com,New York,Japan,Keyboard,Electronics,Electronics-Keyboard,281.88,20,0.29,4002.7,Wire Transfer,Cancelled,Alice Brown,Central
+10271,04/07/2023,Frank Smith,frank.smith@yahoo.com,San Diego,India,Monitor,Electronics,Electronics-Monitor,305.39,2,0.1,549.7,Credit Card,Cancelled,Karen Gonzalez,East
+10240,2024-12-31,Charlie Brown,charlie.brown@yahoo.com,Austin,US,Smartphone,Electronics,Electronics-Smartphone,156.86,6,0.05,894.1,PayPal,Returned,Diana Hernandez,South
+10126,09/03/2023,Noah Hernandez,noah.hernandez@gmail.com,Los Angeles,United States,Olive Oil,Food,Food-Olive Oil,377.43,4,0.17,1253.07,Credit Card,Returned,Uma Davis,North
+10196,2023-06-22,Ivy Moore,ivy.moore@gmail.com,San Diego,France,Clock,Home,Home-Clock,206.34,17,0.11,3121.92,Cash,Returned,Rose Anderson,North
+10198,2023-10-16,Alice Anderson,alice.anderson@outlook.com,Philadelphia,united states,Clock,Home,Home-Clock,129.19,12,0.25,1162.71,Debit Card,Cancelled,Sam Williams,East
+10033,04/08/2023,Charlie Gonzalez,charlie.gonzalez@yahoo.com,Dallas,Germany,Frame,Home,Home-Frame,472.98,15,0.1,6385.23,Cash,Processing,Alice Thompson,South
+10306,Mar 31 2024,Uma Smith,uma.smith@gmail.com,New York,Canada,Pasta,Food,Food-Pasta,271.38,3,0.24,618.75,Credit Card,Processing,Mia Martin,East
+10490,Sep 20 2024,Mia Garcia,mia.garcia@gmail.com,Houston,Germany,Coffee,Food,Food-Coffee,$114.65,9,0.06,969.94,PayPal,Shipped,Hank Thomas,East
+10349,Sep 09 2024,Bob Rodriguez,bob.rodriguez@yahoo.com,New York,united states,Tablet,Electronics,Electronics-Tablet,286.71,18,0.2,4128.62,Debit Card,Delivered,Sam Jones,North
+10492,03/01/2023,Eve Rodriguez,eve.rodriguez@yahoo.com,Mumbai,Japan,Dress,Clothing,Clothing-Dress,16.44,18,0.26,218.98,Credit Card,Processing,Noah Wilson,East
+10463,2024-08-08,Diana Perez,diana.perez@company.com,Paris,USA,T-Shirt,Clothing,Clothing-T-Shirt,142.58,15,0.1,1924.83,Debit Card,Returned,Charlie Davis,South
+10079,2023-08-31,Frank Hernandez,frank.hernandez@gmail.com,New York,USA,Rug,Home,Home-Rug,127.34,11,0.16,1176.62,Cash,Cancelled,Olivia Harris,North
+10057,Apr 15 2023,Uma Anderson,uma.anderson@gmail.com,Los Angeles,Canada,Frame,Home,Home-Frame,37.19,15,0.13,485.33,Credit Card,Cancelled,Bob Martinez,West
+10025,27/01/2023,Mia Brown,mia.brown@company.com,San Diego,USA,Pasta,Food,Food-Pasta,234.78,20,0.28,3380.83,Cash,Processing,Sam Miller,North
+10047,11/05/2023,Diana Smith,diana.smith@gmail.com,San Antonio,France,Rug,Home,Home-Rug,213.4,15,0.01,3168.99,Cash,Returned,Quinn Lee,East
+10253,25/02/2023,Jack Jackson,jack.jackson@yahoo.com,Phoenix,Australia,Rug,Home,Home-Rug,485.28,5,0.25,1819.8,PayPal,Shipped,Grace Lee,South
+10261,2023-08-13,Zane Williams,zane.williams@company.com,Sydney,Australia,Clock,Home,Home-Clock,153.32,4,0.01,607.15,Debit Card,Shipped,Olivia Martin,South
+10071,22/08/2024,Hank Thomas,hank.thomas@outlook.com,Berlin,United States,Tablet,Electronics,Electronics-Tablet,9.9,18,0.06,167.51,Credit Card,Delivered,Grace Miller,East
+10497,24/04/2023,Frank Davis,frank.davis@yahoo.com,London,Germany,Jeans,Clothing,Clothing-Jeans,15.64,4,0.11,55.68,Debit Card,Processing,Olivia Davis,East
+10459,Feb 17 2023,Zane Lopez,zane.lopez@company.com,Chicago,United States,Jeans,Clothing,Clothing-Jeans,268.61,11,0.07,2747.88,Cash,Shipped,Rose Martinez,South
+10205,Oct 22 2024,Karen Davis,,Dallas,India,Dress,Clothing,Clothing-Dress,45.3,20,0.23,697.62,PayPal,Returned,Quinn Anderson,South
+10299,2024-08-08,Karen Thompson,karen.thompson@company.com,Toronto,Canada,Smartphone,Electronics,Electronics-Smartphone,113.67,8,0.27,663.83,PayPal,Processing,Rose Williams,South
+10220,03/07/2023,Yara Williams,yara.williams@outlook.com,San Diego,India,Vase,Home,Home-Vase,228.32,12,0.11,2438.46,Debit Card,Processing,Uma Williams,East
+10300,30/11/2024,Charlie Martinez,charlie.martinez@gmail.com,Dallas,UK,Laptop,Electronics,Electronics-Laptop,183.32,11,0.09,1835.03,Debit Card,Cancelled,Eve Harris,Central
+10383,2023-08-22,Ivy Smith,ivy.smith@outlook.com,Paris,Canada,Olive Oil,Food,Food-Olive Oil,$380.11,17,0.26,4781.78,Debit Card,Returned,Hank Taylor,Central
+10135,May 23 2023,Zane Moore,zane.moore@company.com,London,Australia,Sneakers,Clothing,Clothing-Sneakers,386.21,7,0.01,2676.44,Debit Card,Processing,Xander Smith,West
+10276,Dec 05 2023,Zane Perez,zane.perez@outlook.com,San Diego,Canada,Rug,Home,Home-Rug,295.54,2,0.29,419.67,Cash,Cancelled,Sam Gonzalez,West
+10072,Feb 02 2023,Grace Gonzalez,,Berlin,USA,Clock,Home,Home-Clock,481.16,10,0.17,3993.63,Cash,Returned,Alice Garcia,South
+10382,2023-04-24,Charlie Gonzalez,charlie.gonzalez@yahoo.com,Austin,UK,Coffee,Food,Food-Coffee,$187.48,11,0.05,1959.17,Cash,Returned,Paul White,North
+10127,2023-01-08,Mia Miller,mia.miller@yahoo.com,Austin,India,Hat,Clothing,Clothing-Hat,289.67,7,0.08,1865.47,Wire Transfer,Delivered,Mia Martin,South
+10072,2024-09-19,Quinn Hernandez,quinn.hernandez@company.com,Sydney,USA,Tablet,Electronics,Electronics-Tablet,324.92,12,0.09,3548.13,Wire Transfer,Shipped,Frank Martin,West
+10475,11/08/2023,Olivia Gonzalez,olivia.gonzalez@yahoo.com,Houston,USA,Jeans,Clothing,Clothing-Jeans,140.52,10,0.22,1096.06,Wire Transfer,Cancelled,Diana Lopez,North
+10074,2024-02-11,Yara Brown,yara.brown@outlook.com,Tokyo,Japan,Hat,Clothing,Clothing-Hat,$27.09,15,0.26,300.7,Credit Card,Processing,Diana Thompson,South
+10235,2023-04-13,Karen Perez,karen.perez@company.com,Sydney,United States,Tea,Food,Food-Tea,238.04,6,,1428.24,PayPal,Delivered,Rose White,West
+10330,Jun 19 2024,Frank Williams,frank.williams@gmail.com,Dallas,US,Jeans,Clothing,Clothing-Jeans,358.63,18,0.25,4841.51,Credit Card,Returned,Wendy Martinez,West
+10203,2024-11-16,Bob Martin,,Berlin,Germany,Pillow,Home,Home-Pillow,$103.99,1,0.06,97.75,Debit Card,Delivered,Zane Perez,South
+10256,19/04/2023,Xander Garcia,,Mumbai,US,Clock,Home,Home-Clock,315.26,18,0.07,5277.45,PayPal,Shipped,Alice Gonzalez,East
+10336,Dec 30 2024,Alice Gonzalez,alice.gonzalez@yahoo.com,Chicago,Japan,Lamp,Home,Home-Lamp,38.33,10,0.3,268.31,Cash,Shipped,Ivy Brown,Central
+10403,May 30 2024,Karen Lee,karen.lee@yahoo.com,London,US,Coffee,Food,Food-Coffee,170.88,19,0.22,2532.44,Credit Card,Shipped,Alice Martin,North
+10407,Mar 30 2024,Jack Davis,jack.davis@yahoo.com,Chicago,US,Chocolate,Food,Food-Chocolate,105.0,2,0.3,147.0,PayPal,Shipped,Ivy Hernandez,North
+10368,Jan 26 2024,Quinn Wilson,quinn.wilson@outlook.com,New York,US,Pillow,Home,Home-Pillow,106.88,8,0.07,795.19,PayPal,Shipped,Olivia Lee,North
+10291,2023-11-15,Charlie Thomas,,San Antonio,United States,Jeans,Clothing,Clothing-Jeans,50.42,7,0.22,275.29,Debit Card,Shipped,Noah Garcia,Central
+10109,09/06/2023,Hank Martinez,hank.martinez@company.com,San Antonio,united states,Tablet,Electronics,Electronics-Tablet,202.13,15,0.13,2637.8,Credit Card,Returned,Noah Williams,East
+10034,2023-07-14,Tina Moore,tina.moore@yahoo.com,Dallas,Japan,Chocolate,Food,Food-Chocolate,190.7,3,0.06,537.77,Credit Card,Cancelled,Xander White,East
+10138,22/03/2024,Paul Gonzalez,paul.gonzalez@company.com,Paris,Japan,Headphones,Electronics,Electronics-Headphones,443.07,4,0.06,1665.94,PayPal,Cancelled,Wendy Thomas,East
+10206,2023-09-18,Wendy Johnson,wendy.johnson@company.com,San Diego,USA,Frame,Home,Home-Frame,$354.75,5,0.2,1419.0,Cash,Cancelled,Victor Garcia,North
+10162,23/08/2024,Diana Harris,diana.harris@company.com,Berlin,UK,Sneakers,Clothing,Clothing-Sneakers,87.08,10,0.27,635.68,Wire Transfer,Delivered,Diana Lee,Central
+10017,Mar 02 2024,Yara Lopez,yara.lopez@outlook.com,San Antonio,Canada,Lamp,Home,Home-Lamp,493.58,1,0.13,429.41,PayPal,Returned,Frank Garcia,East
+10118,23/02/2024,Frank Thompson,frank.thompson@company.com,Philadelphia,UK,Olive Oil,Food,Food-Olive Oil,408.11,2,0.06,767.25,Cash,Delivered,Uma Garcia,North
+10029,2023-02-12,Jack Williams,jack.williams@outlook.com,Chicago,Germany,Pasta,Food,Food-Pasta,338.04,2,0.2,540.86,Debit Card,Cancelled,Zane Smith,West
+10398,Jan 23 2024,Tina Taylor,tina.taylor@outlook.com,Toronto,Australia,Chocolate,Food,Food-Chocolate,188.54,11,0.2,1659.15,Credit Card,Processing,Karen Brown,North
+10394,15/10/2024,Olivia Thompson,olivia.thompson@yahoo.com,New York,Japan,Jacket,Clothing,Clothing-Jacket,228.7,16,0.0,3659.2,Credit Card,Processing,Bob White,East
+10167,30/01/2024,Victor Anderson,victor.anderson@company.com,Berlin,UK,Vase,Home,Home-Vase,469.85,16,0.27,5487.85,Cash,Shipped,Wendy Jones,Central
+10351,Nov 06 2024,Sam Thompson,sam.thompson@yahoo.com,Toronto,Japan,Tea,Food,Food-Tea,448.72,16,0.06,6748.75,Credit Card,Delivered,Noah Thompson,North
+10328,Aug 12 2024,Frank Hernandez,frank.hernandez@outlook.com,San Diego,India,Keyboard,Electronics,Electronics-Keyboard,72.2,16,0.26,854.85,Credit Card,Processing,Mia Thompson,West
+10286,2024-01-12,Uma Lee,uma.lee@company.com,San Diego,USA,Lamp,Home,Home-Lamp,60.13,19,0.03,1108.2,PayPal,Returned,Sam White,North
+10353,16/04/2024,Jack Johnson,jack.johnson@yahoo.com,Berlin,Australia,Frame,Home,Home-Frame,467.29,20,0.0,9345.8,Debit Card,Processing,Hank Thomas,West
+10328,2023-12-08,Eve Martin,eve.martin@gmail.com,London,UK,Frame,Home,Home-Frame,289.12,7,0.11,1801.22,Debit Card,Shipped,Wendy White,North
+10139,Jun 24 2024,Yara Garcia,yara.garcia@company.com,Austin,France,Monitor,Electronics,Electronics-Monitor,199.18,16,0.12,2804.45,PayPal,Processing,Wendy Miller,Central
+10496,2024-10-28,Mia Brown,mia.brown@gmail.com,Austin,France,Sneakers,Clothing,Clothing-Sneakers,349.5,5,0.06,1642.65,PayPal,Cancelled,Diana Perez,South
+10237,2024-02-18,Mia Wilson,mia.wilson@yahoo.com,Los Angeles,united states,T-Shirt,Clothing,Clothing-T-Shirt,63.09,11,0.19,562.13,Credit Card,Delivered,Hank Gonzalez,West
+10448,May 15 2024,Jack Thompson,jack.thompson@yahoo.com,Berlin,UK,Honey,Food,Food-Honey,194.14,15,0.02,2853.86,Cash,Shipped,Alice Jackson,Central
+10126,Jul 23 2024,Sam Thomas,sam.thomas@gmail.com,Philadelphia,Canada,Clock,Home,Home-Clock,66.99,18,0.01,1193.76,Cash,Returned,Charlie Taylor,Central
+10472,Jul 31 2023,Rose Thompson,rose.thompson@gmail.com,San Antonio,UK,Hat,Clothing,Clothing-Hat,$349.13,15,0.04,5027.47,Debit Card,Delivered,Rose Rodriguez,North
+10274,12/12/2024,Charlie Brown,charlie.brown@outlook.com,Philadelphia,USA,Jacket,Clothing,Clothing-Jacket,27.85,10,0.17,231.16,Cash,Processing,Tina Moore,Central
+10088,2024-03-08,Grace Thompson,grace.thompson@gmail.com,San Diego,United States,Pillow,Home,Home-Pillow,478.92,7,0.22,2614.9,Cash,Processing,Ivy Gonzalez,South
+10441,Jun 07 2024,Mia Anderson,mia.anderson@outlook.com,Tokyo,France,T-Shirt,Clothing,Clothing-T-Shirt,316.64,7,0.19,1795.35,Debit Card,Returned,Eve Hernandez,West
+10312,2023-10-08,Mia Smith,mia.smith@yahoo.com,Chicago,USA,Coffee,Food,Food-Coffee,168.03,11,0.24,1404.73,Credit Card,Returned,Hank Gonzalez,North
+10037,Dec 20 2023,Zane Brown,zane.brown@outlook.com,Toronto,US,Clock,Home,Home-Clock,139.17,2,0.12,244.94,Cash,Cancelled,Tina Gonzalez,West
+10332,25/03/2024,Sam Jones,sam.jones@yahoo.com,Phoenix,US,Keyboard,Electronics,Electronics-Keyboard,321.4,8,0.14,2211.23,Wire Transfer,Cancelled,Jack Rodriguez,West
+10350,2024-08-12,Quinn Thompson,quinn.thompson@yahoo.com,Austin,UK,Vase,Home,Home-Vase,386.44,3,0.03,1124.54,Credit Card,Processing,Rose Thomas,North
+10380,Sep 08 2023,Noah Perez,noah.perez@yahoo.com,Toronto,UK,Coffee,Food,Food-Coffee,310.06,1,0.22,241.85,Cash,Cancelled,Bob Martin,West
+10137,2024-07-06,Frank Perez,frank.perez@yahoo.com,Philadelphia,United States,Lamp,Home,Home-Lamp,214.25,12,0.2,2056.8,PayPal,Processing,Paul Martinez,East
+10344,06/01/2023,Grace Smith,grace.smith@company.com,San Antonio,USA,Olive Oil,Food,Food-Olive Oil,424.93,1,0.11,378.19,Debit Card,Returned,Leo Smith,North
+10108,Jul 06 2023,Noah Thomas,noah.thomas@yahoo.com,Tokyo,united states,Smartphone,Electronics,Electronics-Smartphone,385.88,16,0.13,5371.45,PayPal,Delivered,Olivia Perez,West
+10182,23/07/2023,Frank Jones,frank.jones@company.com,New York,Germany,Smartphone,Electronics,Electronics-Smartphone,146.03,14,0.05,1942.2,PayPal,Delivered,Noah Thomas,Central
+10190,2023-08-31,Paul Perez,paul.perez@outlook.com,Berlin,Canada,T-Shirt,Clothing,Clothing-T-Shirt,479.05,5,0.23,1844.34,PayPal,Returned,Tina White,North
+10084,2024-03-15,Noah Thomas,noah.thomas@company.com,Chicago,Germany,Dress,Clothing,Clothing-Dress,258.06,4,0.07,959.98,Wire Transfer,Delivered,Wendy White,Central
+10187,25/01/2024,Tina Garcia,tina.garcia@yahoo.com,San Diego,united states,Tablet,Electronics,Electronics-Tablet,495.25,14,0.26,5130.79,Cash,Processing,Wendy Lee,South
+10428,2023-07-06,Hank Hernandez,hank.hernandez@gmail.com,Mumbai,USA,Lamp,Home,Home-Lamp,138.28,12,0.27,1211.33,Credit Card,Delivered,Victor White,East
+10326,Jan 05 2024,Grace Martinez,grace.martinez@gmail.com,Tokyo,united states,Rug,Home,Home-Rug,155.66,1,0.04,149.43,PayPal,Cancelled,Quinn Martin,East
+10233,Jul 13 2024,Hank Lee,hank.lee@company.com,Chicago,France,Laptop,Electronics,Electronics-Laptop,295.35,7,0.03,2005.43,PayPal,Processing,Xander Thomas,South
+10488,2024-05-30,Rose White,rose.white@yahoo.com,San Antonio,Japan,Rug,Home,Home-Rug,227.0,14,0.28,2288.16,Debit Card,Cancelled,Ivy Thompson,South
+10481,04/02/2024,Jack Johnson,jack.johnson@gmail.com,San Antonio,Canada,Honey,Food,Food-Honey,268.57,3,0.12,709.02,Cash,Processing,Grace Garcia,North
+10052,01/09/2023,Frank Jackson,frank.jackson@gmail.com,Mumbai,Japan,Pillow,Home,Home-Pillow,151.7,4,,606.8,Credit Card,Shipped,Ivy Jones,East
+10444,17/05/2023,Zane Johnson,zane.johnson@yahoo.com,San Antonio,USA,Frame,Home,Home-Frame,304.55,3,0.08,840.56,Cash,Processing,Karen Johnson,North
+10120,2024-03-28,Leo Davis,leo.davis@outlook.com,Philadelphia,USA,Keyboard,Electronics,Electronics-Keyboard,374.16,9,0.17,2794.98,PayPal,Processing,Grace Jackson,West
+10438,25/10/2024,Eve Anderson,eve.anderson@company.com,Paris,united states,Headphones,Electronics,Electronics-Headphones,94.85,6,0.22,443.9,Credit Card,Processing,Frank Garcia,West
+10467,Jan 14 2023,Victor Martin,victor.martin@yahoo.com,Chicago,India,Coffee,Food,Food-Coffee,363.53,1,0.01,359.89,Credit Card,Shipped,Hank Harris,North
+10149,2024-05-05,Ivy Jones,ivy.jones@gmail.com,New York,UK,Frame,Home,Home-Frame,47.06,19,0.09,813.67,Debit Card,Delivered,Rose Thompson,East
+10396,Aug 20 2023,Uma Moore,uma.moore@gmail.com,Houston,UK,Tea,Food,Food-Tea,5.6,8,0.2,35.84,Wire Transfer,Delivered,Paul Garcia,North
+10117,2024-09-06,Hank Brown,hank.brown@outlook.com,Paris,US,Tablet,Electronics,Electronics-Tablet,462.04,2,0.16,776.23,Wire Transfer,Shipped,Victor Perez,East
+10339,Apr 02 2024,Tina Martinez,tina.martinez@gmail.com,Dallas,Australia,Frame,Home,Home-Frame,400.35,5,0.04,1921.68,Wire Transfer,Delivered,Diana Jackson,West
+10024,2024-10-31,Xander Rodriguez,xander.rodriguez@outlook.com,Phoenix,united states,Rug,Home,Home-Rug,249.63,14,0.04,3355.03,Wire Transfer,Returned,Rose Thomas,Central
+10036,25/07/2024,Rose Thomas,rose.thomas@yahoo.com,Berlin,united states,Dress,Clothing,Clothing-Dress,48.19,7,,337.33,Debit Card,Delivered,Bob Lopez,East
+10361,10/03/2024,Yara Jones,yara.jones@yahoo.com,Tokyo,United States,Keyboard,Electronics,Electronics-Keyboard,73.21,5,,366.05,Credit Card,Delivered,Victor Jackson,North
+10099,Jun 24 2024,Paul Martin,paul.martin@gmail.com,Phoenix,UK,T-Shirt,Clothing,Clothing-T-Shirt,11.18,14,0.22,122.09,PayPal,Returned,Noah White,East
+10296,Sep 22 2023,Olivia Lee,olivia.lee@outlook.com,Houston,USA,Hat,Clothing,Clothing-Hat,84.37,14,0.17,980.38,Cash,Processing,Wendy Davis,West
+10186,03/05/2024,Frank Rodriguez,frank.rodriguez@company.com,Phoenix,Canada,Smartphone,Electronics,Electronics-Smartphone,199.18,18,0.21,2832.34,Wire Transfer,Returned,Frank Johnson,East
+10442,2023-11-13,Uma Wilson,uma.wilson@gmail.com,Houston,US,Smartphone,Electronics,Electronics-Smartphone,144.69,3,,434.07,Cash,Shipped,Uma Johnson,South
+10454,Feb 05 2024,Ivy Williams,ivy.williams@gmail.com,Toronto,US,Tablet,Electronics,Electronics-Tablet,9.2,10,0.09,83.72,PayPal,Shipped,Wendy Perez,North
+10317,2024-10-02,Karen Wilson,karen.wilson@gmail.com,Mumbai,France,Monitor,Electronics,Electronics-Monitor,399.05,2,0.14,686.37,Debit Card,Shipped,Zane Perez,South
+10322,Aug 02 2023,Yara Thompson,yara.thompson@outlook.com,Sydney,Australia,Rug,Home,Home-Rug,313.62,2,0.12,551.97,Cash,Delivered,Eve Jackson,West
+10425,28/12/2024,Diana Smith,diana.smith@outlook.com,Chicago,India,Pillow,Home,Home-Pillow,467.36,9,0.02,4122.12,PayPal,Returned,Ivy Harris,West
+10151,18/11/2023,Uma Jones,uma.jones@company.com,Los Angeles,Japan,Pasta,Food,Food-Pasta,429.22,5,0.19,1738.34,Credit Card,Returned,Quinn Anderson,East
+10283,2024-11-16,Victor Johnson,victor.johnson@gmail.com,San Diego,USA,T-Shirt,Clothing,Clothing-T-Shirt,148.88,13,0.26,1432.23,PayPal,Returned,Olivia Lee,Central
+10041,13/10/2023,Olivia Brown,olivia.brown@gmail.com,Berlin,Germany,Chocolate,Food,Food-Chocolate,36.91,20,0.14,634.85,Credit Card,Cancelled,Eve Thomas,South
+10194,2024-10-12,Uma Miller,uma.miller@gmail.com,Berlin,US,Pasta,Food,Food-Pasta,110.64,1,0.08,101.79,Credit Card,Shipped,Charlie Rodriguez,West
+10064,05/03/2024,Charlie Martinez,charlie.martinez@company.com,Tokyo,Japan,T-Shirt,Clothing,Clothing-T-Shirt,50.76,11,0.06,524.86,Wire Transfer,Cancelled,Wendy Garcia,West
+10275,26/05/2024,Leo Thompson,leo.thompson@gmail.com,San Antonio,United States,Frame,Home,Home-Frame,493.25,11,0.28,3906.54,Credit Card,Returned,Ivy Taylor,North
+10236,Nov 26 2024,Olivia Jones,olivia.jones@gmail.com,Los Angeles,United States,Honey,Food,Food-Honey,275.31,13,0.06,3364.29,Credit Card,Processing,Leo Smith,East
+10374,30/06/2023,Jack Taylor,jack.taylor@gmail.com,Toronto,India,Pasta,Food,Food-Pasta,179.11,14,0.03,2432.31,Wire Transfer,Processing,Frank Moore,Central
+10023,2024-07-11,Frank Moore,frank.moore@outlook.com,Tokyo,UK,Laptop,Electronics,Electronics-Laptop,$49.37,14,0.19,559.86,Wire Transfer,Cancelled,Sam Johnson,East
+10414,2024-02-10,Noah Miller,noah.miller@company.com,Berlin,united states,Tablet,Electronics,Electronics-Tablet,483.97,14,0.24,5149.44,PayPal,Shipped,Quinn Martinez,East
+10136,08/08/2024,Victor Rodriguez,victor.rodriguez@company.com,San Diego,united states,Laptop,Electronics,Electronics-Laptop,17.99,17,0.1,275.25,Debit Card,Cancelled,Mia Miller,Central
+10310,May 02 2023,Uma Gonzalez,uma.gonzalez@company.com,Phoenix,Canada,Sneakers,Clothing,Clothing-Sneakers,452.56,14,0.04,6082.41,Cash,Returned,Yara Lee,East
+10177,2024-01-27,Rose Garcia,rose.garcia@yahoo.com,Chicago,united states,Keyboard,Electronics,Electronics-Keyboard,386.17,20,0.02,7568.93,Debit Card,Returned,Uma Lee,East
+10434,2023-04-16,Frank Davis,frank.davis@yahoo.com,Austin,United States,Chocolate,Food,Food-Chocolate,331.33,5,0.17,1375.02,Wire Transfer,Cancelled,Diana Brown,South
+10184,04/12/2024,Jack Rodriguez,jack.rodriguez@gmail.com,Chicago,Australia,Sneakers,Clothing,Clothing-Sneakers,54.83,14,0.02,752.27,Wire Transfer,Processing,Uma Anderson,South
+10050,Jun 18 2024,Frank Martinez,,Philadelphia,USA,Tablet,Electronics,Electronics-Tablet,496.9,20,,9938.0,PayPal,Delivered,Grace Martin,North
+10195,Dec 23 2023,Rose Smith,rose.smith@yahoo.com,San Antonio,UK,T-Shirt,Clothing,Clothing-T-Shirt,167.13,5,0.29,593.31,Cash,Processing,Olivia White,West
+10048,19/03/2024,Noah Taylor,noah.taylor@yahoo.com,Dallas,US,Coffee,Food,Food-Coffee,293.91,10,0.22,2292.5,Wire Transfer,Cancelled,Xander Rodriguez,East
+10053,Oct 22 2024,Tina Brown,tina.brown@company.com,San Antonio,Australia,Headphones,Electronics,Electronics-Headphones,$87.79,17,0.18,1223.79,PayPal,Returned,Alice Brown,South
+10173,2023-12-03,Zane Hernandez,zane.hernandez@yahoo.com,Paris,United States,Rug,Home,Home-Rug,76.79,1,,76.79,Wire Transfer,Cancelled,Zane Hernandez,South
+10391,20/05/2024,Rose Williams,rose.williams@yahoo.com,Mumbai,US,Monitor,Electronics,Electronics-Monitor,446.87,14,0.06,5880.81,Credit Card,Processing,Noah Brown,North
+10111,2024-02-17,Olivia Garcia,olivia.garcia@company.com,San Diego,Japan,Keyboard,Electronics,Electronics-Keyboard,392.74,1,0.25,294.56,Cash,Cancelled,Bob Hernandez,North
+10080,May 20 2024,Charlie Thomas,charlie.thomas@company.com,Austin,US,Coffee,Food,Food-Coffee,280.44,20,0.3,3926.16,Credit Card,Processing,Tina Brown,North
+10498,2024-12-05,Hank Johnson,hank.johnson@yahoo.com,Houston,Canada,Jeans,Clothing,Clothing-Jeans,48.57,12,0.0,582.84,PayPal,Delivered,Diana Johnson,East
+10175,Apr 02 2024,Charlie Rodriguez,charlie.rodriguez@company.com,Dallas,France,Coffee,Food,Food-Coffee,67.51,19,0.12,1128.77,Credit Card,Cancelled,Quinn Davis,Central
+10217,Oct 24 2024,Paul Perez,paul.perez@outlook.com,London,India,T-Shirt,Clothing,Clothing-T-Shirt,135.59,3,0.07,378.3,Debit Card,Delivered,Charlie Thomas,North
+10358,Apr 09 2024,Grace Smith,grace.smith@company.com,Berlin,USA,Pillow,Home,Home-Pillow,407.93,17,0.09,6310.68,Debit Card,Cancelled,Diana Jones,South
+10082,2023-04-23,Leo Gonzalez,leo.gonzalez@yahoo.com,Berlin,US,Tea,Food,Food-Tea,344.7,19,0.26,4846.48,Credit Card,Returned,Frank Rodriguez,North
+10413,2023-04-11,Paul Perez,paul.perez@outlook.com,Dallas,USA,Vase,Home,Home-Vase,109.97,14,0.08,1416.41,Wire Transfer,Returned,Grace Martinez,South
+10389,2023-10-10,Mia Garcia,mia.garcia@company.com,Mumbai,USA,T-Shirt,Clothing,Clothing-T-Shirt,113.69,2,0.16,191.0,Cash,Returned,Mia Gonzalez,North
+10004,May 03 2024,Hank White,hank.white@outlook.com,Toronto,United States,Frame,Home,Home-Frame,147.56,1,0.21,116.57,PayPal,Shipped,Frank Hernandez,North
+10446,27/12/2023,Frank Garcia,frank.garcia@company.com,Phoenix,India,Chocolate,Food,Food-Chocolate,15.31,3,0.0,45.93,Cash,Delivered,Paul Davis,West
+10415,Sep 21 2023,Diana Johnson,diana.johnson@outlook.com,San Diego,France,T-Shirt,Clothing,Clothing-T-Shirt,54.5,11,0.3,419.65,Wire Transfer,Processing,Leo Anderson,North
+10143,Aug 14 2024,Leo Martinez,leo.martinez@company.com,Houston,USA,Sneakers,Clothing,Clothing-Sneakers,428.85,5,,2144.25,Wire Transfer,Processing,Grace White,North
+10302,Feb 12 2023,Grace Gonzalez,grace.gonzalez@outlook.com,Sydney,France,Frame,Home,Home-Frame,177.68,19,0.09,3072.09,Cash,Processing,Tina Brown,West
+10230,07/11/2023,Zane Anderson,zane.anderson@outlook.com,Austin,USA,Honey,Food,Food-Honey,77.83,17,0.2,1058.49,PayPal,Delivered,Zane Martinez,North
