@@ -1,0 +1,67 @@
+{
+  "per_dataset_accuracy": {
+    "dataset1_retail_sales": {
+      "llama_only": 0.9333333333333332,
+      "llama_fewshot": 0.5833333333333334,
+      "routed": 1.0
+    },
+    "dataset2_hospital_records": {
+      "llama_only": 0.6,
+      "llama_fewshot": 1.0,
+      "routed": 1.0
+    },
+    "dataset3_supplier_invoices": {
+      "llama_only": 0.9166666666666666,
+      "llama_fewshot": 1.0,
+      "routed": 1.0
+    },
+    "dataset4_ecommerce_events": {
+      "llama_only": 0.9333333333333332,
+      "llama_fewshot": 1.0,
+      "routed": 1.0
+    }
+  },
+  "routing_distribution": {
+    "dataset1_retail_sales": {
+      "llama_only": 1,
+      "llama_fallback": 0,
+      "claude_only": 0
+    },
+    "dataset2_hospital_records": {
+      "llama_only": 0,
+      "llama_fallback": 1,
+      "claude_only": 0
+    },
+    "dataset3_supplier_invoices": {
+      "llama_only": 1,
+      "llama_fallback": 0,
+      "claude_only": 0
+    },
+    "dataset4_ecommerce_events": {
+      "llama_only": 0,
+      "llama_fallback": 1,
+      "claude_only": 0
+    }
+  },
+  "avg_confidence_per_dataset": {
+    "dataset1_retail_sales": 0.907114643270187,
+    "dataset2_hospital_records": 0.9109263001285112,
+    "dataset3_supplier_invoices": 0.7720992428798762,
+    "dataset4_ecommerce_events": 0.9404567638615373
+  },
+  "avg_latency_llama_ms": 1050.3386448460965,
+  "avg_latency_claude_ms": 5098.809746063926,
+  "all_confidence_scores": [
+    0.907114643270187,
+    0.9109263001285112,
+    0.7720992428798762,
+    0.9404567638615373
+  ],
+  "all_accuracy_scores": [
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "confidence_calibration_r": NaN
+}

@@ -16,7 +16,6 @@ import {
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
   SparklesIcon,
-  SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { toggleSidebar, toggleSidebarCollapsed } from '../../store/uiSlice';
 import { logout } from '../../store/authSlice';

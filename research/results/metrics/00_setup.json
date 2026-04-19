@@ -1,0 +1,29 @@
+{
+  "python_version": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+  "datasets": {
+    "dataset1_retail_sales": {
+      "rows": 500,
+      "columns": 17,
+      "missing_pct": 0.005764705882352942,
+      "difficulty": "easy"
+    },
+    "dataset2_hospital_records": {
+      "rows": 300,
+      "columns": 18,
+      "missing_pct": 0.007962962962962962,
+      "difficulty": "medium"
+    },
+    "dataset3_supplier_invoices": {
+      "rows": 200,
+      "columns": 18,
+      "missing_pct": 0.003333333333333333,
+      "difficulty": "medium_hard"
+    },
+    "dataset4_ecommerce_events": {
+      "rows": 800,
+      "columns": 21,
+      "missing_pct": 0.342202380952381,
+      "difficulty": "hard"
+    }
+  }
+}

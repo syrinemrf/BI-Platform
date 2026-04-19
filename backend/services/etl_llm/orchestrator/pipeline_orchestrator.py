@@ -156,8 +156,9 @@ class ETLPipelineOrchestrator:
                 ),
             )
         except Exception as e:
-            result.errors.append(f"Cleaning failed: {e}")
-            return result
+            logger.warning(f"Cleaning step failed ({e}) — continuing with uncleaned data")
+            result.errors.append(f"Cleaning failed (non-blocking): {e}")
+            result.cleaning_confidence = 0.0
 
         # ── Layer 4: HITL ────────────────────────────────────────
         assessment = self.validator.assess_confidence(

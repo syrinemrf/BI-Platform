@@ -132,8 +132,55 @@ Respond ONLY with valid JSON:
             text = text[start:end]
         return json.loads(text), 0.95
 
+    def _heuristic_fallback_plan(self, schema: SchemaContext) -> CleaningPlan:
+        """Generate basic cleaning rules from schema stats without LLM.
+
+        Used as fallback when Ollama times out and no Anthropic key is set.
+        Covers the most common cases: null imputation, duplicate removal,
+        and basic numeric outlier handling.
+        """
+        rules: list[CleaningRule] = []
+        for col in schema.columns:
+            # Fill nulls for columns with > 5% missing
+            if col.null_pct > 0.05:
+                method = "median" if col.is_candidate_measure else "mode"
+                rules.append(CleaningRule(
+                    column=col.name,
+                    rule_type="fill_null",
+                    params={"method": method},
+                    priority=1,
+                    justification=f"null_pct={col.null_pct:.1%} exceeds threshold",
+                ))
+            # Normalize text columns
+            if col.dtype == "object" and not col.is_candidate_key:
+                rules.append(CleaningRule(
+                    column=col.name,
+                    rule_type="normalize_text",
+                    params={},
+                    priority=3,
+                    justification="text column normalization",
+                ))
+        # Always add duplicate removal
+        rules.append(CleaningRule(
+            column="__all__",
+            rule_type="remove_duplicates",
+            params={},
+            priority=2,
+            justification="heuristic fallback: remove exact duplicates",
+        ))
+        improvement = min(0.05 + 0.02 * len([r for r in rules if r.rule_type == "fill_null"]), 0.3)
+        return CleaningPlan(
+            rules=rules,
+            estimated_quality_improvement=improvement,
+            confidence=0.6,
+            model_used="heuristic_fallback",
+        )
+
     def generate_cleaning_plan(self, schema: SchemaContext) -> CleaningPlan:
-        """Generate a cleaning plan with confidence-gated routing."""
+        """Generate a cleaning plan with confidence-gated routing.
+
+        Falls back to a heuristic plan if LLM is unavailable/times out.
+        """
         prompt = self._build_prompt(schema)
 
         model_used = "llama3:8b"
@@ -141,12 +188,17 @@ Respond ONLY with valid JSON:
             parsed, confidence = self._call_llama(prompt)
             if confidence < CONFIDENCE_THRESHOLD:
                 raise ValueError("Low confidence")
-        except Exception:
+        except Exception as e:
             if self._anthropic_key:
-                parsed, confidence = self._call_claude(prompt)
-                model_used = "claude-3-5-sonnet"
+                try:
+                    parsed, confidence = self._call_claude(prompt)
+                    model_used = "claude-3-5-sonnet"
+                except Exception:
+                    logger.warning("Claude also failed — using heuristic fallback")
+                    return self._heuristic_fallback_plan(schema)
             else:
-                raise
+                logger.warning(f"LLM unavailable ({e}) — using heuristic fallback cleaning plan")
+                return self._heuristic_fallback_plan(schema)
 
         rules = [
             CleaningRule(**r) for r in parsed.get("rules", [])

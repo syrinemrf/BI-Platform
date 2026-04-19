@@ -86,4 +86,19 @@ class MultiSourceIngester:
                 rec["line_items_count"] = len(rec["line_items.item"])
                 rec.pop("line_items.item")
             records.append(rec)
-        return pd.DataFrame(records)
+        df = pd.DataFrame(records)
+        # Coerce string columns that look fully numeric (e.g. totals stored as text in XML)
+        for col in df.columns:
+            if df[col].dtype == object:
+                non_null = df[col].dropna()
+                if len(non_null) == 0:
+                    continue
+                converted = pd.to_numeric(non_null, errors="coerce")
+                if converted.notna().all():
+                    df[col] = pd.to_numeric(df[col], errors="coerce")
+        # Derive payment_delay_days from payment date vs issue date
+        if "payment.paid_on" in df.columns and "issued_on" in df.columns:
+            issued = pd.to_datetime(df["issued_on"], errors="coerce")
+            paid = pd.to_datetime(df["payment.paid_on"], errors="coerce")
+            df["payment_delay_days"] = (paid - issued).dt.days
+        return df

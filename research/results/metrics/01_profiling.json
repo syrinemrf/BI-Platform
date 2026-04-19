@@ -1,0 +1,29 @@
+{
+  "classification_accuracy_per_dataset": {
+    "dataset1_retail_sales": 0.6,
+    "dataset2_hospital_records": 0.75,
+    "dataset3_supplier_invoices": 1.0,
+    "dataset4_ecommerce_events": 1.0
+  },
+  "avg_profiling_time_ms": 22.39949498907663,
+  "profiling_performance": {
+    "dataset1_retail_sales": {
+      "mean_ms": 16.8980399845168,
+      "rows": 500
+    },
+    "dataset2_hospital_records": {
+      "mean_ms": 21.060379990376532,
+      "rows": 300
+    },
+    "dataset3_supplier_invoices": {
+      "mean_ms": 20.787159982137382,
+      "rows": 200
+    },
+    "dataset4_ecommerce_events": {
+      "mean_ms": 30.852399999275804,
+      "rows": 800
+    }
+  },
+  "fingerprint_determinism": true,
+  "drift_detection_works": true
+}

@@ -91,7 +91,11 @@ class SchemaProfiler:
             series = df[col_name]
             dtype_str = str(series.dtype)
             null_pct = float(series.isna().mean())
-            unique_count = int(series.nunique())
+            # Guard against unhashable types (list/dict) from JSON flattening
+            try:
+                unique_count = int(series.nunique())
+            except TypeError:
+                unique_count = int(series.dropna().astype(str).nunique())
             samples = series.dropna().head(5).astype(str).tolist()
 
             cp = ColumnProfile(
@@ -168,7 +172,11 @@ class SchemaProfiler:
     def _is_key(series: pd.Series, n_rows: int, col_name: str) -> bool:
         col_lower = col_name.lower()
         if "id" in col_lower or "code" in col_lower:
-            if series.nunique() > 0.9 * n_rows:
+            try:
+                uniq = series.nunique()
+            except TypeError:
+                uniq = series.dropna().astype(str).nunique()
+            if uniq > 0.9 * n_rows:
                 return True
         return False
 
@@ -180,8 +188,11 @@ class SchemaProfiler:
             if any(kw in col_lower for kw in measure_kw):
                 return True
             # High cardinality numeric → likely measure
-            if series.nunique() > 20:
-                return True
+            try:
+                if series.nunique() > 20:
+                    return True
+            except TypeError:
+                pass
         return False
 
     def _is_dimension(self, series: pd.Series, dtype_str: str,
