@@ -1,0 +1,38 @@
+# Research environment requirements
+# Install: pip install -r requirements_research.txt
+
+# Core data processing
+pandas>=2.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# LLM clients
+requests>=2.31.0
+anthropic>=0.18.0
+
+# Vector search / RAG
+faiss-cpu>=1.7.4
+sentence-transformers>=2.2.2
+
+# XML processing
+lxml>=4.9.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Schema validation
+pydantic>=2.0.0
+
+# Jupyter
+jupyter>=1.0.0
+ipykernel>=6.0.0
+ipywidgets>=8.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.65.0
