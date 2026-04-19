@@ -3,6 +3,7 @@
 from .ingestion import MultiSourceIngester
 from .profiler import SchemaProfiler
 from .llm_client import LLMClient, MockLLMClient
+from .rag import RAGSchemaStore
 from .schema_mapper import SchemaMapper
 from .cleaning_agent import CleaningAgent
 from .code_generator import ETLCodeGenerator
@@ -15,6 +16,7 @@ __all__ = [
     "SchemaProfiler",
     "LLMClient",
     "MockLLMClient",
+    "RAGSchemaStore",
     "SchemaMapper",
     "CleaningAgent",
     "ETLCodeGenerator",

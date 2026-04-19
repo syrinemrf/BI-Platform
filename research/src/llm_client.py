@@ -1,7 +1,17 @@
 """
 LLM Client with Confidence-Gated Routing (Innovation #1).
-Supports Ollama (LLaMA 3 8B) and Anthropic (Claude 3.5 Sonnet).
-Falls back to MockLLMClient when services are unavailable.
+
+Supported backends (in routing priority order):
+  1. Ollama / LLaMA 3 8B  — local, free, no key needed
+  2. Google Gemini Flash   — free tier (1 500 req/day), set GOOGLE_API_KEY
+  3. Anthropic Claude      — paid, set ANTHROPIC_API_KEY
+
+Routing logic (route()):
+  - Try LLaMA first.
+  - If confidence < threshold → fallback to Gemini (preferred) or Claude.
+  - If both cloud calls fail → return best-effort LLaMA result.
+
+Falls back to MockLLMClient when all real services are unavailable.
 """
 import json
 import logging
@@ -32,10 +42,12 @@ class LLMClient:
         self,
         ollama_url: str = "http://localhost:11434",
         anthropic_key: str = None,
+        google_key: str = None,
         confidence_threshold: float = 0.75,
     ):
         self.ollama_url = ollama_url.rstrip("/")
         self.anthropic_key = anthropic_key or os.getenv("ANTHROPIC_API_KEY", "")
+        self.google_key = google_key or os.getenv("GOOGLE_API_KEY", "")
         self.confidence_threshold = confidence_threshold
         self._routing_log: list[dict] = []
 
@@ -120,15 +132,71 @@ class LLMClient:
             logger.warning("Claude call failed: %s", e)
             return {}, 0.0, latency_ms
 
+    def call_gemini(self, prompt: str) -> Tuple[dict, float, float]:
+        """Call Google Gemini Flash (free tier).
+
+        Requires ``google-generativeai`` package and a ``GOOGLE_API_KEY``.
+        Get a free key at https://aistudio.google.com
+
+        Returns (response_dict, confidence, latency_ms).
+        """
+        if not self.google_key:
+            logger.warning("No GOOGLE_API_KEY set, Gemini unavailable")
+            return {}, 0.0, 0.0
+
+        start = time.perf_counter()
+        try:
+            import google.generativeai as genai
+
+            genai.configure(api_key=self.google_key)
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            response = model.generate_content(
+                prompt,
+                generation_config=genai.GenerationConfig(
+                    response_mime_type="application/json",
+                    max_output_tokens=4096,
+                    temperature=0.2,
+                ),
+            )
+            latency_ms = (time.perf_counter() - start) * 1000
+            raw = response.text
+            try:
+                parsed = json.loads(raw)
+            except json.JSONDecodeError:
+                start_idx = raw.find("{")
+                end_idx = raw.rfind("}") + 1
+                if start_idx >= 0 and end_idx > start_idx:
+                    parsed = json.loads(raw[start_idx:end_idx])
+                else:
+                    parsed = {"raw_response": raw}
+            return parsed, 0.93, latency_ms
+
+        except Exception as e:
+            latency_ms = (time.perf_counter() - start) * 1000
+            logger.warning("Gemini call failed: %s", e)
+            return {}, 0.0, latency_ms
+
+    def _call_cloud(self, prompt: str) -> Tuple[dict, float, float]:
+        """Try Gemini first (free), then Claude as second fallback."""
+        if self.google_key:
+            resp, conf, lat = self.call_gemini(prompt)
+            if resp:
+                return resp, conf, lat
+        if self.anthropic_key:
+            return self.call_claude(prompt)
+        return {}, 0.0, 0.0
+
     def route(
         self, prompt: str, schema_complexity: str = "medium"
     ) -> LLMResponse:
         """
         Confidence-Gated Routing (Innovation #1).
 
-        1. Try LLaMA first
-        2. If confidence < threshold OR parse error → fallback to Claude
-        3. Log routing decision with reason
+        1. Try LLaMA first.
+        2. If confidence < threshold OR parse error →
+           fallback to Gemini (free) or Claude (paid).
+        3. If both cloud calls fail → return best-effort LLaMA result.
+        4. Every decision is logged in routing_log for analysis.
         """
         # Step 1: Try LLaMA
         llama_resp, llama_conf, llama_lat = self.call_llama(prompt)
@@ -150,25 +218,26 @@ class LLMClient:
                 model_used="llama3",
             )
 
-        # Step 2: Fallback to Claude
+        # Step 2: Fallback to cloud (Gemini preferred, Claude alternative)
         reason = "parse_error" if not llama_resp else f"low_confidence ({llama_conf:.2f})"
-        claude_resp, claude_conf, claude_lat = self.call_claude(prompt)
+        cloud_resp, cloud_conf, cloud_lat = self._call_cloud(prompt)
+        cloud_model = "gemini" if self.google_key else "claude"
 
-        if claude_resp:
+        if cloud_resp:
             entry = {
-                "model_used": "claude",
-                "confidence": claude_conf,
-                "latency_ms": claude_lat,
+                "model_used": cloud_model,
+                "confidence": cloud_conf,
+                "latency_ms": cloud_lat,
                 "fallback": True,
                 "reason": reason,
                 "schema_complexity": schema_complexity,
             }
             self._routing_log.append(entry)
             return LLMResponse(
-                response=claude_resp,
-                confidence=claude_conf,
-                latency_ms=llama_lat + claude_lat,
-                model_used="claude",
+                response=cloud_resp,
+                confidence=cloud_conf,
+                latency_ms=llama_lat + cloud_lat,
+                model_used=cloud_model,
                 fallback_reason=reason,
             )
 
@@ -224,6 +293,17 @@ class MockLLMClient:
         confidence = random.uniform(0.85, 0.98)
         response = self._generate_mock_response(prompt, "claude", confidence)
         return response, confidence, latency
+
+    def call_gemini(self, prompt: str) -> Tuple[dict, float, float]:
+        """Simulate Gemini Flash response with high confidence."""
+        latency = random.uniform(500, 2500)
+        confidence = random.uniform(0.88, 0.97)
+        response = self._generate_mock_response(prompt, "gemini", confidence)
+        return response, confidence, latency
+
+    def _call_cloud(self, prompt: str) -> Tuple[dict, float, float]:
+        """Mock cloud fallback — uses Gemini simulation."""
+        return self.call_gemini(prompt)
 
     def route(
         self, prompt: str, schema_complexity: str = "medium"

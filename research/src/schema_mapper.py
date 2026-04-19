@@ -9,6 +9,7 @@ from typing import Optional
 
 from .llm_client import LLMClient, MockLLMClient, LLMResponse
 from .profiler import SchemaContext
+from .rag import RAGSchemaStore
 
 
 @dataclass
@@ -97,27 +98,63 @@ Respond ONLY with valid JSON in this exact format:
   "reasoning": "Step-by-step reasoning..."
 }}"""
 
-    def __init__(self, llm_client=None):
+    def __init__(self, llm_client=None, rag_store: Optional[RAGSchemaStore] = None):
         self.llm_client = llm_client
+        self.rag_store = rag_store  # RAGSchemaStore for adaptive few-shot retrieval
 
     def build_prompt(
         self, schema_ctx: SchemaContext, k_shots: int = 0
     ) -> str:
-        """Build the mapping prompt with optional few-shot examples."""
+        """Build the mapping prompt with optional few-shot examples.
+
+        Priority order for few-shot examples:
+          1. RAG-retrieved approved mappings (if ``rag_store`` set and non-empty)
+          2. Static fallback examples from ``FEW_SHOT_EXAMPLES``
+        """
         few_shot_section = ""
         if k_shots > 0:
-            examples = FEW_SHOT_EXAMPLES[:k_shots]
-            lines = ["Here are examples of correct mappings:", ""]
-            for i, ex in enumerate(examples, 1):
-                lines.append(f"Example {i}:")
-                lines.append(f"  Schema: {ex['schema']}")
-                lines.append(f"  Mapping: {json.dumps(ex['mapping'])}")
-                lines.append("")
-            few_shot_section = "\n".join(lines)
+            # Try RAG store first
+            if self.rag_store is not None and self.rag_store.size > 0:
+                similar = self.rag_store.retrieve(schema_ctx, k=k_shots)
+                few_shot_section = self.rag_store.build_few_shot_prompt(similar)
+            else:
+                # Fallback to static examples
+                examples = FEW_SHOT_EXAMPLES[:k_shots]
+                lines = ["Here are examples of correct mappings:", ""]
+                for i, ex in enumerate(examples, 1):
+                    lines.append(f"Example {i}:")
+                    lines.append(f"  Schema: {ex['schema']}")
+                    lines.append(f"  Mapping: {json.dumps(ex['mapping'])}")
+                    lines.append("")
+                few_shot_section = "\n".join(lines)
 
         return self.PROMPT_TEMPLATE.format(
             few_shot_section=few_shot_section,
             schema_context=schema_ctx.to_prompt_string(),
+        )
+
+    def store_approved_mapping(
+        self,
+        schema_ctx: SchemaContext,
+        result: "MappingResult",
+        approved_by_human: bool = False,
+    ) -> None:
+        """Persist an approved mapping into the RAG store.
+
+        Call this after HITL validation to grow the adaptive memory.
+        Does nothing if no ``rag_store`` was configured.
+        """
+        if self.rag_store is None:
+            return
+        self.rag_store.add(
+            source_name=result.dataset_name,
+            schema=schema_ctx,
+            mapping={
+                "fact_table": result.fact_table,
+                "dimensions": result.dimensions,
+                "measures": result.measures,
+            },
+            approved_by_human=approved_by_human,
         )
 
     def map_schema(
