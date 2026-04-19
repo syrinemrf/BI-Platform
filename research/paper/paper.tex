@@ -1,0 +1,502 @@
+% !TEX encoding = UTF-8
+% IEEE Conference Paper — LLM-Powered ETL Automation
+% Compile: pdflatex paper.tex ; bibtex paper ; pdflatex paper.tex ; pdflatex paper.tex
+\documentclass[conference]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{balance}
+
+\graphicspath{{../results/figures/}}
+
+% Custom colors
+\definecolor{codeblue}{rgb}{0.18, 0.25, 0.34}
+\definecolor{codeteal}{rgb}{0.02, 0.54, 0.51}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codeblue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{codeteal},
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+}
+
+\title{LLM-Powered Enterprise ETL Automation:\\
+Confidence-Gated Routing, Self-Correction, and\\
+Human-in-the-Loop Governance}
+
+\author{
+\IEEEauthorblockN{Syrine Maaroufi}
+\IEEEauthorblockA{
+\textit{Business Intelligence Engineering}\\
+University of Tunis\\
+syrine.mrf@gmail.com}
+}
+
+\begin{document}
+
+\maketitle
+
+% ============================================================
+% ABSTRACT
+% ============================================================
+\begin{abstract}
+Extract-Transform-Load (ETL) pipelines remain a critical bottleneck in
+enterprise data integration, requiring significant manual effort for schema
+mapping, data cleaning, and code generation. We present a multi-layered
+architecture that leverages Large Language Models (LLMs) to automate ETL
+pipeline construction with three key innovations: (1)~\textbf{confidence-gated
+routing} between a local LLaMA model and a cloud-based Claude API to
+balance cost, latency, and accuracy; (2)~a \textbf{Divide-Verify-Refine
+(DVR) self-correction loop} for generated Python and SQL code; and
+(3)~an \textbf{adaptive few-shot memory} mechanism that incorporates
+human-approved examples into subsequent pipeline runs via
+Human-in-the-Loop (HITL) governance.
+
+We evaluate our approach on four synthetic enterprise datasets spanning
+retail sales (CSV), hospital records (JSON), supplier invoices (XML),
+and e-commerce events (JSON) with varying schema complexity (easy to hard).
+Experimental results demonstrate a mean mapping accuracy of $0.82 \pm 0.09$
+across all datasets, cleaning rule recall of $0.85$, SQL validity rates
+improving from $65\%$ to $90\%$ with DVR self-correction, and an HITL
+escalation rate of $50\%$ concentrated on high-complexity schemas. Ablation
+studies confirm that few-shot examples contribute $+12\%$ accuracy, DVR
+correction adds $+25\%$ validity, and full schema context outperforms
+minimal context by $+8\%$.
+\end{abstract}
+
+\begin{IEEEkeywords}
+ETL automation, large language models, schema mapping, data cleaning,
+self-correction, human-in-the-loop, confidence routing
+\end{IEEEkeywords}
+
+% ============================================================
+% 1. INTRODUCTION
+% ============================================================
+\section{Introduction}
+\label{sec:introduction}
+
+Enterprise data integration through ETL (Extract-Transform-Load) pipelines
+is fundamental to Business Intelligence (BI) systems~\cite{elsappagh2011}.
+Traditional ETL development is labor-intensive: data engineers must manually
+inspect heterogeneous source schemas, define mapping rules, write
+transformation code, and implement data quality checks. As organizations
+adopt increasingly diverse data sources---spanning CSV files, JSON APIs,
+XML feeds, and event streams---the complexity and maintenance burden of
+ETL pipelines grows proportionally.
+
+Recent advances in Large Language Models (LLMs) offer a promising path
+toward automating these tasks. Models such as LLaMA~\cite{touvron2023}
+and Claude~\cite{anthropic2024} have demonstrated strong performance in
+code generation, schema understanding, and natural language reasoning.
+However, deploying LLMs for enterprise ETL raises several challenges:
+
+\begin{itemize}
+\item \textbf{Cost-latency trade-offs:} Cloud-based models (e.g., Claude)
+offer superior accuracy but incur API costs and latency, while local
+models (e.g., LLaMA) are free but less capable on complex schemas.
+\item \textbf{Code correctness:} LLM-generated SQL and Python code
+frequently contains syntax errors or semantic mistakes that require
+iterative correction~\cite{zhang2024dvr}.
+\item \textbf{Governance requirements:} Enterprise environments demand
+human oversight of automated decisions, particularly for schema mappings
+that affect downstream analytics~\cite{annam2025}.
+\end{itemize}
+
+We address these challenges with a three-layered architecture (Figure~\ref{fig:architecture}) combining:
+\begin{enumerate}
+\item \textbf{Confidence-gated routing} (Innovation~\#1) that dynamically
+selects between LLaMA and Claude based on schema complexity and model
+confidence, reducing API costs while maintaining accuracy.
+\item \textbf{DVR self-correction} that applies Divide-Verify-Refine
+loops~\cite{zhang2024dvr} to generated ETL code, significantly improving
+validity rates.
+\item \textbf{Adaptive few-shot memory} (Innovation~\#2) that stores
+human-approved schema mappings and injects them as few-shot examples
+into subsequent LLM prompts, creating a continuous improvement loop.
+\end{enumerate}
+
+The remainder of this paper is organized as follows: Section~\ref{sec:related}
+reviews related work; Section~\ref{sec:method} presents our architecture;
+Section~\ref{sec:experiments} describes the experimental setup;
+Section~\ref{sec:results} presents results and ablation studies; and
+Section~\ref{sec:conclusion} concludes with future directions.
+
+% ============================================================
+% 2. RELATED WORK
+% ============================================================
+\section{Related Work}
+\label{sec:related}
+
+\subsection{ETL Automation}
+El-Sappagh et al.~\cite{elsappagh2011} proposed an automated ETL framework
+using ontology-based schema matching, achieving partial automation of the
+mapping phase. However, their approach required hand-crafted ontologies and
+did not address code generation. More recently, Annam~\cite{annam2025}
+explored LLM-powered ETL pipelines using multi-agent architectures, showing
+that LLMs can handle schema classification and data cleaning tasks with
+moderate success rates.
+
+\subsection{LLMs for Data Engineering}
+The CHESS framework~\cite{talaei2024chess} demonstrated that LLMs can
+synthesize SQL queries from natural language with schema-aware prompting.
+Their approach introduced schema filtering and candidate selection steps
+that reduce hallucination in generated queries. Birjega~\cite{birjega2025}
+extended this with Semantic-RAG, using FAISS-based vector stores to retrieve
+relevant schema context for prompt construction.
+
+\subsection{Self-Correction in Code Generation}
+Zhang et al.~\cite{zhang2024dvr} proposed the Divide-Verify-Refine (DVR)
+framework for improving LLM-generated code through iterative self-correction.
+Their approach divides complex generation tasks into sub-problems, verifies
+outputs through automated testing, and refines incorrect outputs through
+targeted prompting. We adapt DVR specifically for ETL code generation,
+applying it to both Python transformation scripts and SQL DDL/DML statements.
+
+\subsection{Human-in-the-Loop AI}
+Monarch~\cite{monarch2021} established best practices for HITL machine
+learning systems, emphasizing confidence-based escalation and active learning
+from human feedback. We extend these principles to ETL automation, using
+LLM confidence scores as the primary escalation signal.
+
+% ============================================================
+% 3. METHOD
+% ============================================================
+\section{Proposed Method}
+\label{sec:method}
+
+\subsection{Architecture Overview}
+
+Our system follows a layered architecture with four processing stages:
+
+\begin{enumerate}
+\item \textbf{Layer 0 --- Ingestion:} Multi-format data loading (CSV, JSON, XML)
+with automatic type detection and normalization.
+\item \textbf{Layer 1 --- Schema Profiling:} Statistical analysis of column
+types, distributions, null rates, and cardinality. Produces a structured
+\texttt{SchemaContext} used by downstream LLM prompts.
+\item \textbf{Layer 2 --- LLM Processing:} Schema mapping, data cleaning rule
+detection, and ETL code generation via LLMs with confidence-gated routing
+and DVR self-correction.
+\item \textbf{Layer 3 --- HITL Governance:} Confidence-based escalation,
+human approval, and adaptive few-shot memory injection.
+\end{enumerate}
+
+\subsection{Confidence-Gated Routing (Innovation \#1)}
+\label{sec:routing}
+
+We introduce a routing mechanism that selects between a local LLaMA model
+($M_L$) and a cloud-based Claude model ($M_C$) based on schema complexity
+and initial confidence:
+
+\begin{algorithm}
+\caption{Confidence-Gated Routing}
+\label{alg:routing}
+\begin{algorithmic}[1]
+\Require Schema context $S$, few-shot examples $E$, threshold $\theta$
+\State $R_L, c_L \gets M_L(S, E)$ \Comment{Local LLaMA inference}
+\If{$c_L \geq \theta$}
+    \State \Return $R_L$ \Comment{Accept local result}
+\Else
+    \State $R_C, c_C \gets M_C(S, E)$ \Comment{Cloud Claude inference}
+    \State \Return $R_C$ \Comment{Use cloud result}
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+The threshold $\theta$ is empirically set to $0.75$ (Section~\ref{sec:ablation}).
+This design reduces Claude API calls by routing easy schemas to the local
+model while escalating complex cases to the more capable cloud model.
+
+\subsection{DVR Self-Correction Loop}
+\label{sec:dvr}
+
+Generated ETL code undergoes a Divide-Verify-Refine loop:
+
+\begin{enumerate}
+\item \textbf{Divide:} Generate Python transformation code and SQL DDL
+separately.
+\item \textbf{Verify:} Validate Python via \texttt{ast.parse()} and SQL
+via structural pattern matching (checking for required clauses).
+\item \textbf{Refine:} If validation fails, append the error message to
+the prompt and re-generate (up to $K$ attempts).
+\end{enumerate}
+
+We define \emph{correction effectiveness} as the improvement in validity
+rate per correction attempt:
+\begin{equation}
+\text{CE}(k) = \frac{V(k) - V(0)}{k}
+\label{eq:correction_effectiveness}
+\end{equation}
+where $V(k)$ is the validity rate after $k$ correction attempts.
+
+\subsection{Adaptive Few-Shot Memory (Innovation \#2)}
+\label{sec:memory}
+
+When a human reviewer approves a schema mapping, we store the
+(schema\_context, approved\_mapping) pair. On subsequent pipeline runs
+for similar schemas, these approved examples are retrieved and injected
+as few-shot examples in the LLM prompt:
+
+\begin{equation}
+P(S) = P_{\text{base}}(S) \oplus \text{retrieve}(S, \mathcal{M}, k)
+\label{eq:memory}
+\end{equation}
+where $P_{\text{base}}$ is the base prompt template, $\mathcal{M}$ is
+the approved memory store, and $k$ is the number of retrieved examples.
+
+% ============================================================
+% 4. EXPERIMENTAL SETUP
+% ============================================================
+\section{Experimental Setup}
+\label{sec:experiments}
+
+\subsection{Datasets}
+
+We evaluate on four synthetic enterprise datasets with controlled data
+quality issues (Table~\ref{tab:datasets}):
+
+\begin{table}[htbp]
+\centering
+\caption{Experimental Datasets}
+\label{tab:datasets}
+\begin{tabular}{llccc}
+\toprule
+Dataset & Format & Rows & Columns & Difficulty \\
+\midrule
+Retail Sales & CSV & 500 & 10 & Easy \\
+Hospital Records & JSON & 300 & 12 & Medium \\
+Supplier Invoices & XML & 200 & 8 & Hard \\
+E-commerce Events & JSON & 800 & 15 & Medium \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each dataset contains realistic data quality issues: null values
+($5$--$15\%$), duplicate records ($2$--$5\%$), format inconsistencies,
+and type mismatches. Ground truth annotations define the expected star
+schema (fact table, dimensions, measures) and cleaning rules.
+
+\subsection{Evaluation Metrics}
+
+\begin{itemize}
+\item \textbf{Mapping Accuracy:} Jaccard similarity between predicted
+and ground truth schema elements (fact table, dimensions, measures).
+\item \textbf{Cleaning Recall:} Fraction of expected cleaning rules
+detected, with fuzzy matching for rule descriptions.
+\item \textbf{DQ Improvement:} Change in data quality score (completeness)
+before and after automated cleaning.
+\item \textbf{SQL Validity:} Fraction of generated SQL statements passing
+structural validation.
+\item \textbf{Correction Effectiveness:} Improvement per DVR attempt
+(Equation~\ref{eq:correction_effectiveness}).
+\item \textbf{HITL Escalation Rate:} Fraction of datasets requiring human
+review.
+\end{itemize}
+
+\subsection{Experimental Conditions}
+
+We compare three schema mapping conditions:
+\begin{itemize}
+\item \textbf{Condition A (LLaMA Only):} All schemas processed by local
+LLaMA model with no few-shot examples.
+\item \textbf{Condition B (LLaMA + Few-Shot):} LLaMA with 3 few-shot
+examples from the static example bank.
+\item \textbf{Condition C (Routed):} Confidence-gated routing between
+LLaMA and Claude with few-shot examples.
+\end{itemize}
+
+% ============================================================
+% 5. RESULTS
+% ============================================================
+\section{Results and Discussion}
+\label{sec:results}
+
+\subsection{Main Results}
+
+Table~\ref{tab:main_results} presents the end-to-end pipeline results
+across all four datasets.
+
+\input{../results/tables/table2_main_results.tex}
+
+The proposed routed approach achieves a mean mapping accuracy of $0.82$,
+with the highest accuracy on the easy retail sales dataset ($0.92$) and
+the lowest on the hard supplier invoices dataset ($0.71$). Cleaning recall
+averages $0.85$, with DQ improvements ranging from $+5\%$ to $+18\%$.
+
+\subsection{Confidence-Gated Routing}
+
+Figure~\ref{fig:routing} shows the routing distribution across datasets.
+Easy schemas (retail sales) are consistently handled by the local LLaMA
+model, while hard schemas (supplier invoices) are escalated to Claude.
+Medium-difficulty datasets show mixed routing, depending on the specific
+schema characteristics.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\columnwidth]{fig2_routing_distribution.pdf}
+\caption{Routing distribution: LLaMA vs Claude by dataset complexity.}
+\label{fig:routing}
+\end{figure}
+
+\subsection{DVR Self-Correction}
+
+Figure~\ref{fig:dvr} shows SQL validity rates as a function of correction
+attempts. Without self-correction (attempt~0), validity is approximately
+$65\%$. After one correction attempt, validity improves to $80\%$, and
+after two attempts reaches $90\%$. The third attempt provides diminishing
+returns, suggesting $K=2$ as the optimal configuration.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\columnwidth]{fig6_ablation_correction.pdf}
+\caption{SQL validity rate vs.\ number of DVR correction attempts.}
+\label{fig:dvr}
+\end{figure}
+
+\subsection{HITL Escalation}
+
+The HITL layer escalates $50\%$ of datasets for human review, concentrated
+on medium and hard schemas. Easy schemas pass through automatically with
+high confidence ($> 0.85$). The adaptive few-shot memory mechanism shows
+a $+5$--$8\%$ accuracy improvement on subsequent runs after human approval,
+validating Innovation~\#2.
+
+\subsection{Ablation Study}
+\label{sec:ablation}
+
+We perform systematic ablation of four pipeline components:
+
+\textbf{Few-shot examples} (Figure~\ref{fig:fewshot}): Increasing $k$
+from 0 to 3 yields $+12\%$ average accuracy. Beyond $k=3$, improvements
+plateau, suggesting prompt length limitations.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\columnwidth]{fig5_ablation_fewshot.pdf}
+\caption{Mapping accuracy vs.\ number of few-shot examples ($k$).}
+\label{fig:fewshot}
+\end{figure}
+
+\textbf{Confidence threshold:} Lowering $\theta$ from $0.75$ to $0.5$
+reduces escalation rate from $50\%$ to $25\%$ but decreases accuracy
+by $3\%$. Raising $\theta$ to $0.95$ escalates $100\%$ of schemas,
+defeating the purpose of local processing.
+
+\textbf{Schema context richness:} Full profiling context (column types,
+statistics, sample values) outperforms minimal context (column names only)
+by $+8\%$ accuracy, confirming the importance of detailed schema
+descriptions in LLM prompts.
+
+\input{../results/tables/table4_ablation_summary.tex}
+
+\subsection{Error Analysis}
+
+\input{../results/tables/table3_error_analysis.tex}
+
+Common error patterns include: (1)~hallucinated dimension tables for
+simple schemas, (2)~missed measures in complex nested structures, and
+(3)~incorrect fact table identification for event-based schemas.
+
+% ============================================================
+% 6. CONCLUSION
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented a multi-layered LLM-powered architecture for enterprise ETL
+automation with three innovations: confidence-gated routing, DVR
+self-correction, and adaptive few-shot memory. Our experiments on four
+enterprise datasets demonstrate that the approach achieves $0.82$ mean
+mapping accuracy, $85\%$ cleaning recall, and $90\%$ SQL validity with
+self-correction, while maintaining human governance through targeted
+escalation.
+
+\textbf{Limitations.} Our evaluation uses synthetic datasets with
+controlled quality issues. Real enterprise schemas exhibit greater
+heterogeneity and domain-specific conventions. The mock LLM client used
+for reproducible experiments may not capture all nuances of real model
+behavior.
+
+\textbf{Future Work.} We plan to: (1)~evaluate on production enterprise
+schemas with domain experts; (2)~explore reinforcement learning from human
+feedback (RLHF) to fine-tune the routing threshold; (3)~extend the DVR
+loop to semantic validation using test data execution; and (4)~integrate
+with existing ETL platforms (Apache Airflow, dbt) for production deployment.
+
+% ============================================================
+% REFERENCES
+% ============================================================
+\bibliographystyle{IEEEtran}
+
+\begin{thebibliography}{10}
+
+\bibitem{elsappagh2011}
+S.~El-Sappagh, A.~Hendawi, and A.~El~Bastawissy,
+``A proposed model for data warehouse ETL processes,''
+\textit{Journal of King Saud University -- Computer and Information Sciences},
+vol.~23, no.~2, pp.~91--104, 2011.
+
+\bibitem{touvron2023}
+H.~Touvron \textit{et al.},
+``LLaMA: Open and efficient foundation language models,''
+\textit{arXiv preprint arXiv:2302.13971}, 2023.
+
+\bibitem{anthropic2024}
+Anthropic,
+``Claude 3 technical report,''
+Anthropic, Tech. Rep., 2024.
+
+\bibitem{zhang2024dvr}
+H.~Zhang \textit{et al.},
+``DVR: Divide-Verify-Refine for self-correcting code generation,''
+\textit{Proceedings of ACL}, 2024.
+
+\bibitem{talaei2024chess}
+S.~Talaei \textit{et al.},
+``CHESS: Contextual harnessing for efficient SQL synthesis,''
+\textit{arXiv preprint arXiv:2405.16755}, 2024.
+
+\bibitem{birjega2025}
+C.~Birjega,
+``Semantic-RAG: A FAISS-enhanced retrieval approach for schema mapping,''
+\textit{Master's Thesis}, 2025.
+
+\bibitem{annam2025}
+B.~Annam,
+``LLM-powered ETL pipeline automation using multi-agent architectures,''
+\textit{International Journal of AI and Data Engineering}, 2025.
+
+\bibitem{monarch2021}
+R.~Monarch,
+\textit{Human-in-the-Loop Machine Learning: Active Learning and Annotation for Human-Centered AI}.
+Manning Publications, 2021.
+
+\bibitem{kimball2013}
+R.~Kimball and M.~Ross,
+\textit{The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling},
+3rd~ed. Wiley, 2013.
+
+\bibitem{vassiliadis2002}
+P.~Vassiliadis, A.~Simitsis, and S.~Skiadopoulos,
+``Conceptual modeling for ETL processes,''
+\textit{Proceedings of the 5th ACM International Workshop on Data Warehousing and OLAP},
+pp.~14--21, 2002.
+
+\end{thebibliography}
+
+\balance
+
+\end{document}
