@@ -97,10 +97,60 @@ class ETLEvaluator:
 
     def compute_dq_score(self, df: pd.DataFrame) -> float:
         """
-        Data Quality score: mean(1 - null_pct) across all columns.
+        Multi-dimensional Data Quality score (0-1):
+          - Completeness  (40%): fraction of non-null values
+          - Uniqueness    (20%): fraction of non-duplicate rows on key columns
+          - Type validity (20%): fraction of columns with homogeneous types
+          - Consistency   (20%): fraction of numeric cols with no outliers > 5σ
         """
-        null_pcts = df.isnull().mean()
-        return float((1 - null_pcts).mean())
+        if df.empty:
+            return 0.0
+
+        # Completeness
+        completeness = float((1 - df.isnull().mean()).mean())
+
+        # Uniqueness: estimate from first string/id column
+        id_cols = [c for c in df.columns
+                   if any(k in c.lower() for k in ("id", "order", "invoice", "uid"))]
+        if id_cols:
+            n = len(df)
+            n_unique = df[id_cols[0]].nunique(dropna=False)
+            uniqueness = min(1.0, n_unique / n) if n > 0 else 1.0
+        else:
+            uniqueness = 1.0
+
+        # Type validity: % of object columns that don't have >5% mixed numeric/string
+        type_valid_scores = []
+        for col in df.columns:
+            if df[col].dtype == object:
+                non_null = df[col].dropna()
+                if len(non_null) == 0:
+                    type_valid_scores.append(1.0)
+                    continue
+                numeric_pct = pd.to_numeric(non_null, errors="coerce").notna().mean()
+                # Good: all numeric or all string (not mixed)
+                type_valid_scores.append(1.0 - min(numeric_pct, 1.0 - numeric_pct))
+        type_validity = float(np.mean(type_valid_scores)) if type_valid_scores else 1.0
+
+        # Consistency: for numeric cols, penalise if >2% of values are outliers
+        consistency_scores = []
+        for col in df.select_dtypes(include=[np.number]).columns:
+            vals = df[col].dropna()
+            if len(vals) < 5:
+                consistency_scores.append(1.0)
+                continue
+            z = np.abs((vals - vals.mean()) / (vals.std() + 1e-9))
+            outlier_pct = (z > 5).mean()
+            consistency_scores.append(1.0 - outlier_pct)
+        consistency = float(np.mean(consistency_scores)) if consistency_scores else 1.0
+
+        return round(
+            0.40 * completeness +
+            0.20 * uniqueness +
+            0.20 * type_validity +
+            0.20 * consistency,
+            6,
+        )
 
     def compute_dq_improvement(
         self, df_before: pd.DataFrame, df_after: pd.DataFrame

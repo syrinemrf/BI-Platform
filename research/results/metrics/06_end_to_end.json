@@ -9,12 +9,12 @@
       "latency_ms": 6284.388206181387,
       "fallback_reason": "low_confidence (0.56)",
       "cleaning_recall": 1.0,
-      "dq_improvement": -0.036166036594217355,
+      "dq_improvement": 0.00795191713860155,
       "sql_valid": true,
       "python_valid": true,
       "correction_attempts": 0,
       "requires_human_review": true,
-      "total_time_ms": 97.1120999311097
+      "total_time_ms": 351.47170000709593
     },
     {
       "dataset_name": "dataset2_hospital_records",
@@ -25,12 +25,12 @@
       "latency_ms": 3061.4856601670244,
       "fallback_reason": "low_confidence (0.52)",
       "cleaning_recall": 1.0,
-      "dq_improvement": 0.004293447825275187,
+      "dq_improvement": 0.0017094445809904268,
       "sql_valid": true,
       "python_valid": true,
       "correction_attempts": 0,
       "requires_human_review": true,
-      "total_time_ms": 38.353499898221344
+      "total_time_ms": 33.77009998075664
     },
     {
       "dataset_name": "dataset3_supplier_invoices",
@@ -41,12 +41,12 @@
       "latency_ms": 5271.62381250419,
       "fallback_reason": "low_confidence (0.30)",
       "cleaning_recall": 1.0,
-      "dq_improvement": -0.03355215171407744,
+      "dq_improvement": 0.004922206275353558,
       "sql_valid": true,
       "python_valid": true,
       "correction_attempts": 0,
       "requires_human_review": true,
-      "total_time_ms": 36.06050001690164
+      "total_time_ms": 36.465999961365014
     },
     {
       "dataset_name": "dataset4_ecommerce_events",
@@ -57,50 +57,50 @@
       "latency_ms": 4625.81713881774,
       "fallback_reason": "low_confidence (0.67)",
       "cleaning_recall": 1.0,
-      "dq_improvement": 0.009229933942629609,
+      "dq_improvement": 0.009884617657658579,
       "sql_valid": true,
       "python_valid": true,
       "correction_attempts": 0,
       "requires_human_review": true,
-      "total_time_ms": 70.40590012911707
+      "total_time_ms": 79.3650999548845
     }
   ],
   "timing_data": {
     "dataset1_retail_sales": {
-      "ingest": 0.001500011421740055,
-      "profile": 56.60720000742003,
-      "mapping": 0.27600000612437725,
-      "cleaning_detect": 0.1762000028975308,
-      "cleaning_apply": 39.10549997817725,
-      "code_gen": 0.9210999705828726,
-      "hitl": 0.02459995448589325
+      "ingest": 0.001900014467537403,
+      "profile": 238.823699997738,
+      "mapping": 0.4181000404059887,
+      "cleaning_detect": 0.06369996117427945,
+      "cleaning_apply": 110.74249999364838,
+      "code_gen": 1.4010000159032643,
+      "hitl": 0.020799983758479357
     },
     "dataset2_hospital_records": {
-      "ingest": 0.000400003045797348,
-      "profile": 30.485800001770258,
-      "mapping": 0.4013999714516103,
-      "cleaning_detect": 0.172399973962456,
-      "cleaning_apply": 6.203100027050823,
-      "code_gen": 1.0665999725461006,
-      "hitl": 0.023799948394298553
+      "ingest": 0.000300002284348011,
+      "profile": 29.136699973605573,
+      "mapping": 0.21379999816417694,
+      "cleaning_detect": 0.02500001573935151,
+      "cleaning_apply": 2.8669000021182,
+      "code_gen": 1.49639998562634,
+      "hitl": 0.031000003218650818
     },
     "dataset3_supplier_invoices": {
-      "ingest": 0.001100008375942707,
-      "profile": 24.125399999320507,
-      "mapping": 0.24589995155110955,
-      "cleaning_detect": 0.11080002877861261,
-      "cleaning_apply": 10.910900018643588,
-      "code_gen": 0.652400020044297,
-      "hitl": 0.013999990187585354
+      "ingest": 0.000400003045797348,
+      "profile": 27.109800023026764,
+      "mapping": 0.22309995256364346,
+      "cleaning_detect": 0.02269999822601676,
+      "cleaning_apply": 8.32959997933358,
+      "code_gen": 0.7637999951839447,
+      "hitl": 0.016600009985268116
     },
     "dataset4_ecommerce_events": {
-      "ingest": 0.000400003045797348,
-      "profile": 62.18469998566434,
-      "mapping": 0.33170002279803157,
-      "cleaning_detect": 0.13620004756376147,
-      "cleaning_apply": 6.588399992324412,
-      "code_gen": 1.1422000243328512,
-      "hitl": 0.022300053387880325
+      "ingest": 0.000300002284348011,
+      "profile": 42.000999965239316,
+      "mapping": 0.2367999986745417,
+      "cleaning_detect": 0.030099996365606785,
+      "cleaning_apply": 36.37240000534803,
+      "code_gen": 0.7088999846018851,
+      "hitl": 0.015600002370774746
     }
   },
   "baselines": {
@@ -117,10 +117,10 @@
       "dataset4_ecommerce_events": 0.5833333333333334
     },
     "Claude Only": {
-      "dataset1_retail_sales": 1.0,
-      "dataset2_hospital_records": 1.0,
-      "dataset3_supplier_invoices": 1.0,
-      "dataset4_ecommerce_events": 1.0
+      "dataset1_retail_sales": 0.16666666666666666,
+      "dataset2_hospital_records": 0.16666666666666666,
+      "dataset3_supplier_invoices": 0.16666666666666666,
+      "dataset4_ecommerce_events": 0.16666666666666666
     },
     "Proposed": {
       "dataset1_retail_sales": 1.0,
@@ -131,7 +131,7 @@
   },
   "overall_mapping_accuracy": 1.0,
   "overall_cleaning_recall": 1.0,
-  "overall_dq_improvement": -0.0140487016350975,
+  "overall_dq_improvement": 0.006117046413151028,
   "routing_distribution": {
     "llama": 0,
     "claude": 4,

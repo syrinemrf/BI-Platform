@@ -56,9 +56,23 @@ class LLMClient:
         return self._routing_log
 
     def is_ollama_available(self) -> bool:
+        """Check if Ollama is available AND can actually run inference."""
         try:
             r = httpx.get(f"{self.ollama_url}/api/tags", timeout=3.0)
-            return r.status_code == 200
+            if r.status_code != 200:
+                return False
+            # Test actual inference with a tiny prompt
+            probe = httpx.post(
+                f"{self.ollama_url}/api/generate",
+                json={
+                    "model": "llama3:8b",
+                    "prompt": "ping",
+                    "stream": False,
+                    "options": {"num_ctx": 128, "num_gpu": 99},
+                },
+                timeout=60.0,
+            )
+            return probe.status_code == 200
         except Exception:
             return False
 
@@ -71,6 +85,12 @@ class LLMClient:
             "model": "llama3:8b",
             "prompt": prompt,
             "stream": False,
+            # Memory-efficient options: max GPU offload + minimal KV cache
+            "options": {
+                "num_ctx": 512,
+                "num_gpu": 99,
+                "num_thread": 4,
+            },
         }
         if expect_json:
             body["format"] = "json"
@@ -79,7 +99,7 @@ class LLMClient:
             r = httpx.post(
                 f"{self.ollama_url}/api/generate",
                 json=body,
-                timeout=120.0,
+                timeout=180.0,
             )
             r.raise_for_status()
             latency_ms = (time.perf_counter() - start) * 1000

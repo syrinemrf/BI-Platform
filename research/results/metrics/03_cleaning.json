@@ -6,22 +6,22 @@
     "dataset4_ecommerce_events": 1.0
   },
   "dq_score_before": {
-    "dataset1_retail_sales": 0.9942352941176471,
-    "dataset2_hospital_records": 0.9920370370370372,
-    "dataset3_supplier_invoices": 0.9621052631578948,
-    "dataset4_ecommerce_events": 0.6577976190476189
+    "dataset1_retail_sales": 0.990956,
+    "dataset2_hospital_records": 0.996815,
+    "dataset3_supplier_invoices": 0.979642,
+    "dataset4_ecommerce_events": 0.862957
   },
   "dq_score_after": {
-    "dataset1_retail_sales": 0.9582777440873258,
-    "dataset2_hospital_records": 0.9962962962962963,
-    "dataset3_supplier_invoices": 0.9298245614035087,
-    "dataset4_ecommerce_events": 0.6638690476190475
+    "dataset1_retail_sales": 0.998836,
+    "dataset2_hospital_records": 0.998519,
+    "dataset3_supplier_invoices": 0.984464,
+    "dataset4_ecommerce_events": 0.871487
   },
   "dq_improvement_pct": {
-    "dataset1_retail_sales": -3.6166036594217355,
-    "dataset2_hospital_records": 0.42934478252751873,
-    "dataset3_supplier_invoices": -3.355215171407744,
-    "dataset4_ecommerce_events": 0.9229933942629609
+    "dataset1_retail_sales": 0.795191713860155,
+    "dataset2_hospital_records": 0.17094445809904268,
+    "dataset3_supplier_invoices": 0.4922206275353558,
+    "dataset4_ecommerce_events": 0.9884617657658579
   },
   "rules_detected": {
     "dataset1_retail_sales": [
@@ -33,14 +33,14 @@
       "drop_duplicates:order_id"
     ],
     "dataset2_hospital_records": [
-      "normalize_text:patient.gender",
+      "normalize_text:patient_gender",
       "fill_null:discharge_date",
-      "fix_inconsistency:treatment.total_cost"
+      "fix_inconsistency:treatment_total_cost"
     ],
     "dataset3_supplier_invoices": [
       "normalize_text:status",
-      "fix_vat_computation:totals.total_ttc",
-      "standardize_date_format:payment.paid_on",
+      "fix_vat_computation:totals_total_ttc",
+      "standardize_date_format:payment_paid_on",
       "drop_duplicates:invoice_id"
     ],
     "dataset4_ecommerce_events": [

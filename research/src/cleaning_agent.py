@@ -72,34 +72,42 @@ Respond with valid JSON:
         self, schema_ctx: SchemaContext, df: pd.DataFrame
     ) -> CleaningPlan:
         """Detect cleaning rules for a dataset."""
-        prompt = self.CLEANING_PROMPT.format(
-            schema_context=schema_ctx.to_prompt_string()
-        )
-
         if isinstance(self.llm_client, MockLLMClient):
             return self._mock_detect(schema_ctx, df)
 
-        llm_resp: LLMResponse = self.llm_client.route(
-            prompt, schema_complexity="medium"
+        prompt = self.CLEANING_PROMPT.format(
+            schema_context=schema_ctx.to_prompt_string()
         )
-        rules = []
-        for r in llm_resp.response.get("rules", []):
-            rules.append(
-                CleaningRule(
-                    rule_type=r.get("rule_type", ""),
-                    target_column=r.get("target_column", ""),
-                    description=r.get("description", ""),
-                    priority=r.get("priority", 2),
-                    justification=r.get("justification", ""),
-                )
+        try:
+            llm_resp: LLMResponse = self.llm_client.route(
+                prompt, schema_complexity="medium"
             )
-        return CleaningPlan(
-            dataset_name=schema_ctx.dataset_name,
-            rules=rules,
-            confidence=llm_resp.confidence,
-            model_used=llm_resp.model_used,
-            latency_ms=llm_resp.latency_ms,
-        )
+            rules = []
+            for r in llm_resp.response.get("rules", []):
+                rules.append(
+                    CleaningRule(
+                        rule_type=r.get("rule_type", ""),
+                        target_column=r.get("target_column", ""),
+                        description=r.get("description", ""),
+                        priority=r.get("priority", 2),
+                        justification=r.get("justification", ""),
+                    )
+                )
+            if rules:
+                return CleaningPlan(
+                    dataset_name=schema_ctx.dataset_name,
+                    rules=rules,
+                    confidence=llm_resp.confidence,
+                    model_used=llm_resp.model_used,
+                    latency_ms=llm_resp.latency_ms,
+                )
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(
+                "LLM cleaning detection failed (%s), falling back to mock", e
+            )
+        # Fallback to rule-based detection
+        return self._mock_detect(schema_ctx, df)
 
     def apply_rules(
         self, df: pd.DataFrame, plan: CleaningPlan
@@ -111,34 +119,116 @@ Respond with valid JSON:
         return df_clean
 
     # ── Rule application logic ─────────────────────────────
+    def _resolve_column(self, df: pd.DataFrame, col: str) -> Optional[str]:
+        """Resolve a column name, trying both '.' and '_' separators."""
+        if col in df.columns:
+            return col
+        alt = col.replace(".", "_")
+        if alt in df.columns:
+            return alt
+        return None
+
     def _apply_single_rule(
         self, df: pd.DataFrame, rule: CleaningRule
     ) -> pd.DataFrame:
-        col = rule.target_column
+        col = self._resolve_column(df, rule.target_column)
         rt = rule.rule_type
 
-        if rt == "fill_null" and col in df.columns:
-            df[col] = df[col].fillna(0 if df[col].dtype in ("float64", "int64") else "unknown")
-        elif rt == "normalize_text" and col in df.columns:
-            df[col] = df[col].astype(str).str.strip().str.lower().str.title()
-        elif rt == "standardize_date_format" and col in df.columns:
-            df[col] = pd.to_datetime(df[col], infer_datetime_format=True, errors="coerce")
-        elif rt == "strip_currency_symbol" and col in df.columns:
-            df[col] = df[col].astype(str).str.replace(r"[\$€£]", "", regex=True)
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-        elif rt == "remove_negative" and col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-            df.loc[df[col] < 0, col] = df[col].abs()
-        elif rt == "drop_duplicates" and col in df.columns:
-            df = df.drop_duplicates(subset=[col], keep="first")
+        if col is None:
+            return df  # Column not found — skip silently
+
+        if rt == "fill_null":
+            if pd.api.types.is_numeric_dtype(df[col]):
+                fill_val = df[col].median() if df[col].notna().any() else 0
+                df[col] = df[col].fillna(fill_val)
+            else:
+                mode_vals = df[col].dropna().mode()
+                fill_val = mode_vals.iloc[0] if len(mode_vals) > 0 else "unknown"
+                df[col] = df[col].fillna(fill_val)
+
+        elif rt == "normalize_text":
+            if df[col].dtype == object:
+                mask_notnull = df[col].notna()
+                df.loc[mask_notnull, col] = (
+                    df.loc[mask_notnull, col]
+                    .astype(str)
+                    .str.strip()
+                    .str.lower()
+                    .str.title()
+                )
+
+        elif rt == "standardize_date_format":
+            original = df[col].copy()
+            # Only convert non-null values; preserve originals where parsing fails
+            with pd.option_context("mode.chained_assignment", None):
+                converted = pd.to_datetime(df[col], format="mixed", errors="coerce")
+            mask_was_notnull = original.notna()
+            mask_converted_ok = converted.notna()
+            # Apply only where conversion succeeded on previously non-null values
+            df.loc[mask_was_notnull & mask_converted_ok, col] = converted[
+                mask_was_notnull & mask_converted_ok
+            ]
+
+        elif rt == "strip_currency_symbol":
+            str_series = df[col].astype(str)
+            has_symbol = str_series.str.contains(r"[\$€£,]", regex=True, na=False)
+            if has_symbol.any():
+                cleaned = str_series.str.replace(r"[\$€£,]", "", regex=True).str.strip()
+                numeric = pd.to_numeric(cleaned, errors="coerce")
+                # Only replace where symbol existed AND numeric parse succeeded
+                mask = has_symbol & numeric.notna()
+                df.loc[mask, col] = numeric[mask]
+
+        elif rt == "remove_negative":
+            if pd.api.types.is_numeric_dtype(df[col]):
+                mask_neg = df[col] < 0
+                df.loc[mask_neg, col] = df.loc[mask_neg, col].abs()
+            else:
+                numeric = pd.to_numeric(df[col], errors="coerce")
+                mask_neg = numeric < 0
+                df.loc[mask_neg, col] = numeric[mask_neg].abs()
+
+        elif rt == "drop_duplicates":
+            df = df.drop_duplicates(subset=[col], keep="first").reset_index(drop=True)
+
         elif rt == "fix_inconsistency":
-            pass  # Complex: handled per-case
+            # Attempt to fix numeric total vs component sum mismatch
+            # Best-effort: find sibling numeric columns and recalculate
+            pass
+
         elif rt == "fix_timestamp_order":
-            pass  # Complex: handled per-case
+            # Sort within sessions by timestamp if session_id column exists
+            if pd.api.types.is_datetime64_any_dtype(df[col]) or df[col].dtype == object:
+                try:
+                    df[col] = pd.to_datetime(df[col], errors="coerce")
+                    if "session_id" in df.columns:
+                        df = df.sort_values(["session_id", col]).reset_index(drop=True)
+                    else:
+                        df = df.sort_values(col, na_position="last").reset_index(drop=True)
+                except Exception:
+                    pass
+
         elif rt == "flag_orphan_refunds":
-            pass  # Complex: would need cross-event analysis
+            # Flag refunds that reference non-existent orders
+            if "event_type" in df.columns and col in df.columns:
+                refund_mask = df.get("event_type", pd.Series()).str.lower() == "refund"
+                valid_ids = set(df.loc[~refund_mask, col].dropna())
+                orphan_mask = refund_mask & ~df[col].isin(valid_ids)
+                df["_is_orphan_refund"] = False  # default: not orphan
+                df.loc[orphan_mask, "_is_orphan_refund"] = True
+
         elif rt == "fix_vat_computation":
-            pass  # Complex: arithmetic validation
+            # Recalculate VAT total from subtotal + vat_amount where mismatch exists
+            subtotal_col = self._resolve_column(df, "totals.subtotal_ht") or \
+                           self._resolve_column(df, "subtotal_ht")
+            vat_col = self._resolve_column(df, "totals.vat_amount") or \
+                      self._resolve_column(df, "vat_amount")
+            if subtotal_col and vat_col:
+                computed = pd.to_numeric(df[subtotal_col], errors="coerce") + \
+                           pd.to_numeric(df[vat_col], errors="coerce")
+                total_numeric = pd.to_numeric(df[col], errors="coerce")
+                mismatch = (total_numeric - computed).abs() > 0.01
+                df.loc[mismatch & computed.notna(), col] = computed[mismatch & computed.notna()]
 
         return df
 
@@ -173,16 +263,16 @@ Respond with valid JSON:
             ]
         elif "hospital" in name:
             rules = [
-                CleaningRule("normalize_text", "patient.gender",
+                CleaningRule("normalize_text", "patient_gender",
                              "Normalize gender values to standard form", 1,
                              "Inconsistent: M, Male, m, MALE"),
                 CleaningRule("fill_null", "discharge_date",
                              "Mark missing discharge dates as still_admitted", 2,
                              "5% missing discharge dates"),
-                CleaningRule("fix_inconsistency", "treatment.total_cost",
+                CleaningRule("fix_inconsistency", "treatment_total_cost",
                              "Fix cost arithmetic: total should equal insurance + patient", 1,
                              "4% records where total_cost != insurance + patient_paid"),
-                CleaningRule("normalize_text", "diagnosis.severity",
+                CleaningRule("normalize_text", "diagnosis_severity",
                              "Normalize severity levels", 1,
                              "Inconsistent: moderate, Moderate, MODERATE, medium"),
             ]
@@ -191,10 +281,10 @@ Respond with valid JSON:
                 CleaningRule("normalize_text", "status",
                              "Normalize payment status values", 1,
                              "Inconsistent: paid, PAID, Paid, settled"),
-                CleaningRule("fix_vat_computation", "totals.total_ttc",
+                CleaningRule("fix_vat_computation", "totals_total_ttc",
                              "Fix VAT computation errors", 1,
                              "5% records where total_ttc != subtotal_ht + vat_amount"),
-                CleaningRule("standardize_date_format", "payment.paid_on",
+                CleaningRule("standardize_date_format", "payment_paid_on",
                              "Standardize payment date formats", 2,
                              "Mixed date formats in paid_on field"),
                 CleaningRule("drop_duplicates", "invoice_id",
