@@ -30,10 +30,13 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE: int = 100 * 1024 * 1024  # 100MB
     ALLOWED_EXTENSIONS: list = [".csv", ".xlsx", ".xls", ".json"]
 
-    # LLM Settings (Ollama)
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "llama3:8b"
-    LLM_TIMEOUT: int = 120
+    # LLM Settings (Gemini API — research-grade cloud inference)
+    GOOGLE_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_FALLBACK_MODEL: str = "gemini-2.0-flash"
+    LLM_TIMEOUT: int = 60
+    LLM_MAX_TOKENS: int = 2048
+    LLM_TEMPERATURE: float = 0.2
 
     # ETL Settings
     ETL_BATCH_SIZE: int = 10000

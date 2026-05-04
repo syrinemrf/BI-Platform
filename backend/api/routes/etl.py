@@ -571,9 +571,9 @@ async def chat_with_data(
         if not dataset:
             raise HTTPException(status_code=404, detail="Dataset not found")
 
-        # Check LLM availability
+        # Check LLM availability (Gemini)
         llm = get_llm_service()
-        llm_available = await llm.is_available()
+        llm_available = llm.is_available()
 
         # Load data info
         try:
@@ -614,9 +614,9 @@ Sample Data (first 3 rows):
 Error building context: {str(e)}
 """
 
-        # If LLM is not available, provide a basic response
+        # If Gemini API not available, return instructions
         if not llm_available:
-            basic_response = f"""LLM service (Ollama) is not available. Here's what I can tell you about the data:
+            basic_response = f"""Gemini AI service is not configured. Here's what I can tell you about the data:
 
 **Dataset Summary:**
 - Name: {dataset.name}
@@ -628,7 +628,7 @@ Error building context: {str(e)}
 **Null Values:**
 {df.isnull().sum().to_string() if len(df.columns) < 30 else 'Too many columns to display'}
 
-**To enable AI assistance:** Please start Ollama with `ollama serve` and ensure a model is available (e.g., `ollama pull llama3`)."""
+**To enable AI assistance:** Add `GOOGLE_API_KEY=your_key` to `backend/.env`."""
 
             return {
                 "response": basic_response,
@@ -654,9 +654,9 @@ Please provide a helpful response."""
         response = await llm.generate(prompt, system_prompt, temperature=0.7)
 
         if not response.success:
-            logger.error(f"LLM error: {response.error}")
+            logger.error(f"Gemini error: {response.error}")
             return {
-                "response": f"LLM Error: {response.error}. Please check that Ollama is running correctly.",
+                "response": f"Gemini Error: {response.error}. Please check your GOOGLE_API_KEY.",
                 "available": True,
                 "success": False
             }

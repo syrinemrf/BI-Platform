@@ -78,12 +78,23 @@ class SchemaMappingAgent:
     def __init__(
         self,
         vector_store: SchemaVectorStore,
-        ollama_url: str = "http://localhost:11434",
-        anthropic_key: str | None = None,
+        google_api_key: str | None = None,
     ) -> None:
         self._vector_store = vector_store
-        self._ollama_url = ollama_url.rstrip("/")
-        self._anthropic_key = anthropic_key
+        self._google_api_key = google_api_key
+        self._gemini_client = None
+
+    def _get_gemini_client(self):
+        if self._gemini_client is None:
+            from google import genai
+            key = self._google_api_key
+            if not key:
+                from config import settings
+                key = settings.GOOGLE_API_KEY
+            if not key:
+                raise RuntimeError("GOOGLE_API_KEY not configured. Add it to backend/.env")
+            self._gemini_client = genai.Client(api_key=key)
+        return self._gemini_client
 
     # ── prompt construction ──────────────────────────────────────
 
@@ -145,44 +156,41 @@ STRICT: Respond ONLY with valid JSON. No explanation text outside the JSON."""
 
     # ── LLM callers ──────────────────────────────────────────────
 
-    def call_llama(self, prompt: str) -> tuple[dict, float]:
-        """Call local LLaMA 3 8B via Ollama API.
+    def call_gemini(self, prompt: str) -> tuple[dict, float]:
+        """Call Gemini 2.5 Flash API (research-validated NB02 gemini_only condition).
 
         Returns (parsed_response_dict, confidence_score).
-        Timeout: 120 seconds.
         """
-        response = httpx.post(
-            f"{self._ollama_url}/api/generate",
-            json={"model": "llama3:8b", "prompt": prompt, "format": "json", "stream": False},
-            timeout=120,
-        )
-        response.raise_for_status()
-        text = response.json().get("response", "{}")
-        parsed = json.loads(text)
-        confidence = float(parsed.get("confidence", 0.5))
-        return parsed, confidence
+        from google.genai import types
 
-    def call_claude(self, prompt: str) -> tuple[dict, float]:
-        """Call Claude API as high-confidence fallback.
-
-        Returns (parsed_response_dict, 0.95).
-        """
-        import anthropic
-
-        client = anthropic.Anthropic(api_key=self._anthropic_key)
-        message = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4096,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        text = message.content[0].text
-        # Extract JSON from response
-        start = text.find("{")
-        end = text.rfind("}") + 1
-        if start >= 0 and end > start:
-            text = text[start:end]
-        parsed = json.loads(text)
-        return parsed, 0.95
+        client = self._get_gemini_client()
+        models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash"]
+        last_err = None
+        for model in models_to_try:
+            try:
+                response = client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        max_output_tokens=4096,
+                        temperature=0.2,
+                    ),
+                )
+                text = response.text or "{}"
+                # Strip markdown code fences if present
+                text = text.strip()
+                if text.startswith("```"):
+                    text = text.split("\n", 1)[1] if "\n" in text else text
+                    if text.endswith("```"):
+                        text = text[:-3].strip()
+                parsed = json.loads(text)
+                confidence = float(parsed.get("confidence", 0.75))
+                return parsed, confidence
+            except Exception as e:
+                last_err = e
+                logger.warning(f"Gemini {model} failed: {e}")
+                continue
+        raise RuntimeError(f"All Gemini models failed: {last_err}")
 
     # ── main mapping method ──────────────────────────────────────
 
@@ -204,22 +212,11 @@ STRICT: Respond ONLY with valid JSON. No explanation text outside the JSON."""
         few_shot = self._vector_store.build_few_shot_prompt(similar)
         prompt = self.build_prompt(schema, few_shot)
 
-        model_used = "llama3:8b"
+        model_used = "gemini-2.5-flash"
         try:
-            parsed, confidence = self.call_llama(prompt)
-            if confidence < CONFIDENCE_THRESHOLD:
-                logger.info(
-                    f"LLaMA confidence {confidence:.2f} < {CONFIDENCE_THRESHOLD} — "
-                    f"escalating to Claude"
-                )
-                raise ValueError("Low confidence — fallback to Claude")
+            parsed, confidence = self.call_gemini(prompt)
         except Exception as e:
-            logger.warning(f"LLaMA call failed or low confidence: {e}")
-            if self._anthropic_key:
-                parsed, confidence = self.call_claude(prompt)
-                model_used = "claude-3-5-sonnet"
-            else:
-                raise RuntimeError("LLaMA failed and no Anthropic API key configured") from e
+            raise RuntimeError(f"Gemini schema mapping failed: {e}") from e
 
         # Build result
         fact = FactTableSpec(

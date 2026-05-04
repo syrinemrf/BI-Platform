@@ -24,9 +24,9 @@ python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
 bcrypt>=4.1.3
 
-# LLM Integration
-ollama>=0.4.0
-anthropic>=0.28.0
+# LLM Integration — Google Gemini API (research-validated NB02-NB05)
+google-genai>=1.0.0
+# ollama and anthropic removed — Gemini is the sole LLM provider in production
 langchain>=0.2.5
 langchain-community>=0.2.5
 

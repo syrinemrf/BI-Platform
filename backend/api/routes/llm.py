@@ -1,5 +1,8 @@
 """
-LLM Integration API routes.
+LLM Integration API routes — Gemini 2.5 Flash powered.
+
+All endpoints use Google Gemini API (research-validated in NB02-NB05).
+No local Ollama dependency.
 """
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
@@ -18,9 +21,308 @@ router = APIRouter(prefix="/llm", tags=["LLM"])
 
 @router.get("/status")
 async def get_llm_status():
+    """Check if the Gemini LLM service is configured and available."""
+    llm = get_llm_service()
+    available = llm.is_available()
+    return {
+        "available": available,
+        "model": llm.model,
+        "provider": "Google Gemini API",
+        "message": (
+            "Gemini API ready" if available
+            else "GOOGLE_API_KEY not configured. Add it to backend/.env"
+        ),
+    }
+
+
+@router.post("/query", response_model=LLMQueryResponse)
+async def query_llm(
+        request: LLMQueryRequest,
+        db: Session = Depends(get_db)
+):
     """
-    Check if the LLM service (Ollama) is available.
+    Generate SQL query from natural language using Gemini (NB04 DVR method).
     """
+    llm = get_llm_service()
+    if not llm.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API not configured. Add GOOGLE_API_KEY to backend/.env",
+        )
+
+    from core.database import get_table_schema
+    tables = get_table_names()
+    table_info = {}
+    for table in tables:
+        if table.startswith("fact_") or table.startswith("dim_"):
+            schema = get_table_schema(table)
+            table_info[table] = {
+                "type": "fact" if table.startswith("fact_") else "dimension",
+                "columns": [
+                    {"name": col["column_name"], "type": col["data_type"]}
+                    for col in schema
+                ],
+            }
+
+    if not table_info:
+        return LLMQueryResponse(
+            answer="No warehouse tables found. Please run ETL first.",
+            sql_query=None,
+            confidence=0.0,
+            suggestions=["Upload a dataset", "Run the ETL pipeline"],
+        )
+
+    result = await llm.generate_sql_query(request.question, table_info)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    conf_map = {"high": 1.0, "medium": 0.7, "low": 0.4}
+    conf_raw = result.get("confidence", "medium")
+    confidence = conf_map.get(conf_raw, 0.7) if isinstance(conf_raw, str) else float(conf_raw)
+
+    return LLMQueryResponse(
+        answer=result.get("explanation", ""),
+        sql_query=result.get("sql"),
+        confidence=confidence,
+        suggestions=[],
+    )
+
+
+@router.post("/schema-assist")
+async def schema_assistance(
+        request: SchemaAssistRequest,
+        db: Session = Depends(get_db)
+):
+    """
+    Get Gemini suggestions for star-schema design (NB02 method).
+
+    Analyzes the dataset and provides:
+    - Dimension table design
+    - Measure selection
+    - Data quality concerns
+    - Optimization tips
+    - Star-schema suggestion (fact_table, dimensions, measures)
+    """
+    llm = get_llm_service()
+    if not llm.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API not configured. Add GOOGLE_API_KEY to backend/.env",
+        )
+
+    dataset = db.query(Dataset).filter(Dataset.id == request.dataset_id).first()
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    schema_info = dataset.schema_info
+    if not schema_info:
+        df = load_file(dataset.file_path)
+        schema_info = analyze_schema(df)
+
+    result = await llm.analyze_schema_suggestion(schema_info, request.question)
+    return result
+
+
+@router.post("/map-schema/{dataset_id}")
+async def map_schema(
+        dataset_id: int,
+        db: Session = Depends(get_db)
+):
+    """
+    Star-schema mapping using Gemini (NB02 gemini_only condition).
+
+    Returns: {fact_table, dimensions, measures, confidence, model, latency_ms,
+              hitl_assessment}
+    """
+    llm = get_llm_service()
+    if not llm.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API not configured. Add GOOGLE_API_KEY to backend/.env",
+        )
+
+    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    schema_info = dataset.schema_info
+    if not schema_info:
+        df = load_file(dataset.file_path)
+        schema_info = analyze_schema(df)
+
+    # Schema mapping (NB02)
+    mapping = await llm.map_schema(schema_info)
+
+    # HITL assessment (NB05)
+    hitl = await llm.assess_confidence(mapping, threshold=0.75)
+
+    return {**mapping, "hitl_assessment": hitl}
+
+
+@router.post("/detect-cleaning-rules/{dataset_id}")
+async def detect_cleaning_rules(
+        dataset_id: int,
+        db: Session = Depends(get_db)
+):
+    """
+    Detect data cleaning rules using Gemini (NB03 RAG+LLM method).
+
+    Returns list of {rule_type, target_column, description, priority, justification}.
+    """
+    llm = get_llm_service()
+    if not llm.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API not configured. Add GOOGLE_API_KEY to backend/.env",
+        )
+
+    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    schema_info = dataset.schema_info
+    if not schema_info:
+        df = load_file(dataset.file_path)
+        schema_info = analyze_schema(df)
+
+    rules = await llm.detect_cleaning_rules(schema_info)
+    return {
+        "dataset_id": dataset_id,
+        "dataset_name": dataset.name,
+        "cleaning_rules": rules,
+        "n_rules": len(rules),
+        "model": llm.model,
+    }
+
+
+@router.post("/generate-etl-code/{dataset_id}")
+async def generate_etl_code(
+        dataset_id: int,
+        db: Session = Depends(get_db)
+):
+    """
+    Generate ETL code using Gemini (NB04 DVR — Detect-Verify-Repair).
+
+    Returns {python_code, sql_ddl, explanation, valid, model, latency_ms}.
+    """
+    llm = get_llm_service()
+    if not llm.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API not configured. Add GOOGLE_API_KEY to backend/.env",
+        )
+
+    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    schema_info = dataset.schema_info
+    if not schema_info:
+        df = load_file(dataset.file_path)
+        schema_info = analyze_schema(df)
+
+    # Get or compute schema mapping first
+    mapping = await llm.map_schema(schema_info)
+
+    # Generate ETL code
+    code = await llm.generate_etl_code(mapping, schema_info)
+    return {
+        "dataset_id": dataset_id,
+        "mapping": mapping,
+        **code,
+    }
+
+
+@router.post("/transformation-suggest")
+async def suggest_transformations(
+        dataset_id: int,
+        db: Session = Depends(get_db)
+):
+    """
+    Get Gemini suggestions for data transformations based on quality issues (NB03).
+    """
+    llm = get_llm_service()
+    if not llm.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API not configured. Add GOOGLE_API_KEY to backend/.env",
+        )
+
+    dataset = db.query(Dataset).filter(Dataset.id == dataset_id).first()
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    from services.data_quality import check_data_quality
+    df = load_file(dataset.file_path)
+    quality_report = check_data_quality(df)
+
+    suggestions = await llm.suggest_transformations(quality_report)
+    return {
+        "quality_score": quality_report.get("overall_score"),
+        "suggestions": suggestions,
+        "model": llm.model,
+    }
+
+
+@router.post("/natural-query")
+async def natural_language_query(
+        question: str,
+        execute: bool = False,
+        db: Session = Depends(get_db)
+):
+    """
+    Convert natural language to SQL using Gemini and optionally execute it.
+    """
+    llm = get_llm_service()
+    if not llm.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API not configured. Add GOOGLE_API_KEY to backend/.env",
+        )
+
+    from core.database import get_table_schema
+    tables = get_table_names()
+    table_info = {}
+    for table in tables:
+        if table.startswith("fact_") or table.startswith("dim_"):
+            schema = get_table_schema(table)
+            table_info[table] = {
+                "type": "fact" if table.startswith("fact_") else "dimension",
+                "columns": [
+                    {"name": col["column_name"], "type": col["data_type"]}
+                    for col in schema
+                ],
+            }
+
+    result = await llm.generate_sql_query(question, table_info)
+
+    response = {
+        "question": question,
+        "sql": result.get("sql"),
+        "explanation": result.get("explanation"),
+        "confidence": result.get("confidence"),
+        "model": llm.model,
+        "executed": False,
+        "results": None,
+    }
+
+    if execute and result.get("sql"):
+        try:
+            from core.database import execute_raw_sql
+            sql = result["sql"].strip()
+            if not sql.upper().startswith("SELECT"):
+                raise HTTPException(status_code=400, detail="Only SELECT queries allowed")
+            if "LIMIT" not in sql.upper():
+                sql += " LIMIT 1000"
+            data = execute_raw_sql(sql)
+            response["executed"] = True
+            response["results"] = data
+            response["row_count"] = len(data)
+        except Exception as e:
+            response["execution_error"] = str(e)
+
+    return response
+
     llm = get_llm_service()
     available = await llm.is_available()
 
