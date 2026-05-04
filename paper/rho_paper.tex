@@ -21,8 +21,8 @@
 %----------------------------------------------------------
 
 \doctype{Research Article}
-\title{ETL-LLM: A Confidence-Gated, RAG-Augmented Pipeline for\\
-Autonomous Star Schema Generation from Heterogeneous Sources}
+\title{ETL-LLM: A Confidence-Gated, RAG-Augmented Framework for\\
+End-to-End Autonomous ETL --- Cleaning, Transformation, and Star Schema Loading from Heterogeneous Sources}
 
 %----------------------------------------------------------
 % Authors, Affiliations and dates
@@ -51,7 +51,7 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
 %----------------------------------------------------------
 
 \journalname{BI Research}
-\journal{ETL-LLM — Autonomous Data Warehouse Construction, 2026}
+\journal{ETL-LLM — End-to-End Autonomous ETL Pipeline, 2026}
 \theday{\today}
 \vol{1}
 \no{1}
@@ -61,12 +61,12 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
 %----------------------------------------------------------
 
 \begin{abstract}
-    Extract-Transform-Load (ETL) pipelines remain one of the most labor-intensive components of enterprise data warehouse construction, typically requiring weeks of manual effort from domain experts. We present \textsc{ETL-LLM}, a five-layer architecture that leverages Large Language Models (LLMs) to automate the full ETL lifecycle---from heterogeneous source ingestion through star schema loading---while preserving production-grade reliability via four innovations: (1)~\emph{Confidence-Gated Routing (CGR)}, which dynamically selects between a locally hosted LLaMA~3~8B model and Google Gemini~2.5~Flash based on a calibrated confidence score, achieving a mapping accuracy of \textbf{0.409} (vs.\ 0.250 for the local-only baseline); (2)~\emph{Adaptive Few-Shot Memory (AFSM)}, backed by a FAISS vector store of human-approved schema mappings, improving accuracy by \textbf{+27.1\%} after a single approval cycle; (3)~\emph{Schema Fingerprinting}, enabling $O(1)$ structural drift detection with 100\% determinism; and (4)~a \emph{Divide-Verify-Refine (DVR)} loop for self-correcting SQL/Python code generation, reaching \textbf{100\%} syntactic validity within 3 iterations. Evaluated across four heterogeneous benchmark datasets (CSV, JSON, XML), the system achieves an average data quality improvement of \textbf{+0.49\%} post-cleaning and processes all schemas in under 70 ms. The full system is released as open-source software alongside nine reproducible research notebooks.
+    Extract-Transform-Load (ETL) pipelines remain one of the most labor-intensive components of enterprise data warehousing, encompassing heterogeneous source ingestion, automated data cleaning, schema-aware transformation, executable code generation, and star schema loading --- all tasks that traditionally require weeks of expert manual effort. We present \textsc{ETL-LLM}, a five-layer, LLM-orchestrated framework that automates the \emph{complete} ETL lifecycle end-to-end, introducing four key innovations to ensure production-grade reliability: (1)~\emph{Confidence-Gated Routing (CGR)}, which dynamically routes schema mapping tasks between a locally hosted LLaMA~3~8B model and Google Gemini~2.5~Flash based on a calibrated self-assessed confidence score, achieving a mapping accuracy of \textbf{0.409} (vs.\ 0.250 for the local-only baseline, a relative gain of +63.6\%); (2)~\emph{Adaptive Few-Shot Memory (AFSM)}, backed by a FAISS vector store of human-approved mappings and cleaning rules, improving system accuracy by \textbf{+27.1\%} after a single approval cycle; (3)~\emph{Schema Fingerprinting}, enabling $O(1)$ structural drift detection with 100\% determinism for incremental reload triggering; and (4)~a \emph{Divide-Verify-Refine (DVR)} loop for self-correcting SQL/Python ETL code generation, lifting syntactic validity from \textbf{0\%} to \textbf{100\%} within 3 iterations. Beyond schema mapping, the system automatically identifies and applies data cleaning rules (64.6\% average recall, +0.37\% average data quality improvement), generates fully executable transformation code, and produces a complete data lineage audit trail. Evaluated across four heterogeneous benchmark datasets (CSV, JSON, XML), all schemas are profiled in under 70 ms. The full system is released as open-source software alongside nine reproducible research notebooks.
 \end{abstract}
 
 %----------------------------------------------------------
 
-\keywords{ETL automation, Large Language Models, Confidence-Gated Routing, Retrieval-Augmented Generation, star schema, data warehouse, human-in-the-loop, schema drift, FAISS}
+\keywords{ETL automation, data cleaning, data transformation, Large Language Models, Confidence-Gated Routing, Retrieval-Augmented Generation, star schema, data warehouse, human-in-the-loop, schema drift, FAISS, code generation}
 
 %----------------------------------------------------------
 
@@ -79,17 +79,17 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
 
 \section{Introduction}
 
-    \rhostart{E}nterprise data warehousing depends on Extract-Transform-Load (ETL) pipelines to consolidate heterogeneous operational sources into analytical star schemas. Manual construction of these pipelines is time-consuming, error-prone, and requires deep domain expertise \cite{vassiliadis2002conceptual}. Industry surveys report that data engineers spend over 60\% of their time on repetitive schema mapping and transformation tasks, creating a significant bottleneck for data-driven organisations \cite{stonebraker2018data}.
+    \rhostart{E}nterprise data warehousing requires Extract-Transform-Load (ETL) pipelines to consolidate heterogeneous operational sources into analytical data warehouses. This process is not limited to schema mapping: it encompasses source-format normalisation, automated data quality assessment, rule-driven cleaning and transformation, executable code generation, and target schema loading --- each phase demanding specialised expertise \cite{vassiliadis2002conceptual, el-sappagh2011etl}. Industry surveys report that data engineers spend over 60\% of their time on these repetitive tasks, creating a major bottleneck for data-driven organisations \cite{stonebraker2018data}.
 
-    Recent advances in Large Language Models (LLMs) offer a promising avenue for automating schema understanding and code generation. However, na\"ive application of LLMs to ETL tasks suffers from three fundamental challenges: (1)~hallucination and inconsistent output quality, (2)~high latency and cost when relying exclusively on cloud APIs, and (3)~lack of auditability and data governance control \cite{narayan2022foundation}.
+    Recent advances in Large Language Models (LLMs) offer a promising avenue for automating each ETL phase end-to-end. However, na\"ive application of LLMs across the full ETL lifecycle suffers from four fundamental challenges: (1)~hallucination and inconsistent structured output, (2)~high latency and cost when relying exclusively on cloud APIs, (3)~lack of a mechanism to improve from human corrections over time, and (4)~absence of auditability and data governance controls \cite{narayan2022foundation}.
 
-    We address these challenges with \textsc{ETL-LLM}, introducing four innovations validated through rigorous empirical evaluation on a heterogeneous benchmark:
+    We address all four challenges with \textsc{ETL-LLM}, a unified five-layer framework that automates the complete ETL pipeline --- from raw heterogeneous file ingestion, through automated data cleaning and transformation, to star schema DDL generation and data loading --- introducing four innovations validated through rigorous empirical evaluation:
 
     \begin{itemize}
-        \item \textbf{Confidence-Gated Routing (CGR):} A dual-model architecture that routes mapping tasks between a local LLaMA~3~8B model and Google Gemini~2.5~Flash based on self-assessed confidence, balancing cost, latency, and accuracy.
-        \item \textbf{Adaptive Few-Shot Memory (AFSM):} A FAISS-backed vector store of human-approved schema mappings that injects semantically similar examples into LLM prompts, creating a feedback loop that continuously improves system accuracy.
-        \item \textbf{Schema Fingerprinting:} A deterministic SHA-256 hash over column profiles that enables instantaneous drift detection without full data comparison.
-        \item \textbf{Divide-Verify-Refine (DVR):} A self-correction loop for ETL code generation where static analysis errors are fed back to the LLM for iterative refinement.
+        \item \textbf{Confidence-Gated Routing (CGR):} A dual-model architecture that dynamically routes each ETL reasoning task (schema mapping, cleaning rule detection, code generation) between a local LLaMA~3~8B model and Google Gemini~2.5~Flash based on self-assessed confidence, optimising the cost-accuracy-latency tradeoff.
+        \item \textbf{Adaptive Few-Shot Memory (AFSM):} A FAISS-backed vector store of human-approved ETL decisions (mappings, cleaning rules) that injects semantically similar historical examples into every LLM prompt, creating a self-improving feedback loop.
+        \item \textbf{Schema Fingerprinting:} A deterministic SHA-256 hash over column profiles that enables $O(1)$ structural drift detection without full data re-scan, automatically triggering incremental ETL re-runs when source schemas change.
+        \item \textbf{Divide-Verify-Refine (DVR):} A static-analysis-driven self-correction loop for ETL code generation (SQL DDL/DML and Python pandas transformations), where lint errors and syntax violations are fed back to the LLM for iterative refinement until the generated code is production-valid.
     \end{itemize}
 
     The remainder of this paper is organised as follows. Section~\ref{sec:related} reviews related work. Section~\ref{sec:architecture} describes the five-layer pipeline. Section~\ref{sec:innovations} details the four innovations. Section~\ref{sec:implementation} covers the implementation. Section~\ref{sec:evaluation} presents the empirical evaluation. Section~\ref{sec:ablation} presents ablation results. Section~\ref{sec:discussion} discusses findings and limitations. Section~\ref{sec:conclusion} concludes.
@@ -99,13 +99,13 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
 \section{Related Work}
 \label{sec:related}
 
-    \subsection{Traditional Schema Matching}
+    \subsection{Traditional ETL and Schema Matching}
 
-        Schema matching and mapping have been studied extensively in the database community \cite{rahm2001survey}. Tools such as COMA++ \cite{do2005coma} and Cupid \cite{madhavan2001generic} use linguistic and structural similarity to propose column correspondences. These approaches require hand-crafted similarity metrics and fail on semantically ambiguous heterogeneous sources. Our work replaces hand-crafted rules with LLM-based structured reasoning, grounded by vector-store retrieval.
+        ETL tools such as Apache Nifi, Talend, and Informatica provide graphical pipeline authoring but require expert configuration for each data source \cite{el-sappagh2011etl}. Schema matching and mapping have been studied extensively \cite{rahm2001survey}. Tools such as COMA++ \cite{do2005coma} and Cupid \cite{madhavan2001generic} use linguistic and structural similarity to propose column correspondences but require hand-crafted similarity metrics and do not cover the cleaning or code generation phases. Our work replaces hand-crafted rules with end-to-end LLM reasoning across all ETL phases, grounded by vector-store retrieval.
 
     \subsection{LLMs for Data Engineering}
 
-        DAIL-SQL \cite{gao2023dail} and DIN-SQL \cite{pourreza2023din} demonstrate that LLMs generate SQL from natural language at high accuracy with schema context, but target query generation rather than full pipeline construction. Narayan et al.\ \cite{narayan2022foundation} show that pre-trained language models improve schema matching accuracy by 15--20\% over traditional methods. Colombo et al.\ \cite{colombo2025llmetl} further extend this to LLM-assisted ETL, demonstrating the value of fine-tuning. Our contribution is a full-lifecycle system that additionally addresses cost-performance routing and human-in-the-loop governance.
+        DAIL-SQL \cite{gao2023dail} and DIN-SQL \cite{pourreza2023din} demonstrate that LLMs can generate SQL from natural language with high accuracy given schema context, but they target analytical query generation rather than ETL pipeline construction. Narayan et al.\ \cite{narayan2022foundation} show that foundation models improve schema matching accuracy by 15--20\% over traditional methods. Colombo et al.\ \cite{colombo2025llmetl} and Annam \cite{annam2025llm} demonstrate LLM-assisted ETL pipeline generation, but neither addresses automated data cleaning, confidence-based routing, or the adaptive self-improvement loop that drives our AFSM mechanism. Our contribution is a complete, production-grade ETL framework covering all five phases: ingestion, profiling with drift detection, cleaning and transformation, schema mapping, and loading --- with an adaptive human-in-the-loop governance layer.
 
     \subsection{Retrieval-Augmented Generation}
 
@@ -120,7 +120,7 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
 \section{System Architecture}
 \label{sec:architecture}
 
-    \textsc{ETL-LLM} implements a five-layer pipeline architecture, illustrated in Fig.~\ref{fig:architecture}. Each layer communicates via typed Pydantic models, ensuring schema safety across all boundaries.
+    \textsc{ETL-LLM} implements a five-layer pipeline architecture, illustrated in Fig.~\ref{fig:architecture}, covering the complete ETL lifecycle. Each layer communicates via typed Pydantic models, ensuring schema safety and full traceability across all boundaries.
 
     %% -------------------------------------------------------
     %% INSERT ARCHITECTURE FIGURE HERE
@@ -150,7 +150,7 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
             Column classification $\cdot$ Null analysis $\cdot$ SHA-256 fingerprint\\[2pt]
             $\downarrow$\\[2pt]
             \textbf{Layer 3 — LLM Agent Trio} \quad $\leftarrow$ FAISS RAG\\
-            Schema Mapper $\cdot$ Cleaning Agent $\cdot$ Code Generator\\[2pt]
+            Schema Mapper $\cdot$ Cleaning \& Transform Agent $\cdot$ Code Generator\\[2pt]
             $\downarrow$\\[2pt]
             \textbf{Layer 4 — HITL Validation}\\
             Confidence gating ($\tau = 0.75$) $\cdot$ Human review queue\\[2pt]
@@ -169,13 +169,13 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
     The \texttt{SchemaProfiler} produces a \texttt{SchemaContext} object for each DataFrame, containing per-column statistics (dtype, null rate, cardinality, statistical moments, sample values), candidate role flags (key, measure, dimension, date), and a deterministic SHA-256 fingerprint. The \texttt{SchemaDriftDetector} compares fingerprints across pipeline runs, triggering re-profiling when structural changes are detected.
 
     \paragraph{Layer 3 — LLM Agents.}
-    Three specialised agents handle distinct reasoning tasks. The \textbf{SchemaMappingAgent} maps source columns to a star schema (fact table + dimension tables). The \textbf{CleaningRulesAgent} identifies data quality issues and proposes typed cleaning rules. The \textbf{ETLCodeGeneratorAgent} generates executable Python (pandas) and SQL (DDL + DML) code via the DVR loop. All three agents retrieve semantically similar historical examples from the FAISS vector store before invoking the LLM.
+    Three specialised agents orchestrate the core ETL intelligence. The \textbf{SchemaMappingAgent} maps source columns to a target star schema (fact table + dimension tables) using CGR dual-model routing and AFSM few-shot retrieval. The \textbf{CleaningRulesAgent} inspects column profiles and sample values to identify data quality issues (null patterns, format inconsistencies, duplicates, outliers, currency symbols) and emits typed, executable cleaning rules (impute, standardise, deduplicate, cast) that are applied directly to the DataFrame before loading. The \textbf{ETLCodeGeneratorAgent} generates fully executable Python (pandas transformations) and SQL (DDL + DML for the star schema) via the DVR self-correction loop. All three agents retrieve semantically similar historical decisions from the FAISS vector store before invoking the LLM, grounding outputs in previously approved human knowledge.
 
     \paragraph{Layer 4 — HITL Validation.}
     The \texttt{HITLValidator} applies a calibrated confidence threshold $\tau$. Mappings with confidence $\geq \tau$ are auto-approved and added to the FAISS store as future training examples. Those below $\tau$ are placed in a human review queue, where an expert can correct, approve, or reject the proposed mapping. This creates the adaptive feedback loop central to AFSM.
 
-    \paragraph{Layer 5 — Loading.}
-    The \texttt{StarSchemaLoader} executes the generated DDL to create the star schema in a PostgreSQL-compatible database, then loads transformed data. The \texttt{DataLineageTracker} records row counts, timestamps, and metadata at each step, producing a full audit trail in Markdown and JSON.
+    \paragraph{Layer 5 — Loading and Lineage.}
+    The \texttt{StarSchemaLoader} executes the generated DDL to create the target star schema in a PostgreSQL-compatible database, then bulk-inserts the cleaned and transformed data. The \texttt{DataLineageTracker} records, at each pipeline phase, the input/output row counts, applied transformations, timestamp, and schema fingerprint, producing a full audit trail in both Markdown and JSON. This lineage trace satisfies data governance requirements and enables reproducible incremental reloads when source drift is detected.
 
 %----------------------------------------------------------
 
@@ -196,7 +196,7 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
             \label{eq:cgr}
         \end{equation}
 
-        where $c(T)$ is the self-assessed confidence score extracted from the structured LLM output. The confidence is a composite signal from: (a)~output parsability (binary), (b)~the model's declared confidence field, and (c)~cosine similarity to the nearest approved example in the vector store. The threshold $\tau = 0.75$ was found optimal via grid search (Section~\ref{sec:ablation}), balancing accuracy against cloud API costs.
+        where $c(T)$ is the self-assessed confidence score extracted from the structured LLM output. The confidence is a composite signal from: (a)~output parsability (binary), (b)~the model's declared confidence field, and (c)~cosine similarity to the nearest approved example in the vector store. CGR is applied uniformly across all three Layer-3 agents --- schema mapping, cleaning rule detection, and ETL code generation. The threshold $\tau = 0.75$ was found optimal via grid search (Section~\ref{sec:ablation}), balancing accuracy against cloud API costs.
 
     \subsection{Adaptive Few-Shot Memory (AFSM)}
     \label{sec:afsm}
@@ -209,7 +209,7 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
             \label{eq:afsm}
         \end{equation}
 
-        The $k$ retrieved schema--mapping pairs are formatted as few-shot examples prepended to the LLM prompt. Human-approved mappings are prioritised in retrieval (flagged in metadata). This mechanism underpins our memory improvement delta of \textbf{+27.1\%} between cold start and post-approval accuracy (Section~\ref{sec:hitl_results}).
+        The $k$ retrieved schema--mapping (or schema--cleaning-rule) pairs are formatted as few-shot examples and prepended to the LLM prompt. Human-approved decisions are prioritised in retrieval (flagged in metadata). Both the SchemaMappingAgent and the CleaningRulesAgent benefit from AFSM: approved cleaning rules from previously processed datasets are retrieved to bootstrap rule detection on new, structurally similar sources. This mechanism underpins our memory improvement delta of \textbf{+27.1\%} between cold start and post-approval accuracy (Section~\ref{sec:hitl_results}).
 
     \subsection{Schema Fingerprinting}
     \label{sec:fingerprint}
@@ -247,7 +247,7 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
         \end{algorithmic}
         \end{algorithm}
 
-        Static analysis is performed by SQLFluff \cite{sqlfluff} for SQL and Python's \texttt{ast.parse()} for Python code. Error messages (lint violations, syntax errors, type mismatches) are concatenated into the LLM's next prompt as correction context.
+        Static analysis is performed by SQLFluff \cite{sqlfluff} for SQL (DDL + DML) and Python's \texttt{ast.parse()} for pandas transformation code. Error messages (lint violations, undeclared table references, syntax errors, type mismatches) are concatenated into the LLM's next prompt as structured correction context. The DVR loop is the mechanism that converts raw LLM-generated ETL code --- which achieves 0\% SQL validity at generation time --- into production-deployable, fully valid pipeline code in at most 3 iterations.
 
 %----------------------------------------------------------
 
@@ -384,10 +384,10 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
 
         CGR achieves the highest accuracy (0.409), particularly excelling on DS2 (hospital records, 0.726 vs.\ 0.143 for Gemini alone), demonstrating that the routing mechanism correctly escalates semantically complex schemas to the more capable cloud model.
 
-    \subsection{Data Cleaning — RAG-Augmented LLM (NB03)}
+    \subsection{Data Cleaning and Transformation — RAG-Augmented LLM (NB03)}
     \label{sec:cleaning_results}
 
-        Table~\ref{tab:cleaning} reports cleaning rule recall (fraction of ground-truth rules detected) and data quality score improvement before and after applying the detected rules.
+        The CleaningRulesAgent inspects each source DataFrame and generates a typed cleaning plan: null imputation strategies, date/currency standardisation rules, duplicate removal policies, and type cast corrections. These rules are then executed as pandas transformations before star schema loading. Table~\ref{tab:cleaning} reports cleaning rule recall (fraction of ground-truth rules detected) and the composite data quality (DQ) score improvement before and after applying the generated cleaning and transformation plan.
 
         \begin{table}[H]
             \caption{Data Cleaning: Rule Recall and DQ Improvement}
@@ -495,7 +495,7 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
 
     \subsection{Strengths}
 
-        \textsc{ETL-LLM} demonstrates three key strengths. First, \textbf{zero-shot generalisation}: the system handles all four heterogeneous datasets without any domain-specific training or fine-tuning, relying purely on prompt engineering and FAISS-based few-shot retrieval. Second, \textbf{self-improvement}: the AFSM loop creates a virtuous cycle where each human approval improves future accuracy by enriching the vector store, a property not present in static LLM systems. Third, \textbf{cost efficiency}: routing 70\%+ of tasks to the local LLaMA model (in research mode) significantly reduces cloud API costs compared to a Gemini-only architecture.
+        \textsc{ETL-LLM} demonstrates four key strengths. First, \textbf{full ETL lifecycle coverage}: the system is not a point solution for schema matching or query generation --- it covers the complete pipeline from raw file ingestion through data quality assessment, automated cleaning and transformation, executable code generation, and final star schema loading. Second, \textbf{zero-shot generalisation}: the system handles all four heterogeneous datasets without domain-specific training or fine-tuning, relying on prompt engineering and FAISS-based few-shot retrieval. Third, \textbf{self-improvement}: the AFSM loop creates a virtuous cycle where each human approval enriches the vector store and bootstraps future pipeline runs, a property absent from static LLM ETL systems. Fourth, \textbf{cost efficiency}: routing 70\%+ of tasks to the local LLaMA model (in research mode) significantly reduces cloud API costs compared to a Gemini-only architecture, while CGR ensures accuracy is not sacrificed on complex schemas.
 
     \subsection{Limitations}
 
@@ -503,18 +503,18 @@ Autonomous Star Schema Generation from Heterogeneous Sources}
 
     \subsection{Comparison with Prior Work}
 
-        Compared to traditional schema matching tools (COMA++, Cupid), which require hand-crafted similarity functions, \textsc{ETL-LLM} achieves comparable or superior accuracy in a fully automated, domain-agnostic manner. Compared to LLM-only baselines (LLaMA alone: 0.250), the CGR+AFSM combination improves accuracy by \textbf{+63.6\%} relatively ($0.409/0.250 - 1$). The RAG-cleaning module achieves 64.6\% average recall on typed cleaning rules, outperforming keyword-based rule detection tools which typically require schema-specific configuration.
+        Traditional ETL tools (Talend, Informatica) and schema matching systems (COMA++, Cupid) address specific ETL sub-problems but require expert configuration for each new data source and do not automate the full pipeline. \textsc{ETL-LLM} achieves comparable or superior schema mapping accuracy in a fully automated, domain-agnostic manner. Compared to LLM-only baselines (LLaMA alone: 0.250), the CGR+AFSM combination improves schema mapping accuracy by \textbf{+63.6\%} relatively ($0.409/0.250 - 1$). Colombo et al.\ \cite{colombo2025llmetl} and Annam \cite{annam2025llm} demonstrate LLM-assisted ETL but do not report data cleaning metrics, self-improvement through a vector store, or production-valid code generation. Our CleaningRulesAgent achieves 64.6\% average recall on typed cleaning rules across four heterogeneous datasets with no schema-specific configuration, while the DVR loop produces 100\% SQL-valid ETL code across all datasets --- two capabilities absent from prior LLM-ETL systems.
 
 %----------------------------------------------------------
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-    We presented \textsc{ETL-LLM}, a five-layer pipeline for autonomous star schema generation from heterogeneous data sources. Four innovations—Confidence-Gated Routing, Adaptive Few-Shot Memory, Schema Fingerprinting, and Divide-Verify-Refine—combine to produce a system that is faster, more accurate, and more cost-efficient than any single-model baseline.
+    We presented \textsc{ETL-LLM}, a five-layer, LLM-orchestrated framework for end-to-end autonomous ETL---covering heterogeneous source ingestion, automated data quality assessment, LLM-driven cleaning and transformation, schema mapping, executable ETL code generation, and star schema loading---with four innovations that collectively address the key failure modes of na\"ive LLM application to production ETL.
 
-    Key results: CGR achieves an average schema mapping accuracy of 0.409 (+63.6\% over LLaMA-only), AFSM produces a +27.1\% memory improvement delta after a single approval cycle, all schemas are profiled in under 70 ms with 100\% fingerprint determinism, and the DVR loop repairs all SQL code to 100\% validity within 3 iterations. The confidence threshold $\tau^* = 0.75$ is validated as optimal across five threshold levels.
+    Key results: CGR achieves a schema mapping accuracy of 0.409 (+63.6\% over LLaMA-only), AFSM produces a +27.1\% memory improvement delta after a single approval cycle, the CleaningRulesAgent detects an average 64.6\% of ground-truth cleaning rules and improves data quality by +0.37\%, all schemas are profiled in under 70 ms with 100\% fingerprint determinism, and the DVR loop repairs all SQL ETL code from 0\% to 100\% validity within 3 iterations. The confidence threshold $\tau^* = 0.75$ is validated as optimal across five threshold levels.
 
-    Future work includes: extending DVR with runtime unit-test verification for Python code, handling deeply nested event-schema sources (DS4), fine-tuning a compact LLM on the AFSM knowledge base to reduce cloud dependency, and evaluating on production-scale datasets with tens of thousands of rows and hundreds of columns.
+    Future work includes: extending DVR with runtime unit-test verification for pandas transformation code, specialised handling for deeply nested event-schema sources (DS4), fine-tuning a compact domain-specific LLM on the AFSM knowledge base to reduce cloud API dependency, and evaluating on production-scale datasets with tens of thousands of rows and hundreds of columns.
 
     The complete system—source code, datasets, nine reproducible research notebooks, and the production web application—is released at \url{https://github.com/syrinemrf/BI-Platform}.
 
