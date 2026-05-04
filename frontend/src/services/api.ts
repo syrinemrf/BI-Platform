@@ -306,7 +306,7 @@ export const dashboardApi = {
 
 // LLM API
 export const llmApi = {
-  getStatus: async (): Promise<{ available: boolean; model: string; base_url: string }> => {
+  getStatus: async (): Promise<{ available: boolean; model: string; provider: string; message: string }> => {
     const response = await api.get('/llm/status');
     return response.data;
   },

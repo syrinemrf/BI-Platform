@@ -176,7 +176,7 @@ export const SettingsPage: React.FC = () => {
                   {t('settings.llm')}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {llmStatus?.model || 'Ollama (LLaMA 3)'}
+                  {llmStatus?.model || 'Gemini 2.5 Flash'}
                 </p>
               </div>
             </div>
@@ -236,7 +236,7 @@ export const SettingsPage: React.FC = () => {
             </div>
             <div>
               <p className="text-slate-500 dark:text-slate-400">LLM</p>
-              <p className="font-medium text-slate-900 dark:text-white">Ollama (LLaMA 3)</p>
+              <p className="font-medium text-slate-900 dark:text-white">Google Gemini 2.5 Flash</p>
             </div>
           </div>
         </div>

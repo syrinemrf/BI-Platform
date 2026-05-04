@@ -141,7 +141,7 @@ const AboutPage: React.FC = () => {
             { name: 'FastAPI', desc: 'Backend' },
             { name: 'React', desc: 'Frontend' },
             { name: 'PostgreSQL', desc: 'Database' },
-            { name: 'LLaMA 3', desc: 'LLM' },
+            { name: 'Gemini 2.5 Flash', desc: 'LLM' },
             { name: 'Pandas', desc: 'ETL' },
             { name: 'SQLAlchemy', desc: 'ORM' },
             { name: 'TailwindCSS', desc: 'Styling' },
