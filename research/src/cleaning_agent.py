@@ -1,17 +1,24 @@
 """
-Cleaning Agent — LLM-powered data cleaning rule detection and application.
+Cleaning Agent — LLM + RAG-powered data cleaning rule detection and application.
 Layer 2, Agent 2 of the ETL pipeline.
+
+RAG Integration (Birjega 2025): Similar past cleaning patterns are retrieved from
+the FAISS vector store (RAGSchemaStore) and injected as few-shot examples into
+the LLM prompt, improving recall on known rule types.
 """
 import random
 import re
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 
 from .llm_client import LLMClient, MockLLMClient, LLMResponse
 from .profiler import SchemaContext
+
+if TYPE_CHECKING:
+    from .rag import RAGSchemaStore
 
 
 @dataclass
@@ -30,17 +37,18 @@ class CleaningPlan:
     confidence: float
     model_used: str
     latency_ms: float
+    rag_examples_used: int = 0   # how many RAG examples were injected
 
 
 class CleaningAgent:
-    """Detect and apply data cleaning rules using LLM."""
+    """Detect and apply data cleaning rules using LLM + RAG retrieval."""
 
     CLEANING_PROMPT = """You are a data quality expert. Analyze the following dataset schema
 and data samples to propose cleaning rules.
 
 DATASET SCHEMA:
 {schema_context}
-
+{rag_section}
 DATA QUALITY ISSUES TO LOOK FOR:
 - Null/missing values
 - Duplicate rows
@@ -65,18 +73,41 @@ Respond with valid JSON:
   "confidence": 0.XX
 }}"""
 
-    def __init__(self, llm_client=None):
+    def __init__(self, llm_client=None, rag_store=None):
         self.llm_client = llm_client
+        self.rag_store = rag_store  # RAGSchemaStore for cleaning pattern retrieval
+
+    def _build_rag_section(self, schema_ctx: SchemaContext) -> tuple[str, int]:
+        """Retrieve similar cleaning patterns from FAISS RAG store."""
+        if self.rag_store is None:
+            return "", 0
+        try:
+            similar = self.rag_store.retrieve(schema_ctx, k=3)
+            if not similar:
+                return "", 0
+            lines = ["\nSIMILAR CLEANING PATTERNS (from knowledge base — use as reference):\n"]
+            for i, ex in enumerate(similar, 1):
+                name = ex.get("dataset_name", f"example_{i}")
+                rules = ex.get("cleaning_rules", [])
+                lines.append(f"  [{i}] {name}: {', '.join(rules[:5])}")
+            lines.append("")
+            return "\n".join(lines) + "\n", len(similar)
+        except Exception:
+            return "", 0
 
     def detect_rules(
         self, schema_ctx: SchemaContext, df: pd.DataFrame
     ) -> CleaningPlan:
-        """Detect cleaning rules for a dataset."""
+        """Detect cleaning rules for a dataset using LLM + RAG context."""
         if isinstance(self.llm_client, MockLLMClient):
             return self._mock_detect(schema_ctx, df)
 
+        # Build RAG few-shot context
+        rag_section, n_rag = self._build_rag_section(schema_ctx)
+
         prompt = self.CLEANING_PROMPT.format(
-            schema_context=schema_ctx.to_prompt_string()
+            schema_context=schema_ctx.to_prompt_string(),
+            rag_section=rag_section,
         )
         try:
             llm_resp: LLMResponse = self.llm_client.route(
@@ -100,6 +131,7 @@ Respond with valid JSON:
                     confidence=llm_resp.confidence,
                     model_used=llm_resp.model_used,
                     latency_ms=llm_resp.latency_ms,
+                    rag_examples_used=n_rag,
                 )
         except Exception as e:
             import logging
