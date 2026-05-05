@@ -85,13 +85,10 @@ Respond with valid JSON:
             similar = self.rag_store.retrieve(schema_ctx, k=3)
             if not similar:
                 return "", 0
-            lines = ["\nSIMILAR CLEANING PATTERNS (from knowledge base — use as reference):\n"]
-            for i, ex in enumerate(similar, 1):
-                name = ex.get("dataset_name", f"example_{i}")
-                rules = ex.get("cleaning_rules", [])
-                lines.append(f"  [{i}] {name}: {', '.join(rules[:5])}")
-            lines.append("")
-            return "\n".join(lines) + "\n", len(similar)
+            # Use the dedicated cleaning prompt builder which formats cleaning_rules
+            prompt_section = self.rag_store.build_cleaning_prompt(similar)
+            n_useful = sum(1 for ex in similar if ex.get("cleaning_rules"))
+            return prompt_section, n_useful
         except Exception:
             return "", 0
 
